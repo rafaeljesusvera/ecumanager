@@ -22,11 +22,10 @@ const { useState } = React;
 const Icon = ({ d, size = 20, strokeWidth = 2, className = '', fill = 'none' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>{d}</svg>
 );
-const HomeIc = (p) => <Icon {...p} d={<><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>} />;
+const Home = (p) => <Icon {...p} d={<><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>} />;
 const Plus = (p) => <Icon {...p} d={<><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>} />;
 const Heart = (p) => <Icon {...p} d={<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>} />;
 const User = (p) => <Icon {...p} d={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />;
-const Users = (p) => <Icon {...p} d={<><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>} />;
 const ChevronLeft = (p) => <Icon {...p} d={<polyline points="15 18 9 12 15 6"/>} />;
 const ChevronRight = (p) => <Icon {...p} d={<polyline points="9 18 15 12 9 6"/>} />;
 const Calendar = (p) => <Icon {...p} d={<><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>} />;
@@ -39,59 +38,86 @@ const Check = (p) => <Icon {...p} d={<polyline points="20 6 9 17 4 12"/>} />;
 const Share2 = (p) => <Icon {...p} d={<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></>} />;
 const Lock = (p) => <Icon {...p} d={<><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />;
 const Medal = (p) => <Icon {...p} d={<><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><circle cx="12" cy="17" r="5"/></>} />;
-const Search = (p) => <Icon {...p} d={<><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>} />;
-const Bell = (p) => <Icon {...p} d={<><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>} />;
-const Euro = (p) => <Icon {...p} d={<><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></>} />;
-const Grid = (p) => <Icon {...p} d={<><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></>} />;
-const LogOut = (p) => <Icon {...p} d={<><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>} />;
 const Settings = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>} />;
-const TrendingUp = (p) => <Icon {...p} d={<><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></>} />;
+const Trash = (p) => <Icon {...p} d={<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></>} />;
+const Archive = (p) => <Icon {...p} d={<><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></>} />;
 
 function Ecumanager() {
-  const [profile, setProfile] = useState(() => {
-    try { return localStorage.getItem('ecumanager_profile') || null; }
-    catch (e) { return null; }
-  });
-
-  const setProfileSave = (p) => {
-    setProfile(p);
-    try { if (p) localStorage.setItem('ecumanager_profile', p); else localStorage.removeItem('ecumanager_profile'); } catch (e) {}
-  };
-
   const [screen, setScreen] = useState('home');
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [selectedBadge, setSelectedBadge] = useState(null);
-  const [selectedStudent, setSelectedStudent] = useState(null);
   const [showLogger, setShowLogger] = useState(false);
-  const [showAwardBadge, setShowAwardBadge] = useState(false);
-  const [showNewClass, setShowNewClass] = useState(false);
   const [loggerStep, setLoggerStep] = useState(1);
   const [logData, setLogData] = useState({ horse: null, feeling: null, intensity: 3 });
   const [badgeFilter, setBadgeFilter] = useState('todas');
   const [horseTab, setHorseTab] = useState('mine');
   const [horseDetailTab, setHorseDetailTab] = useState('resumen');
+  const [editingHorseId, setEditingHorseId] = useState(null);
+  const [clubHorseFilter, setClubHorseFilter] = useState('todos');
+  const [showArchived, setShowArchived] = useState(false);
+  const [editingRiderId, setEditingRiderId] = useState(null);
+  const [clubRiderFilter, setClubRiderFilter] = useState('todos');
+  const [showArchivedRiders, setShowArchivedRiders] = useState(false);
+  const [clubBadgeFilter, setClubBadgeFilter] = useState('todas');
 
   const [customImages, setCustomImages] = useState(() => {
-    try { const s = localStorage.getItem('ecumanager_horse_images'); return s ? JSON.parse(s) : {}; } catch (e) { return {}; }
-  });
-  const [badgeImages, setBadgeImages] = useState(() => {
-    try { const s = localStorage.getItem('ecumanager_badge_images'); return s ? JSON.parse(s) : {}; } catch (e) { return {}; }
-  });
-  const [studentImages, setStudentImages] = useState(() => {
-    try { const s = localStorage.getItem('ecumanager_student_images'); return s ? JSON.parse(s) : {}; } catch (e) { return {}; }
+    try {
+      const saved = localStorage.getItem('ecumanager_horse_images');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) { return {}; }
   });
 
-  const handleImageUpload = (key, event, store, setStore, storageKey) => {
+  const [badgeImages, setBadgeImages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ecumanager_badge_images');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) { return {}; }
+  });
+
+  const [clubMode, setClubMode] = useState(() => {
+    try { return localStorage.getItem('ecumanager_club_mode') === '1'; }
+    catch (e) { return false; }
+  });
+
+  const toggleClubMode = () => {
+    const next = !clubMode;
+    setClubMode(next);
+    try { localStorage.setItem('ecumanager_club_mode', next ? '1' : '0'); } catch (e) {}
+  };
+
+  const handleImageUpload = (horseName, event) => {
     const file = event.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('Máx 5MB.'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert('La foto es muy grande. Máx 5MB.'); return; }
     const reader = new FileReader();
     reader.onload = (e) => {
-      const ni = { ...store, [key]: e.target.result };
-      setStore(ni);
-      try { localStorage.setItem(storageKey, JSON.stringify(ni)); } catch (err) {}
+      const newImages = { ...customImages, [horseName]: e.target.result };
+      setCustomImages(newImages);
+      try { localStorage.setItem('ecumanager_horse_images', JSON.stringify(newImages)); }
+      catch (err) { alert('No se pudo guardar. Memoria llena.'); }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleBadgeImageUpload = (badgeId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('La foto es muy grande. Máx 5MB.'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const newImages = { ...badgeImages, [badgeId]: e.target.result };
+      setBadgeImages(newImages);
+      try { localStorage.setItem('ecumanager_badge_images', JSON.stringify(newImages)); }
+      catch (err) { alert('No se pudo guardar. Memoria llena.'); }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const resetBadgeImage = (badgeId) => {
+    const newImages = { ...badgeImages };
+    delete newImages[badgeId];
+    setBadgeImages(newImages);
+    try { localStorage.setItem('ecumanager_badge_images', JSON.stringify(newImages)); } catch (e) {}
   };
 
   const HorseImg = ({ name }) => {
@@ -105,92 +131,190 @@ function Ecumanager() {
     );
   };
 
-  const StudentImg = ({ id, name }) => {
-    const src = studentImages[id];
-    if (src) return <img src={src} alt={name} className="w-full h-full object-cover" />;
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-700 to-stone-900 text-yellow-300 font-black">
-        {name.split(' ').map(n => n[0]).slice(0,2).join('')}
-      </div>
-    );
-  };
-
-  // === DATA ===
-  const user = { name: 'Carlota Van der Berg', firstName: 'Carlota', level: 'U14 · Nivel Medio', school: 'Club Hípica La Finca', avatar: 'CV' };
-  const club = { name: 'Club Hípica La Finca', shortName: 'La Finca', city: 'Madrid', members: 87, since: '2015', avatar: 'LF' };
+  const user = { name: 'Carlota Van der Berg', firstName: 'Carlota', level: 'U14 · Nivel Medio', school: clubConfig.name, avatar: 'CV', joinDate: 'Enero 2024' };
   const stats = { totalHours: 142, totalRides: 86, uniqueHorses: 12, currentStreak: 5, monthRides: 14, monthHours: 23, badgesUnlocked: 8, badgesTotal: 24 };
-  const clubStats = { students: 87, activeStudents: 74, classesWeek: 42, classesToday: 8, badgesGiven: 156, badgesMonth: 23, revenue: 12480, revenueGrowth: 8.2, horses: 6, attendance: 91 };
   const skills = [{ name: 'Salto', value: 72, color: '#FFD230' },{ name: 'Doma', value: 65, color: '#FF6B6B' },{ name: 'Equilibrio', value: 81, color: '#4ECDC4' },{ name: 'Ritmo', value: 68, color: '#A78BFA' }];
 
   const badges = [
-    { id: 1, title: 'ESPÍRITU DEL SALTO', category: 'Salto', subtitle: 'Salto de obstáculos', level: 'U14 | NIVEL MEDIO', gradient: ['#EC4899', '#BE185D'], icon: '🏇', unlocked: true, date: '5 Feb 2025', desc: 'Superaste el metro de altura', rarity: 'Épica' },
-    { id: 2, title: 'MENTALIDAD GANADORA', category: 'Hitos', subtitle: 'Constancia y disciplina', level: 'U14 | NIVEL ALTO', gradient: ['#1E40AF', '#3B82F6'], icon: '🏆', unlocked: true, date: '12 Mar 2026', desc: '10 semanas seguidas', rarity: 'Rara' },
-    { id: 3, title: 'CONEXIÓN MÁGICA', category: 'Conexión', subtitle: 'Vínculo con tu caballo', level: 'U14 | INTERMEDIO', gradient: ['#059669', '#10B981'], icon: '💚', unlocked: true, date: '20 Abr 2026', desc: '90%+ de conexión', rarity: 'Rara' },
-    { id: 4, title: 'ESPÍRITU COMPETITIVO', category: 'Hitos', subtitle: 'Primera competición', level: 'U14 | NIVEL ALTO', gradient: ['#DC2626', '#F97316'], icon: '🥇', unlocked: false, desc: 'Primer concurso oficial', progress: 0, rarity: 'Legendaria' },
-    { id: 5, title: 'TRABAJO IMPECABLE', category: 'Doma', subtitle: 'Técnica de doma', level: 'U14 | NIVEL MEDIO', gradient: ['#7C3AED', '#A78BFA'], icon: '🎯', unlocked: true, date: '8 May 2026', desc: 'Transiciones aire-aire', rarity: 'Común' },
-    { id: 6, title: 'MEJOR SALTO', category: 'Salto', subtitle: 'Línea limpia', level: 'U14 | INICIACIÓN', gradient: ['#16A34A', '#84CC16'], icon: '⭐', unlocked: true, date: '15 May 2026', desc: '4 obstáculos sin derribos', rarity: 'Común' },
-    { id: 7, title: 'JINETE VERSÁTIL', category: 'Conexión', subtitle: '10 caballos', level: 'U14 | INTERMEDIO', gradient: ['#0EA5E9', '#06B6D4'], icon: '🐎', unlocked: true, date: '2 Abr 2026', desc: '10+ caballos distintos', rarity: 'Rara' },
-    { id: 8, title: 'CENTENARIA', category: 'Hitos', subtitle: '100 horas en silla', level: 'U14 | ÉLITE', gradient: ['#F59E0B', '#FCD34D'], icon: '👑', unlocked: true, date: '28 Mar 2026', desc: '100 horas acumuladas', rarity: 'Legendaria' },
-    { id: 9, title: 'SUPERACIÓN', category: 'Hitos', subtitle: '20 semanas', level: 'U14 | ALTO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: '20 semanas seguidas', progress: 25, rarity: 'Épica' },
-    { id: 10, title: 'DOMA AVANZADA', category: 'Doma', subtitle: 'Nivel avanzado', level: 'U14 | AVANZADO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: 'Pirueta al galope', progress: 60, rarity: 'Épica' },
-    { id: 11, title: 'PRIMER 1.10m', category: 'Salto', subtitle: 'Superar 1.10m', level: 'U14 | ALTO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: 'Saltar 1.10m limpio', progress: 40, rarity: 'Épica' },
+    { id: 1, title: 'ESPÍRITU DEL SALTO', category: 'Salto', subtitle: 'Salto de obstáculos', level: 'U14 | NIVEL MEDIO', gradient: ['#EC4899', '#BE185D'], icon: '🏇', unlocked: true, date: '5 Feb 2025', desc: 'Superaste el metro de altura por primera vez', rarity: 'Épica' },
+    { id: 2, title: 'MENTALIDAD GANADORA', category: 'Hitos', subtitle: 'Constancia y disciplina', level: 'U14 | NIVEL ALTO', gradient: ['#1E40AF', '#3B82F6'], icon: '🏆', unlocked: true, date: '12 Mar 2026', desc: '10 semanas seguidas montando sin faltar', rarity: 'Rara' },
+    { id: 3, title: 'CONEXIÓN MÁGICA', category: 'Conexión', subtitle: 'Vínculo con tu caballo', level: 'U14 | INTERMEDIO', gradient: ['#059669', '#10B981'], icon: '💚', unlocked: true, date: '20 Abr 2026', desc: '90%+ de conexión con tu caballo principal', rarity: 'Rara' },
+    { id: 4, title: 'ESPÍRITU COMPETITIVO', category: 'Hitos', subtitle: 'Primera competición', level: 'U14 | NIVEL ALTO', gradient: ['#DC2626', '#F97316'], icon: '🥇', unlocked: false, desc: 'Participa en tu primer concurso oficial', progress: 0, rarity: 'Legendaria' },
+    { id: 5, title: 'TRABAJO IMPECABLE', category: 'Doma', subtitle: 'Técnica de doma', level: 'U14 | NIVEL MEDIO', gradient: ['#7C3AED', '#A78BFA'], icon: '🎯', unlocked: true, date: '8 May 2026', desc: 'Domina las transiciones aire-aire', rarity: 'Común' },
+    { id: 6, title: 'MEJOR SALTO', category: 'Salto', subtitle: 'Línea de obstáculos limpia', level: 'U14 | INICIACIÓN', gradient: ['#16A34A', '#84CC16'], icon: '⭐', unlocked: true, date: '15 May 2026', desc: 'Línea de 4 obstáculos sin derribos', rarity: 'Común' },
+    { id: 7, title: 'JINETE VERSÁTIL', category: 'Conexión', subtitle: '10 caballos diferentes', level: 'U14 | INTERMEDIO', gradient: ['#0EA5E9', '#06B6D4'], icon: '🐎', unlocked: true, date: '2 Abr 2026', desc: 'Has montado 10+ caballos distintos', rarity: 'Rara' },
+    { id: 8, title: 'CENTENARIA', category: 'Hitos', subtitle: '100 horas en silla', level: 'U14 | ÉLITE', gradient: ['#F59E0B', '#FCD34D'], icon: '👑', unlocked: true, date: '28 Mar 2026', desc: '100 horas montadas acumuladas', rarity: 'Legendaria' },
+    { id: 9, title: 'SUPERACIÓN', category: 'Hitos', subtitle: 'Constancia 20 semanas', level: 'U14 | ALTO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: '20 semanas seguidas', progress: 25, rarity: 'Épica' },
+    { id: 10, title: 'DOMA AVANZADA', category: 'Doma', subtitle: 'Nivel avanzado', level: 'U14 | AVANZADO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: 'Domina la pirueta al galope', progress: 60, rarity: 'Épica' },
+    { id: 11, title: 'PRIMER 1.10m', category: 'Salto', subtitle: 'Superar 1.10m', level: 'U14 | ALTO', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: 'Saltar limpio 1.10m', progress: 40, rarity: 'Épica' },
     { id: 12, title: 'CONEXIÓN TOTAL', category: 'Conexión', subtitle: '95%+ con un caballo', level: 'U14 | ÉLITE', gradient: ['#475569', '#64748B'], icon: '🔒', unlocked: false, desc: 'Alcanza 95% de conexión', progress: 92, rarity: 'Legendaria' },
   ];
 
   const feed = [
-    { id: 1, horse: 'Tornado', date: 'Hoy', time: '18:30', duration: '1h 15min', feeling: 'Conexión', feelingColor: '#10b981', intensity: 4, note: 'Tornado respondió genial al galope. Transiciones limpias.', hasPhoto: true, milestone: false },
+    { id: 1, horse: 'Tornado', date: 'Hoy', time: '18:30', duration: '1h 15min', feeling: 'Conexión', feelingColor: '#10b981', intensity: 4, note: 'Tornado respondió genial al galope. Transiciones limpias y suelto.', hasPhoto: true, milestone: false },
     { id: 2, horse: 'Luna', date: 'Ayer', time: '17:00', duration: '1h', feeling: 'Tranquila', feelingColor: '#3b82f6', intensity: 3, note: 'Clase de doma. Mucho trabajo de flexión.', hasPhoto: false, milestone: false },
     { id: 3, horse: 'Trueno', date: '20 May', time: '19:00', duration: '1h 30min', feeling: 'Intensa', feelingColor: '#f59e0b', intensity: 5, note: 'Primer salto de 1m. ¡Lo logramos!', hasPhoto: true, milestone: true },
   ];
 
-  const horses = [
-    { name: 'Tornado', color: '#8B5A3C', rides: 23, lastRide: 'Hoy', connection: 92, type: 'Castaño · 7 años', breed: 'PRE × Hannoveriano', height: '1.68m', favorite: true, totalRiders: 4, since: '2018', status: 'Disponible', statusColor: '#10b981' },
-    { name: 'Luna', color: '#C9A876', rides: 18, lastRide: 'Ayer', connection: 78, type: 'Palomino · 9 años', breed: 'KWPN', height: '1.65m', favorite: false, totalRiders: 7, since: '2016', status: 'En clase', statusColor: '#f59e0b' },
-    { name: 'Trueno', color: '#2C2416', rides: 14, lastRide: '3 días', connection: 85, type: 'Negro · 6 años', breed: 'Selle Français', height: '1.71m', favorite: true, totalRiders: 3, since: '2019', status: 'Disponible', statusColor: '#10b981' },
-    { name: 'Estrella', color: '#B8B0A8', rides: 11, lastRide: '5 días', connection: 71, type: 'Tordo · 10 años', breed: 'PRE', height: '1.62m', favorite: false, totalRiders: 9, since: '2015', status: 'Descanso', statusColor: '#3b82f6' },
-    { name: 'Centella', color: '#A0826D', rides: 8, lastRide: '2 sem', connection: 64, type: 'Alazán · 8 años', breed: 'Hispano-Árabe', height: '1.63m', favorite: false, totalRiders: 6, since: '2017', status: 'Disponible', statusColor: '#10b981' },
-    { name: 'Rayo', color: '#3D2817', rides: 6, lastRide: '3 sem', connection: 58, type: 'Castaño oscuro · 5 años', breed: 'KWPN', height: '1.66m', favorite: false, totalRiders: 2, since: '2021', status: 'Lesión', statusColor: '#ef4444' },
+  // === MIEMBROS DEL CLUB (jinetes) — fuente única persistida ===
+  const defaultClubRiders = [
+    { id: 'r1', name: 'Carlota Van der Berg', level: 'U14 · Medio', category: 'U14', tier: 'Medio', email: 'carlota@example.com', phone: '', joinDate: 'Ene 2024', role: 'alumno', status: 'activo', notes: '' },
+    { id: 'r2', name: 'Diego Ramos', level: 'U16 · Alto', category: 'U16', tier: 'Alto', email: '', phone: '', joinDate: 'Sep 2022', role: 'alumno', status: 'activo', notes: '' },
+    { id: 'r3', name: 'Sofía Llorente', level: 'U12 · Iniciación', category: 'U12', tier: 'Iniciación', email: '', phone: '', joinDate: 'Feb 2025', role: 'alumno', status: 'activo', notes: '' },
+    { id: 'r4', name: 'Marina Castro', level: 'U18 · Élite', category: 'U18', tier: 'Élite', email: '', phone: '', joinDate: 'Mar 2020', role: 'propietario', status: 'activo', notes: 'Propietaria de Tornado y Rayo.' },
+    { id: 'r5', name: 'Javier Núñez', level: 'Adulto · Medio', category: 'Adulto', tier: 'Medio', email: '', phone: '', joinDate: 'Ene 2023', role: 'alumno', status: 'activo', notes: '' },
+    { id: 'r6', name: 'Lucía Pérez', level: 'U14 · Iniciación', category: 'U14', tier: 'Iniciación', email: '', phone: '', joinDate: 'Oct 2024', role: 'alumno', status: 'activo', notes: '' },
+    { id: 'r7', name: 'Pablo Soler', level: 'Adulto · Alto', category: 'Adulto', tier: 'Alto', email: '', phone: '', joinDate: 'May 2021', role: 'propietario', status: 'activo', notes: 'Propietario de Trueno.' },
+    { id: 'r8', name: 'Ana Beltrán', level: 'U16 · Medio', category: 'U16', tier: 'Medio', email: '', phone: '', joinDate: 'Sep 2023', role: 'alumno', status: 'activo', notes: '' },
   ];
+
+  const [clubRiders, setClubRiders] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ecumanager_club_riders');
+      return saved ? JSON.parse(saved) : defaultClubRiders;
+    } catch (e) { return defaultClubRiders; }
+  });
+
+  const saveClubRiders = (next) => {
+    setClubRiders(next);
+    try { localStorage.setItem('ecumanager_club_riders', JSON.stringify(next)); } catch (e) {}
+  };
+
+  const upsertClubRider = (rider) => {
+    const level = `${rider.category} · ${rider.tier}`;
+    const full = { ...rider, level };
+    if (full.id && clubRiders.some(r => r.id === full.id)) {
+      saveClubRiders(clubRiders.map(r => r.id === full.id ? full : r));
+    } else {
+      const newRider = { ...full, id: 'r' + Date.now() };
+      saveClubRiders([...clubRiders, newRider]);
+    }
+  };
+
+  const archiveClubRider = (id) => {
+    saveClubRiders(clubRiders.map(r => r.id === id ? { ...r, status: 'baja' } : r));
+  };
+
+  const restoreClubRider = (id) => {
+    saveClubRiders(clubRiders.map(r => r.id === id ? { ...r, status: 'activo' } : r));
+  };
+
+  const deleteClubRider = (id) => {
+    const linked = clubHorses.filter(h => h.ownerId === id || (h.riderIds || []).includes(id));
+    if (linked.length > 0) {
+      if (!confirm(`Este jinete está vinculado a ${linked.length} caballo(s). Al eliminarlo, se desvinculará de todos. ¿Continuar?`)) return;
+      saveClubHorses(clubHorses.map(h => ({
+        ...h,
+        ownerId: h.ownerId === id ? null : h.ownerId,
+        riderIds: (h.riderIds || []).filter(rid => rid !== id),
+      })));
+    } else {
+      if (!confirm('¿Eliminar definitivamente este jinete? Esta acción no se puede deshacer.')) return;
+    }
+    saveClubRiders(clubRiders.filter(r => r.id !== id));
+  };
+
+  // === CONFIGURACIÓN DEL CLUB (branding) ===
+  const defaultClubConfig = {
+    name: 'Club Hípica La Finca',
+    shortName: 'La Finca',
+    primaryColor: '#1c1917',
+    accentColor: '#FDE047',
+    logo: null,
+    location: 'Pozuelo de Alarcón, Madrid',
+    welcomeMessage: '',
+  };
+
+  const [clubConfig, setClubConfig] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ecumanager_club_config');
+      return saved ? { ...defaultClubConfig, ...JSON.parse(saved) } : defaultClubConfig;
+    } catch (e) { return defaultClubConfig; }
+  });
+
+  const saveClubConfig = (next) => {
+    setClubConfig(next);
+    try { localStorage.setItem('ecumanager_club_config', JSON.stringify(next)); } catch (e) {}
+  };
+
+  const handleLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('El logo es muy grande. Máx 2MB.'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      saveClubConfig({ ...clubConfig, logo: e.target.result });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // === CABALLOS DEL CLUB — fuente única, persistido en localStorage ===
+  const defaultClubHorses = [
+    { id: 'h1', name: 'Tornado', color: '#8B5A3C', kind: 'mixto', ownerId: 'r4', riderIds: ['r1','r2','r8'], status: 'activo', discipline: 'Salto', breed: 'PRE × Hannoveriano', height: '1.68m', age: 7, coat: 'Castaño', since: '2018', notes: '' },
+    { id: 'h2', name: 'Luna', color: '#C9A876', kind: 'escuela', ownerId: null, riderIds: ['r1','r2','r3','r5','r6','r8'], status: 'activo', discipline: 'Doma', breed: 'KWPN', height: '1.65m', age: 9, coat: 'Palomino', since: '2016', notes: '' },
+    { id: 'h3', name: 'Trueno', color: '#2C2416', kind: 'propietario', ownerId: 'r7', riderIds: [], status: 'activo', discipline: 'Salto', breed: 'Selle Français', height: '1.71m', age: 6, coat: 'Negro', since: '2019', notes: 'Caballo de propietario, uso exclusivo.' },
+    { id: 'h4', name: 'Estrella', color: '#B8B0A8', kind: 'escuela', ownerId: null, riderIds: ['r1','r3','r6','r8'], status: 'activo', discipline: 'Iniciación', breed: 'PRE', height: '1.62m', age: 10, coat: 'Tordo', since: '2015', notes: '' },
+    { id: 'h5', name: 'Centella', color: '#A0826D', kind: 'escuela', ownerId: null, riderIds: ['r2','r5'], status: 'rehabilitacion', discipline: 'Salto', breed: 'Hispano-Árabe', height: '1.63m', age: 8, coat: 'Alazán', since: '2017', notes: 'Tendinitis leve, reposo 2 semanas.' },
+    { id: 'h6', name: 'Rayo', color: '#3D2817', kind: 'mixto', ownerId: 'r4', riderIds: ['r2'], status: 'activo', discipline: 'Doma', breed: 'KWPN', height: '1.66m', age: 5, coat: 'Castaño oscuro', since: '2021', notes: '' },
+  ];
+
+  const [clubHorses, setClubHorses] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ecumanager_club_horses');
+      return saved ? JSON.parse(saved) : defaultClubHorses;
+    } catch (e) { return defaultClubHorses; }
+  });
+
+  const saveClubHorses = (next) => {
+    setClubHorses(next);
+    try { localStorage.setItem('ecumanager_club_horses', JSON.stringify(next)); } catch (e) {}
+  };
+
+  const upsertClubHorse = (horse) => {
+    if (horse.id && clubHorses.some(h => h.id === horse.id)) {
+      saveClubHorses(clubHorses.map(h => h.id === horse.id ? horse : h));
+    } else {
+      const newHorse = { ...horse, id: 'h' + Date.now() };
+      saveClubHorses([...clubHorses, newHorse]);
+    }
+  };
+
+  const archiveClubHorse = (id) => {
+    saveClubHorses(clubHorses.map(h => h.id === id ? { ...h, status: 'baja' } : h));
+  };
+
+  const restoreClubHorse = (id) => {
+    saveClubHorses(clubHorses.map(h => h.id === id ? { ...h, status: 'activo' } : h));
+  };
+
+  const deleteClubHorse = (id) => {
+    if (!confirm('¿Eliminar definitivamente este caballo del club? Esto NO se puede deshacer.')) return;
+    saveClubHorses(clubHorses.filter(h => h.id !== id));
+  };
+
+  // === Derivado: lista que ve el jinete en "Caballos del club" (sin bajas, con campos de UI) ===
+  const horsesForRider = clubHorses
+    .filter(h => h.status !== 'baja')
+    .map(h => ({
+      name: h.name,
+      color: h.color,
+      rides: 10 + (h.name.length * 2),
+      lastRide: h.status === 'rehabilitacion' ? 'Reposo' : 'Reciente',
+      connection: 60 + (h.name.charCodeAt(0) % 35),
+      type: `${h.coat} · ${h.age} años`,
+      breed: h.breed,
+      height: h.height,
+      favorite: h.kind === 'mixto',
+      totalRiders: (h.riderIds?.length || 0) + (h.ownerId ? 1 : 0),
+      since: h.since,
+    }));
 
   const myHorses = [{ name: 'Káiser', color: '#3D2817', breed: 'KWPN', height: '1.70m', microchip: '981100002847163', die: 'ES-2018-0084712', birthDate: '12 Abr 2018', sex: 'Macho castrado', stable: 'Box 14 · Cuadra Sur', since: 'Marzo 2022', weight: 542, condition: 5, mood: 'Activo', moodEmoji: '⚡' }];
-
-  const students = [
-    { id: 's1', name: 'Carlota Van der Berg', level: 'U14 · Medio', age: 14, classes: 86, streak: 5, lastClass: 'Hoy', badges: 8, paid: true, group: 'Avanzado A' },
-    { id: 's2', name: 'Sofía Q.', level: 'U10 · Iniciación', age: 10, classes: 32, streak: 3, lastClass: 'Ayer', badges: 4, paid: true, group: 'Iniciación' },
-    { id: 's3', name: 'Martín F.', level: 'U12 · Medio', age: 12, classes: 54, streak: 7, lastClass: 'Hoy', badges: 6, paid: true, group: 'Medio B' },
-    { id: 's4', name: 'Carla T.', level: 'U16 · Alto', age: 16, classes: 124, streak: 11, lastClass: 'Hoy', badges: 12, paid: true, group: 'Avanzado A' },
-    { id: 's5', name: 'Manuel G.', level: 'U10 · Iniciación', age: 9, classes: 18, streak: 2, lastClass: '3 días', badges: 2, paid: false, group: 'Iniciación' },
-    { id: 's6', name: 'Lucía R.', level: 'U12 · Medio', age: 11, classes: 41, streak: 4, lastClass: 'Ayer', badges: 5, paid: true, group: 'Medio A' },
-    { id: 's7', name: 'Alejandro P.', level: 'U14 · Medio', age: 13, classes: 67, streak: 6, lastClass: 'Hoy', badges: 7, paid: true, group: 'Medio B' },
-    { id: 's8', name: 'Marta L.', level: 'U16 · Alto', age: 15, classes: 98, streak: 9, lastClass: 'Ayer', badges: 10, paid: false, group: 'Avanzado A' },
-  ];
-
-  const todayClasses = [
-    { id: 'c1', time: '09:00', duration: '1h', group: 'Iniciación 7-9', coach: 'Marina López', students: 6, horse: 'Estrella', status: 'past' },
-    { id: 'c2', time: '11:00', duration: '1h', group: 'Iniciación 10-12', coach: 'Marina López', students: 8, horse: 'Luna', status: 'past' },
-    { id: 'c3', time: '13:00', duration: '1h', group: 'Medio 12-14', coach: 'Carlos V.', students: 7, horse: 'Tornado', status: 'past' },
-    { id: 'c4', time: '17:00', duration: '1h', group: 'Avanzado 14-17', coach: 'Marina López', students: 5, horse: 'Luna', status: 'current' },
-    { id: 'c5', time: '18:00', duration: '1h', group: 'Avanzado A', coach: 'Carlos V.', students: 6, horse: 'Tornado', status: 'next' },
-    { id: 'c6', time: '19:00', duration: '1h 30min', group: 'Salto Élite', coach: 'Marina López', students: 4, horse: 'Trueno', status: 'next' },
-  ];
-
-  const upcomingAlerts = [
-    { id: 1, icon: '💰', title: '2 impagos del mes', desc: 'Manuel G. y Marta L. · Mayo', urgent: true, color: '#EF4444' },
-    { id: 2, icon: '🎂', title: 'Cumpleaños esta semana', desc: 'Sofía Q. cumple 11 el sábado', urgent: false, color: '#EC4899' },
-    { id: 3, icon: '⚠️', title: 'Rayo en revisión veterinaria', desc: 'Lesión leve · 5 días sin trabajo', urgent: true, color: '#F59E0B' },
-    { id: 4, icon: '🏆', title: '3 alumnos cerca de insignia', desc: 'Verifica progreso de Carlota, Carla y Alejandro', urgent: false, color: '#8B5CF6' },
-  ];
-
-  const coaches = [
-    { id: 'co1', name: 'Marina López', classesWeek: 22, students: 38, rating: 4.9, role: 'Cabeza de escuela' },
-    { id: 'co2', name: 'Carlos Vitulli', classesWeek: 18, students: 31, rating: 4.7, role: 'Profesor de salto' },
-    { id: 'co3', name: 'Laura Marquina', classesWeek: 12, students: 18, rating: 4.8, role: 'Profesora de doma' },
-  ];
 
   const healthRecords = [
     { id: 1, icon: '🏥', title: 'Revisión general', date: '15 Abr 2026', vet: 'Dr. Martínez', notes: 'Todo correcto.', cost: 85 },
     { id: 2, icon: '💉', title: 'Vacuna influenza + tétanos', date: '10 Mar 2026', vet: 'Dr. Martínez', notes: 'Sin reacciones.', cost: 45 },
-    { id: 3, icon: '🔨', title: 'Herraje completo', date: '8 May 2026', vet: 'Juan Pérez', notes: 'Grieta superficial.', cost: 95 },
+    { id: 3, icon: '🔨', title: 'Herraje completo', date: '8 May 2026', vet: 'Juan Pérez', notes: 'Casco anterior con grieta.', cost: 95 },
     { id: 4, icon: '🦷', title: 'Revisión dental', date: '20 Feb 2026', vet: 'Dr. Sánchez', notes: 'Limado de molares.', cost: 110 },
   ];
   const upcomingHealth = [
@@ -225,33 +349,48 @@ function Ecumanager() {
     { name: 'Aprendizaje', color: '#06b6d4', emoji: '🎯' },
   ];
 
-  // ===== COMPONENTES COMUNES =====
-  const Header = ({ title, back, action, dark }) => (
-    <div className={`px-5 pt-4 pb-3 flex items-center justify-between sticky top-0 z-10 border-b ${dark ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-      <div className="flex items-center gap-2">
-        {back && <button onClick={back} className="p-1 -ml-1"><ChevronLeft size={24} className={dark ? 'text-white' : 'text-stone-700'} /></button>}
-        <h1 className={`text-2xl font-black ${dark ? 'text-white' : 'text-stone-900'}`}>{title}</h1>
-      </div>
-      {action}
-    </div>
-  );
+  // ====== Helpers de etiquetas para gestor club ======
+  const KIND_LABELS = {
+    escuela: { label: 'Escuela', color: 'bg-blue-100 text-blue-700', icon: '🎓' },
+    propietario: { label: 'Propietario', color: 'bg-purple-100 text-purple-700', icon: '👤' },
+    mixto: { label: 'Mixto', color: 'bg-amber-100 text-amber-700', icon: '🔀' },
+  };
+  const STATUS_LABELS = {
+    activo: { label: 'Activo', color: 'bg-green-100 text-green-700', dot: 'bg-green-500' },
+    rehabilitacion: { label: 'Rehabilitación', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
+    baja: { label: 'Baja', color: 'bg-stone-200 text-stone-600', dot: 'bg-stone-400' },
+  };
+  const riderName = (id) => clubRiders.find(r => r.id === id)?.name || '—';
 
-  const BadgeCard = ({ badge, size = 'normal', onClick, clubEditable }) => {
+  const ROLE_LABELS = {
+    alumno: { label: 'Alumno', color: 'bg-sky-100 text-sky-700', icon: '🎒' },
+    propietario: { label: 'Propietario', color: 'bg-purple-100 text-purple-700', icon: '👤' },
+    profesor: { label: 'Profesor', color: 'bg-emerald-100 text-emerald-700', icon: '🎓' },
+    invitado: { label: 'Invitado', color: 'bg-stone-100 text-stone-700', icon: '✋' },
+  };
+  const CATEGORIES = ['U10', 'U12', 'U14', 'U16', 'U18', 'Adulto'];
+  const TIERS = ['Iniciación', 'Medio', 'Alto', 'Élite'];
+
+  const horsesOfRider = (riderId) => {
+    return clubHorses.filter(h => h.ownerId === riderId || (h.riderIds || []).includes(riderId));
+  };
+
+  const BadgeCard = ({ badge, size = 'normal', onClick }) => {
     const heights = { small: 'h-44', normal: 'h-60', large: 'h-[420px]' };
     const isLocked = !badge.unlocked;
-    const photo = badgeImages[badge.id];
+    const customPhoto = badgeImages[badge.id];
     return (
       <div className={`${heights[size]} relative rounded-2xl overflow-hidden w-full`} style={{ background: isLocked ? 'linear-gradient(135deg, #475569, #64748B)' : `linear-gradient(135deg, ${badge.gradient[0]}, ${badge.gradient[1]})`, boxShadow: isLocked ? 'none' : `0 8px 24px ${badge.gradient[0]}40` }}>
-        <button onClick={onClick} className="absolute inset-0 text-left w-full">
+        <button onClick={onClick} className="absolute inset-0 text-left w-full h-full">
           <div className="absolute inset-0 opacity-20"><div className="absolute -top-8 -right-8 w-32 h-32 bg-white rounded-full blur-2xl"></div><div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white rounded-full blur-3xl"></div></div>
           <div className="absolute top-0 left-0 right-0 px-3 pt-3 flex items-start justify-between">
             <div className="bg-white/95 rounded-md px-2 py-1"><div className="text-[9px] font-black text-stone-900 uppercase tracking-widest">{badge.category}</div></div>
             {isLocked && <div className="bg-black/30 rounded-full p-1.5"><Lock size={12} className="text-white" /></div>}
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            {photo && !isLocked ? (
+            {customPhoto && !isLocked ? (
               <div className={`${size === 'large' ? 'w-40 h-40' : size === 'small' ? 'w-20 h-20' : 'w-28 h-28'} rounded-full overflow-hidden ring-4 ring-white/30 shadow-2xl`}>
-                <img src={photo} alt={badge.title} className="w-full h-full object-cover" />
+                <img src={customPhoto} alt={badge.title} className="w-full h-full object-cover" />
               </div>
             ) : (
               <div className="text-7xl" style={{ filter: isLocked ? 'grayscale(1) opacity(0.5)' : 'none' }}>{isLocked ? '🔒' : badge.icon}</div>
@@ -266,706 +405,211 @@ function Ecumanager() {
             </div>
           </div>
         </button>
-        {clubEditable && !isLocked && (
+        {clubMode && !isLocked && (
           <label className="absolute top-2 right-2 bg-stone-900 px-2 py-1 rounded-md shadow-lg cursor-pointer z-10 flex items-center gap-1">
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(badge.id, e, badgeImages, setBadgeImages, 'ecumanager_badge_images')} />
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleBadgeImageUpload(badge.id, e)} />
             <span className="text-xs">📷</span>
-            <div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">{photo ? 'Cambiar' : 'Foto'}</div>
+            <div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">{customPhoto ? 'Cambiar' : 'Foto'}</div>
           </label>
         )}
       </div>
     );
   };
 
-  // ============================================================
-  // LOGIN SCREEN
-  // ============================================================
-  if (!profile) {
+  const Header = ({ title, back, action, dark }) => (
+    <div className={`px-5 pt-4 pb-3 flex items-center justify-between sticky top-0 z-10 border-b ${dark ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
+      <div className="flex items-center gap-2 min-w-0">
+        {back && <button onClick={back} className="p-1 -ml-1"><ChevronLeft size={24} className={dark ? 'text-white' : 'text-stone-700'} /></button>}
+        <h1 className={`text-2xl font-black truncate ${dark ? 'text-white' : 'text-stone-900'}`}>{title}</h1>
+      </div>
+      {action}
+    </div>
+  );
+
+  const PhotoButton = ({ horseName }) => (
+    <label className="bg-white/90 px-3 py-1.5 rounded-md shadow-lg cursor-pointer block">
+      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(horseName, e)} />
+      <div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">📷 {customImages[horseName] ? 'Cambiar' : 'Subir'} foto</div>
+    </label>
+  );
+
+  const BottomNav = () => {
+    const items = [
+      { id: 'home', icon: Home, label: 'Inicio' },
+      { id: 'badges', icon: Medal, label: 'Insignias' },
+      { id: 'add', icon: Plus, label: '', special: true },
+      { id: 'horses', icon: Heart, label: 'Caballos' },
+      { id: 'profile', icon: User, label: 'Perfil' },
+    ];
     return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900 flex flex-col items-center justify-center p-6 font-sans">
-        <div className="mb-10 text-center">
-          <div className="w-20 h-20 bg-yellow-300 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-yellow-300/30">
-            <span className="text-stone-900 font-black text-4xl">E</span>
-          </div>
-          <h1 className="text-4xl font-black text-white tracking-tight">Ecumanager</h1>
-          <p className="text-stone-400 text-sm mt-2 font-bold">Tu mundo ecuestre, digitalizado</p>
-        </div>
-        <div className="w-full max-w-sm space-y-3">
-          <div className="text-xs font-black text-yellow-300 uppercase tracking-widest text-center mb-2">¿Cómo entras hoy?</div>
-          <button onClick={() => { setProfileSave('rider'); setScreen('home'); }} className="w-full bg-yellow-300 hover:bg-yellow-400 transition rounded-3xl p-5 flex items-center gap-4 active:scale-95 shadow-2xl">
-            <div className="text-5xl">🏇</div>
-            <div className="text-left flex-1">
-              <div className="text-stone-900 font-black text-xl">Soy Jinete</div>
-              <div className="text-stone-700 text-xs font-bold">Registra monturas, gana insignias</div>
-            </div>
-            <ChevronRight size={24} className="text-stone-900" />
-          </button>
-          <button onClick={() => { setProfileSave('club'); setScreen('home'); }} className="w-full bg-white hover:bg-stone-50 transition rounded-3xl p-5 flex items-center gap-4 active:scale-95 shadow-2xl">
-            <div className="text-5xl">🏛️</div>
-            <div className="text-left flex-1">
-              <div className="text-stone-900 font-black text-xl">Soy Club</div>
-              <div className="text-stone-600 text-xs font-bold">Gestiona alumnos, clases, insignias</div>
-            </div>
-            <ChevronRight size={24} className="text-stone-900" />
-          </button>
-        </div>
-        <div className="mt-10 text-center">
-          <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Puedes cambiar de modo en cualquier momento</div>
-        </div>
+      <div className="bg-white border-t border-stone-100 px-2 pt-2 pb-6 flex items-center justify-around">
+        {items.map(item => {
+          const Ic = item.icon;
+          const active = screen === item.id || (item.id === 'badges' && screen === 'badge') || (item.id === 'horses' && (screen === 'horse' || screen === 'myhorse')) || (item.id === 'profile' && (screen === 'clubhorses' || screen === 'clubhorseedit' || screen === 'clubriders' || screen === 'clubrideredit' || screen === 'clubconfig' || screen === 'clubbadges'));
+          if (item.special) return (
+            <button key={item.id} onClick={() => { setShowLogger(true); setLoggerStep(1); }} className="bg-yellow-300 text-stone-900 rounded-full w-14 h-14 flex items-center justify-center shadow-lg -mt-6">
+              <Ic size={28} strokeWidth={3} />
+            </button>
+          );
+          return (
+            <button key={item.id} onClick={() => setScreen(item.id)} className={`flex flex-col items-center gap-0.5 px-3 py-1 ${active ? 'text-stone-900' : 'text-stone-400'}`}>
+              <Ic size={20} strokeWidth={active ? 2.5 : 2} />
+              <span className={`text-[10px] ${active ? 'font-black' : 'font-bold'}`}>{item.label}</span>
+            </button>
+          );
+        })}
       </div>
     );
-  }
+  };
 
-  // ============================================================
-  // ===== MODO CLUB =====
-  // ============================================================
-  if (profile === 'club') {
-    const ClubBottomNav = () => {
-      const items = [
-        { id: 'home', icon: HomeIc, label: 'Inicio' },
-        { id: 'students', icon: Users, label: 'Alumnos' },
-        { id: 'newclass', icon: Plus, label: '', special: true },
-        { id: 'horses', icon: Heart, label: 'Caballos' },
-        { id: 'more', icon: Grid, label: 'Más' },
-      ];
-      return (
-        <div className="bg-white border-t border-stone-100 px-2 pt-2 pb-6 flex items-center justify-around">
-          {items.map(item => {
-            const Ic = item.icon;
-            const active = screen === item.id || (item.id === 'students' && screen === 'student') || (item.id === 'horses' && (screen === 'horse' || screen === 'myhorse')) || (item.id === 'more' && (screen === 'classes' || screen === 'badges' || screen === 'finance' || screen === 'coaches' || screen === 'settings'));
-            if (item.special) return (
-              <button key={item.id} onClick={() => setShowNewClass(true)} className="bg-yellow-300 text-stone-900 rounded-full w-14 h-14 flex items-center justify-center shadow-lg -mt-6">
-                <Ic size={28} strokeWidth={3} />
-              </button>
-            );
-            return (
-              <button key={item.id} onClick={() => setScreen(item.id)} className={`flex flex-col items-center gap-0.5 px-3 py-1 ${active ? 'text-stone-900' : 'text-stone-400'}`}>
-                <Ic size={20} strokeWidth={active ? 2.5 : 2} />
-                <span className={`text-[10px] ${active ? 'font-black' : 'font-bold'}`}>{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      );
-    };
-
-    // CLUB: HOME / DASHBOARD
-    const ClubHome = () => (
+  const HomeScreen = () => {
+    const recentBadge = badges.find(b => b.unlocked);
+    return (
       <>
-        <div className="bg-stone-900 text-white px-5 pt-4 pb-6 relative overflow-hidden">
-          <div className="absolute -right-4 -top-4 w-32 h-32 bg-yellow-300/10 rounded-full blur-3xl"></div>
-          <div className="flex items-center justify-between relative mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-yellow-300 text-stone-900 flex items-center justify-center font-black">{club.avatar}</div>
-              <div>
-                <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Modo Club</div>
-                <div className="text-base font-black">{club.shortName}</div>
-              </div>
+        <Header title="Inicio" action={
+          <div className="flex items-center gap-2">
+            <div className="bg-yellow-300 px-2 py-1 rounded-md">
+              <div className="text-[10px] font-black text-stone-900 leading-none">{stats.badgesUnlocked}/{stats.badgesTotal}</div>
+              <div className="text-[8px] font-black text-stone-900 uppercase tracking-wider">insignias</div>
             </div>
-            <button className="p-2 relative">
-              <Bell size={22} className="text-white" />
-              <div className="absolute top-1 right-1 w-2 h-2 bg-yellow-300 rounded-full"></div>
-            </button>
+            <div className="w-10 h-10 rounded-full bg-stone-900 text-white flex items-center justify-center font-black text-sm">{user.avatar}</div>
           </div>
-          <div className="text-2xl font-black leading-tight">Hola equipo,<br/><span className="text-yellow-300">hoy hay {clubStats.classesToday} clases</span></div>
+        } />
+        <div className="px-5 pt-4 pb-5">
+          <div className="mb-4">
+            <div className="text-xs font-black text-stone-500 uppercase tracking-widest">Hola, {user.firstName}</div>
+            <div className="text-2xl font-black text-stone-900 leading-tight mt-0.5">Has desbloqueado<br/><span className="text-yellow-500">una nueva insignia</span></div>
+          </div>
+          <div className="flex justify-center mb-4">
+            <div className="w-[70%]">
+              <BadgeCard badge={recentBadge} size="large" onClick={() => { setSelectedBadge(recentBadge); setScreen('badge'); }} />
+            </div>
+          </div>
+          <div className="flex justify-center mb-3">
+            <div className="bg-green-500 px-3 py-1.5 rounded-md flex items-center gap-1.5">
+              <Sparkles size={14} className="text-white" />
+              <div className="text-[10px] font-black text-white uppercase tracking-widest">Conseguida · {recentBadge.date}</div>
+            </div>
+          </div>
+          <button className="w-full bg-green-500 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+            <Share2 size={20} strokeWidth={2.5} /><span>¡COMPARTE!</span>
+          </button>
         </div>
-        <div className="px-5 -mt-4 pb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Alumnos activos</div>
-              <div className="text-3xl font-black text-stone-900 mt-1">{clubStats.activeStudents}<span className="text-sm text-stone-400">/{clubStats.students}</span></div>
-              <div className="text-[10px] text-green-600 font-black mt-1">{clubStats.attendance}% asistencia</div>
-            </div>
-            <div className="bg-stone-900 rounded-2xl p-4 text-white shadow-sm">
-              <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Este mes</div>
-              <div className="text-3xl font-black mt-1">{clubStats.revenue.toLocaleString()}€</div>
-              <div className="text-[10px] font-black text-green-400 mt-1 flex items-center gap-1"><TrendingUp size={10} /> +{clubStats.revenueGrowth}%</div>
-            </div>
-            <div className="bg-gradient-to-br from-yellow-300 to-amber-400 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black text-stone-900/70 uppercase tracking-widest">Insignias dadas</div>
-              <div className="text-3xl font-black text-stone-900 mt-1">{clubStats.badgesGiven}</div>
-              <div className="text-[10px] text-stone-900 font-black mt-1">{clubStats.badgesMonth} este mes</div>
-            </div>
-            <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm">
-              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Caballos</div>
-              <div className="text-3xl font-black text-stone-900 mt-1">{clubStats.horses}</div>
-              <div className="text-[10px] text-stone-500 font-black mt-1">5 disponibles · 1 lesión</div>
-            </div>
-          </div>
-        </div>
-        <div className="px-5 pb-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-black text-stone-900 uppercase tracking-widest">📋 Clases de hoy</h2>
-            <button onClick={() => setScreen('classes')} className="text-[10px] font-black text-stone-500 uppercase tracking-wider">Ver todas</button>
-          </div>
-          <div className="space-y-2">
-            {todayClasses.filter(c => c.status !== 'past').slice(0, 3).map(c => (
-              <div key={c.id} className={`rounded-2xl p-3 flex items-center gap-3 ${c.status === 'current' ? 'bg-yellow-50 border-2 border-yellow-300' : 'bg-white border border-stone-200'}`}>
-                <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center ${c.status === 'current' ? 'bg-yellow-300' : 'bg-stone-100'}`}>
-                  <div className="text-[10px] font-black text-stone-900">{c.time}</div>
-                  <div className="text-[8px] font-bold text-stone-700">{c.duration}</div>
-                </div>
-                <div className="flex-1">
-                  <div className="font-black text-sm text-stone-900">{c.group}</div>
-                  <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{c.coach} · {c.horse} · {c.students} alumnos</div>
-                </div>
-                {c.status === 'current' && <div className="bg-yellow-300 px-2 py-1 rounded-md text-[9px] font-black text-stone-900 uppercase tracking-widest">En curso</div>}
-                {c.status === 'next' && <ChevronRight size={18} className="text-stone-400" />}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="px-5 pb-4">
-          <h2 className="text-xs font-black text-stone-900 uppercase tracking-widest mb-3">⚠️ Alertas y avisos</h2>
-          <div className="space-y-2">
-            {upcomingAlerts.map(a => (
-              <div key={a.id} className={`rounded-2xl p-3 flex items-center gap-3 ${a.urgent ? 'bg-red-50 border-2 border-red-200' : 'bg-white border border-stone-200'}`}>
-                <div className="text-2xl">{a.icon}</div>
-                <div className="flex-1">
-                  <div className="font-black text-sm text-stone-900">{a.title}</div>
-                  <div className="text-[10px] text-stone-500 font-bold">{a.desc}</div>
-                </div>
-                {a.urgent && <div className="bg-red-500 px-2 py-0.5 rounded-md text-[9px] font-black text-white uppercase tracking-widest">Urgente</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="px-5 pb-4">
-          <h2 className="text-xs font-black text-stone-900 uppercase tracking-widest mb-3">⚡ Acciones rápidas</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => setShowAwardBadge(true)} className="bg-stone-900 text-white p-4 rounded-2xl flex flex-col items-start gap-2 active:scale-95">
-              <div className="text-2xl">🏅</div>
-              <div className="text-sm font-black uppercase tracking-wider">Entregar insignia</div>
-              <div className="text-[10px] text-stone-400 font-bold">A un alumno</div>
-            </button>
-            <button onClick={() => setShowNewClass(true)} className="bg-yellow-300 text-stone-900 p-4 rounded-2xl flex flex-col items-start gap-2 active:scale-95">
-              <div className="text-2xl">📅</div>
-              <div className="text-sm font-black uppercase tracking-wider">Nueva clase</div>
-              <div className="text-[10px] text-stone-700 font-bold">Programar</div>
-            </button>
-          </div>
-        </div>
-      </>
-    );
-
-    // CLUB: STUDENTS LIST
-    const ClubStudents = () => {
-      const [search, setSearch] = useState('');
-      const [filter, setFilter] = useState('todos');
-      const filters = ['todos', 'Avanzado', 'Medio', 'Iniciación', 'Impagos'];
-      const filtered = students.filter(s => {
-        const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
-        if (!matchSearch) return false;
-        if (filter === 'todos') return true;
-        if (filter === 'Impagos') return !s.paid;
-        return s.level.includes(filter);
-      });
-      return (
-        <>
-          <Header title="Alumnos" action={<div className="bg-yellow-300 px-2 py-1 rounded-md"><div className="text-[10px] font-black text-stone-900 uppercase tracking-wider">{filtered.length} de {students.length}</div></div>} />
-          <div className="px-5 pt-3">
-            <div className="relative mb-4">
-              <Search size={18} className="absolute top-3 left-3 text-stone-400" />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar alumno..." className="w-full bg-stone-100 rounded-2xl pl-10 pr-4 py-3 text-sm font-medium outline-none focus:bg-stone-200" />
-            </div>
-            <div className="flex gap-2 mb-4 overflow-x-auto -mx-5 px-5 pb-1">
-              {filters.map(f => (
-                <button key={f} onClick={() => setFilter(f)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${filter === f ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f}</button>
-              ))}
-            </div>
-            <div className="space-y-2">
-              {filtered.map(s => (
-                <button key={s.id} onClick={() => { setSelectedStudent(s); setScreen('student'); }} className="w-full bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.98]">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0"><StudentImg id={s.id} name={s.name} /></div>
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <div className="font-black text-stone-900">{s.name}</div>
-                      {!s.paid && <div className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider">Impago</div>}
-                    </div>
-                    <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{s.level} · {s.group}</div>
-                    <div className="flex items-center gap-3 mt-1 text-[10px] font-black text-stone-700">
-                      <span>📅 {s.classes}</span>
-                      <span>🔥 {s.streak}</span>
-                      <span>🏅 {s.badges}</span>
-                    </div>
-                  </div>
-                  <ChevronRight size={18} className="text-stone-300" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
-      );
-    };
-
-    // CLUB: STUDENT DETAIL
-    const ClubStudentDetail = () => {
-      if (!selectedStudent) return null;
-      const s = selectedStudent;
-      return (
-        <>
-          <Header title={s.name} back={() => setScreen('students')} />
-          <div className="px-5 pt-3">
-            <div className="bg-stone-900 text-white rounded-3xl p-5 mb-4 relative overflow-hidden">
-              <div className="absolute -right-4 -top-4 w-32 h-32 bg-yellow-300/10 rounded-full blur-3xl"></div>
-              <div className="flex items-center gap-4 relative">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden relative">
-                  <StudentImg id={s.id} name={s.name} />
-                  <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 cursor-pointer">
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(s.id, e, studentImages, setStudentImages, 'ecumanager_student_images')} />
-                    <span className="text-white text-xs font-bold">📷</span>
-                  </label>
-                </div>
-                <div>
-                  <div className="text-xl font-black">{s.name}</div>
-                  <div className="text-xs text-stone-400 font-bold">{s.level} · {s.age} años</div>
-                  <div className="inline-flex mt-1 bg-yellow-300 text-stone-900 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest">{s.group}</div>
-                </div>
-              </div>
-              {!s.paid && <div className="mt-3 bg-red-500 px-3 py-2 rounded-xl text-xs font-black flex items-center gap-2"><span>⚠️</span> Cuota de Mayo pendiente · 95€</div>}
-            </div>
-            <div className="grid grid-cols-3 gap-2 mb-5">
-              <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Clases</div><div className="text-2xl font-black text-stone-900 mt-1">{s.classes}</div></div>
-              <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Racha</div><div className="text-2xl font-black text-stone-900 mt-1">{s.streak}🔥</div></div>
-              <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Insignias</div><div className="text-2xl font-black text-stone-900 mt-1">{s.badges}</div></div>
-            </div>
-            <button onClick={() => setShowAwardBadge(true)} className="w-full bg-yellow-300 text-stone-900 font-black rounded-2xl p-4 mb-4 flex items-center justify-center gap-2 uppercase tracking-widest">
-              🏅 Entregar insignia a {s.name.split(' ')[0]}
-            </button>
-            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Acciones</h2>
-            <div className="space-y-2">
-              <button className="w-full bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3 text-left">
-                <div className="text-2xl">📋</div>
-                <div className="flex-1"><div className="font-black text-sm text-stone-900">Crear informe</div><div className="text-[10px] text-stone-500 font-bold">Evaluación deportiva</div></div>
-                <ChevronRight size={18} className="text-stone-300" />
-              </button>
-              <button className="w-full bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3 text-left">
-                <div className="text-2xl">💬</div>
-                <div className="flex-1"><div className="font-black text-sm text-stone-900">Enviar mensaje</div><div className="text-[10px] text-stone-500 font-bold">Por WhatsApp a tutores</div></div>
-                <ChevronRight size={18} className="text-stone-300" />
-              </button>
-              <button className="w-full bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3 text-left">
-                <div className="text-2xl">💰</div>
-                <div className="flex-1"><div className="font-black text-sm text-stone-900">Historial de pagos</div><div className="text-[10px] text-stone-500 font-bold">Ver cuotas y recibos</div></div>
-                <ChevronRight size={18} className="text-stone-300" />
-              </button>
-            </div>
-          </div>
-        </>
-      );
-    };
-
-    // CLUB: HORSES (inventory)
-    const ClubHorses = () => (
-      <>
-        <Header title="Caballos" action={<div className="bg-yellow-300 px-2 py-1 rounded-md"><div className="text-[10px] font-black text-stone-900 uppercase tracking-wider">{horses.length} en cuadra</div></div>} />
-        <div className="px-5 pt-3">
-          <div className="grid grid-cols-4 gap-2 mb-4 text-center">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-2"><div className="text-xl font-black text-green-700">4</div><div className="text-[9px] font-black text-green-700 uppercase">Activos</div></div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-2"><div className="text-xl font-black text-yellow-700">1</div><div className="text-[9px] font-black text-yellow-700 uppercase">En clase</div></div>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-2"><div className="text-xl font-black text-blue-700">0</div><div className="text-[9px] font-black text-blue-700 uppercase">Descanso</div></div>
-            <div className="bg-red-50 border border-red-200 rounded-xl p-2"><div className="text-xl font-black text-red-700">1</div><div className="text-[9px] font-black text-red-700 uppercase">Lesión</div></div>
-          </div>
+        <div className="px-5">
           <div className="grid grid-cols-2 gap-3 mb-5">
-            {horses.map(horse => (
-              <button key={horse.name} onClick={() => { setSelectedHorse(horse); setScreen('horse'); }} className="bg-white border border-stone-200 rounded-2xl overflow-hidden text-left active:scale-95">
-                <div className="h-32 relative overflow-hidden">
-                  <HorseImg name={horse.name} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest text-white" style={{ background: horse.statusColor }}>{horse.status}</div>
-                  <div className="absolute bottom-2 left-3 text-white font-black text-xl drop-shadow-lg">{horse.name}</div>
-                </div>
-                <div className="p-3">
-                  <div className="text-[9px] text-stone-500 font-black uppercase tracking-wider mb-1">{horse.type}</div>
-                  <div className="text-[10px] text-stone-600 font-bold">{horse.rides} monturas · {horse.totalRiders} jinetes</div>
-                </div>
-              </button>
-            ))}
-          </div>
-          <button className="w-full bg-stone-100 border-2 border-dashed border-stone-300 rounded-2xl p-4 font-black text-stone-600 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-            <Plus size={18} /> Añadir caballo
-          </button>
-        </div>
-      </>
-    );
-
-    // CLUB: CLASSES (full week agenda)
-    const ClubClasses = () => (
-      <>
-        <Header title="Clases" back={() => setScreen('more')} action={<button onClick={() => setShowNewClass(true)} className="bg-yellow-300 px-3 py-1.5 rounded-md text-[10px] font-black text-stone-900 uppercase tracking-widest">+ Nueva</button>} />
-        <div className="px-5 pt-3">
-          <div className="bg-stone-900 rounded-2xl p-4 mb-5 text-white">
-            <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Esta semana</div>
-            <div className="text-3xl font-black mt-1">{clubStats.classesWeek} clases</div>
-            <div className="text-[10px] text-stone-400 font-bold">{clubStats.classesToday} hoy · {clubStats.attendance}% asistencia media</div>
-          </div>
-          <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">📅 Hoy · Viernes 23 mayo</h2>
-          <div className="space-y-2 mb-5">
-            {todayClasses.map(c => (
-              <div key={c.id} className={`rounded-2xl p-3 flex items-center gap-3 ${c.status === 'current' ? 'bg-yellow-50 border-2 border-yellow-300' : c.status === 'past' ? 'bg-stone-50 border border-stone-200 opacity-60' : 'bg-white border border-stone-200'}`}>
-                <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center ${c.status === 'current' ? 'bg-yellow-300' : 'bg-stone-100'}`}>
-                  <div className="text-xs font-black text-stone-900">{c.time}</div>
-                  <div className="text-[8px] font-bold text-stone-700">{c.duration}</div>
-                </div>
-                <div className="flex-1">
-                  <div className="font-black text-sm text-stone-900">{c.group}</div>
-                  <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{c.coach} · {c.horse}</div>
-                  <div className="text-[10px] text-stone-700 font-black mt-1">👥 {c.students} alumnos</div>
-                </div>
-                {c.status === 'past' && <Check size={20} className="text-stone-400" />}
-                {c.status === 'current' && <div className="bg-yellow-300 px-2 py-1 rounded-md text-[9px] font-black text-stone-900 uppercase tracking-widest">En curso</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </>
-    );
-
-    // CLUB: BADGES catalog
-    const ClubBadges = () => (
-      <>
-        <Header title="Insignias" back={() => setScreen('more')} action={<button onClick={() => setShowAwardBadge(true)} className="bg-yellow-300 px-3 py-1.5 rounded-md text-[10px] font-black text-stone-900 uppercase tracking-widest">+ Entregar</button>} />
-        <div className="px-5 pt-3">
-          <div className="bg-gradient-to-br from-yellow-300 to-amber-400 rounded-2xl p-4 mb-5">
-            <div className="text-[10px] font-black text-stone-900/70 uppercase tracking-widest">Insignias entregadas</div>
-            <div className="text-3xl font-black text-stone-900 mt-1">{clubStats.badgesGiven} totales · {clubStats.badgesMonth} este mes</div>
-          </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-3 mb-5">
-            <div className="text-[10px] font-black text-yellow-700 uppercase tracking-widest mb-1">💡 Personaliza las insignias</div>
-            <p className="text-xs text-stone-700 leading-relaxed font-medium">Toca <b>📷 Foto</b> en cualquier insignia para subir fotos reales de tu escuela.</p>
-          </div>
-          <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Catálogo del club ({badges.filter(b => b.unlocked).length})</h2>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            {badges.filter(b => b.unlocked).map(b => (
-              <BadgeCard key={b.id} badge={b} clubEditable={true} onClick={() => { setSelectedBadge(b); setScreen('badge'); }} />
-            ))}
-          </div>
-          <button className="w-full bg-stone-100 border-2 border-dashed border-stone-300 rounded-2xl p-4 font-black text-stone-600 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-            <Plus size={18} /> Crear plantilla nueva
-          </button>
-        </div>
-      </>
-    );
-
-    // CLUB: MORE menu
-    const ClubMore = () => (
-      <>
-        <Header title="Más" />
-        <div className="px-5 pt-3">
-          <div className="space-y-2 mb-5">
-            <button onClick={() => setScreen('classes')} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-              <div className="w-11 h-11 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">📅</div>
-              <div className="flex-1 text-left">
-                <div className="font-black text-stone-900">Agenda de clases</div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{clubStats.classesWeek} esta semana</div>
-              </div>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-            <button onClick={() => setScreen('badges')} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-              <div className="w-11 h-11 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">🏅</div>
-              <div className="flex-1 text-left">
-                <div className="font-black text-stone-900">Catálogo de insignias</div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{clubStats.badgesGiven} entregadas · personaliza</div>
-              </div>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-            <button onClick={() => setScreen('finance')} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-              <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center text-2xl">💰</div>
-              <div className="flex-1 text-left">
-                <div className="font-black text-stone-900">Ingresos y cobros</div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{clubStats.revenue.toLocaleString()}€ este mes</div>
-              </div>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-            <button onClick={() => setScreen('coaches')} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-              <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center text-2xl">👨‍🏫</div>
-              <div className="flex-1 text-left">
-                <div className="font-black text-stone-900">Profesores</div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{coaches.length} activos</div>
-              </div>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-            <button onClick={() => setScreen('settings')} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-              <div className="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center"><Settings size={20} className="text-stone-700" /></div>
-              <div className="flex-1 text-left">
-                <div className="font-black text-stone-900">Ajustes del club</div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">Datos, integraciones</div>
-              </div>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-          </div>
-          <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Cuenta</h2>
-          <button onClick={() => { setProfileSave(null); setScreen('home'); }} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98]">
-            <div className="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center"><LogOut size={20} className="text-red-700" /></div>
-            <div className="flex-1 text-left">
-              <div className="font-black text-stone-900">Cambiar de modo</div>
-              <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">Volver al login</div>
+            <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-4 text-white relative overflow-hidden">
+              <div className="absolute -right-2 -top-2 text-4xl opacity-30">🔥</div>
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-90">Racha</div>
+              <div className="text-3xl font-black leading-none mt-1">{stats.currentStreak}</div>
+              <div className="text-[10px] font-bold opacity-80 mt-0.5">semanas seguidas</div>
             </div>
-            <ChevronRight size={18} className="text-stone-300" />
-          </button>
-        </div>
-      </>
-    );
-
-    // CLUB: FINANCE
-    const ClubFinance = () => (
-      <>
-        <Header title="Ingresos" back={() => setScreen('more')} />
-        <div className="px-5 pt-3">
-          <div className="bg-gradient-to-br from-stone-900 to-stone-700 rounded-3xl p-5 mb-5 text-white">
-            <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Ingresos · Mayo</div>
-            <div className="text-4xl font-black mt-1">{clubStats.revenue.toLocaleString()}€</div>
-            <div className="text-[10px] text-green-400 font-black mt-1 flex items-center gap-1"><TrendingUp size={10} /> +{clubStats.revenueGrowth}% vs Abril</div>
+            <div className="bg-stone-900 rounded-2xl p-4 text-white relative overflow-hidden">
+              <div className="absolute -right-2 -top-2 text-4xl opacity-30">⏱️</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-yellow-300">Este mes</div>
+              <div className="text-3xl font-black leading-none mt-1">{stats.monthHours}h</div>
+              <div className="text-[10px] font-bold text-stone-400 mt-0.5">{stats.monthRides} monturas</div>
+            </div>
           </div>
-          <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Impagos pendientes</h2>
-          <div className="space-y-2 mb-5">
-            {students.filter(s => !s.paid).map(s => (
-              <div key={s.id} className="bg-red-50 border-2 border-red-200 rounded-2xl p-3 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden"><StudentImg id={s.id} name={s.name} /></div>
-                <div className="flex-1">
-                  <div className="font-black text-sm text-stone-900">{s.name}</div>
-                  <div className="text-[10px] text-red-700 font-black uppercase tracking-wider">95€ pendientes</div>
-                </div>
-                <button className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest">Recordar</button>
+          <button onClick={() => setScreen('next')} className="w-full bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-yellow-300 flex items-center justify-center"><Calendar size={20} className="text-stone-900" strokeWidth={2.5} /></div>
+              <div className="text-left">
+                <div className="text-[10px] text-yellow-700 font-black uppercase tracking-widest">Próxima clase</div>
+                <div className="text-sm font-black text-stone-900">{nextClass.date} · {nextClass.time}</div>
+                <div className="text-xs text-stone-600 font-bold">con {nextClass.horse} · {nextClass.coach}</div>
               </div>
-            ))}
-          </div>
-          <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Resumen del mes</h2>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
-            <div className="flex justify-between"><span className="text-sm font-bold text-stone-700">Cuotas mensuales</span><span className="font-black text-stone-900">9.840€</span></div>
-            <div className="flex justify-between"><span className="text-sm font-bold text-stone-700">Clases sueltas</span><span className="font-black text-stone-900">1.240€</span></div>
-            <div className="flex justify-between"><span className="text-sm font-bold text-stone-700">Pensiones de caballos</span><span className="font-black text-stone-900">1.200€</span></div>
-            <div className="flex justify-between"><span className="text-sm font-bold text-stone-700">Otros</span><span className="font-black text-stone-900">200€</span></div>
-            <div className="pt-2 border-t border-stone-200 flex justify-between"><span className="text-sm font-black text-stone-900">Total</span><span className="text-lg font-black text-stone-900">{clubStats.revenue.toLocaleString()}€</span></div>
-          </div>
-        </div>
-      </>
-    );
-
-    // CLUB: COACHES
-    const ClubCoaches = () => (
-      <>
-        <Header title="Profesores" back={() => setScreen('more')} action={<button className="bg-yellow-300 px-3 py-1.5 rounded-md text-[10px] font-black text-stone-900 uppercase tracking-widest">+ Añadir</button>} />
-        <div className="px-5 pt-3">
+            </div>
+            <ChevronRight size={20} className="text-stone-400" />
+          </button>
+          <h2 className="text-lg font-black text-stone-900 uppercase mb-3">Tu historia</h2>
           <div className="space-y-3">
-            {coaches.map(c => (
-              <div key={c.id} className="bg-white border border-stone-200 rounded-2xl p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stone-700 to-stone-900 text-yellow-300 flex items-center justify-center font-black">{c.name.split(' ').map(n => n[0]).join('')}</div>
-                  <div className="flex-1">
-                    <div className="font-black text-stone-900">{c.name}</div>
-                    <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{c.role}</div>
+            {feed.map(ride => (
+              <div key={ride.id} className="bg-white border border-stone-200 rounded-2xl overflow-hidden">
+                {ride.hasPhoto && (
+                  <div className="h-36 relative">
+                    <HorseImg name={ride.horse} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
+                    {ride.milestone && <div className="absolute top-3 right-3 bg-yellow-300 text-stone-900 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest flex items-center gap-1 shadow-lg"><Trophy size={12} /> Insignia ganada</div>}
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-black text-stone-900">⭐ {c.rating}</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="bg-stone-50 rounded-xl p-2"><div className="text-lg font-black text-stone-900">{c.classesWeek}</div><div className="text-[9px] font-black text-stone-500 uppercase">Clases/sem</div></div>
-                  <div className="bg-stone-50 rounded-xl p-2"><div className="text-lg font-black text-stone-900">{c.students}</div><div className="text-[9px] font-black text-stone-500 uppercase">Alumnos</div></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </>
-    );
-
-    const ClubSettings = () => (
-      <>
-        <Header title="Ajustes del club" back={() => setScreen('more')} />
-        <div className="px-5 pt-3 space-y-3">
-          <div className="bg-stone-900 text-white rounded-2xl p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-14 h-14 rounded-xl bg-yellow-300 text-stone-900 flex items-center justify-center font-black">{club.avatar}</div>
-              <div>
-                <div className="text-xl font-black">{club.name}</div>
-                <div className="text-[10px] text-stone-400 font-bold uppercase">📍 {club.city} · Desde {club.since}</div>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center pt-3 border-t border-stone-700">
-              <div><div className="text-lg font-black">{club.members}</div><div className="text-[9px] text-yellow-300 font-black uppercase">Miembros</div></div>
-              <div><div className="text-lg font-black">{coaches.length}</div><div className="text-[9px] text-yellow-300 font-black uppercase">Profes</div></div>
-              <div><div className="text-lg font-black">{horses.length}</div><div className="text-[9px] text-yellow-300 font-black uppercase">Caballos</div></div>
-            </div>
-          </div>
-          {['Datos del club', 'Plantillas de informes', 'Categorías de cuotas', 'Integraciones (WhatsApp, Email)', 'Pasarela de pagos', 'Personalización de marca'].map(item => (
-            <button key={item} className="w-full bg-white border border-stone-200 rounded-2xl p-4 flex items-center justify-between">
-              <span className="text-sm font-black text-stone-900">{item}</span>
-              <ChevronRight size={18} className="text-stone-300" />
-            </button>
-          ))}
-        </div>
-      </>
-    );
-
-    // CLUB: Award badge modal
-    const AwardBadgeModal = () => {
-      const [step, setStep] = useState(1);
-      const [selStudent, setSelStudent] = useState(null);
-      const [selBadge, setSelBadge] = useState(null);
-      return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowAwardBadge(false)}>
-          <div className="bg-white w-full rounded-t-3xl max-h-[88%] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-stone-100">
-              <div>
-                <div className="text-[10px] font-black text-yellow-600 uppercase tracking-widest">Paso {step} de 3</div>
-                <div className="text-xl font-black text-stone-900">{step === 1 && '¿A qué alumno?'}{step === 2 && '¿Qué insignia?'}{step === 3 && 'Confirmar entrega'}</div>
-              </div>
-              <button onClick={() => setShowAwardBadge(false)} className="p-2"><X size={20} /></button>
-            </div>
-            <div className="px-5 py-5 pb-8">
-              {step === 1 && (
-                <div className="space-y-2">
-                  {students.map(s => (
-                    <button key={s.id} onClick={() => { setSelStudent(s); setStep(2); }} className={`w-full bg-white border-2 rounded-2xl p-3 flex items-center gap-3 ${selStudent?.id === s.id ? 'border-yellow-400' : 'border-stone-200'}`}>
-                      <div className="w-12 h-12 rounded-xl overflow-hidden"><StudentImg id={s.id} name={s.name} /></div>
-                      <div className="flex-1 text-left">
-                        <div className="font-black text-stone-900">{s.name}</div>
-                        <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{s.level}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {step === 2 && (
-                <div className="grid grid-cols-2 gap-3">
-                  {badges.filter(b => b.unlocked).map(b => (
-                    <button key={b.id} onClick={() => { setSelBadge(b); setStep(3); }} className={`rounded-2xl overflow-hidden ${selBadge?.id === b.id ? 'ring-4 ring-yellow-400' : ''}`}>
-                      <BadgeCard badge={b} size="small" onClick={() => { setSelBadge(b); setStep(3); }} />
-                    </button>
-                  ))}
-                </div>
-              )}
-              {step === 3 && selStudent && selBadge && (
-                <>
-                  <div className="bg-stone-50 rounded-2xl p-4 mb-4 text-center">
-                    <div className="text-xs font-black text-stone-500 uppercase tracking-widest mb-2">Resumen</div>
-                    <div className="text-xl font-black text-stone-900">Vas a entregar</div>
-                    <div className="bg-white rounded-2xl p-3 my-3 inline-flex items-center gap-3">
-                      <div className="text-3xl">{selBadge.icon}</div>
-                      <div className="text-left">
-                        <div className="font-black text-sm text-stone-900">{selBadge.title}</div>
-                        <div className="text-[10px] text-stone-500 font-bold">{selBadge.subtitle}</div>
+                )}
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden shadow ring-2 ring-white"><HorseImg name={ride.horse} /></div>
+                      <div>
+                        <div className="font-black text-stone-900">{ride.horse}</div>
+                        <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{ride.date} · {ride.time} · {ride.duration}</div>
                       </div>
                     </div>
-                    <div className="text-base font-black text-stone-900">a {selStudent.name}</div>
+                    <div className="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest" style={{ background: `${ride.feelingColor}20`, color: ride.feelingColor }}>{ride.feeling}</div>
                   </div>
-                  <textarea placeholder="Mensaje opcional para el alumno..." className="w-full border-2 border-stone-200 rounded-2xl p-4 text-sm resize-none mb-4" rows={3} />
-                  <button onClick={() => { setShowAwardBadge(false); setStep(1); setSelStudent(null); setSelBadge(null); alert('¡Insignia entregada! Carlota recibirá una notificación.'); }} className="w-full bg-yellow-300 text-stone-900 font-black rounded-2xl p-4 flex items-center justify-center gap-2 uppercase tracking-widest">
-                    <Check size={20} /> Entregar insignia
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    const NewClassModal = () => (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowNewClass(false)}>
-        <div className="bg-white w-full rounded-t-3xl max-h-[88%] overflow-y-auto" onClick={e => e.stopPropagation()}>
-          <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-stone-100">
-            <div className="text-xl font-black text-stone-900">Nueva clase</div>
-            <button onClick={() => setShowNewClass(false)} className="p-2"><X size={20} /></button>
-          </div>
-          <div className="px-5 py-5 pb-8 space-y-4">
-            <div><div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1">Grupo</div><input className="w-full bg-stone-100 rounded-xl px-4 py-3 font-medium outline-none" placeholder="Ej: Iniciación 7-9 años" /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1">Fecha</div><input type="date" className="w-full bg-stone-100 rounded-xl px-4 py-3 font-medium outline-none" /></div>
-              <div><div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1">Hora</div><input type="time" className="w-full bg-stone-100 rounded-xl px-4 py-3 font-medium outline-none" /></div>
-            </div>
-            <div>
-              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Profesor/a</div>
-              <div className="space-y-2">
-                {coaches.map(c => <button key={c.id} className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-left flex items-center gap-3"><div className="w-10 h-10 rounded-lg bg-stone-200 flex items-center justify-center font-black text-stone-700">{c.name.split(' ').map(n=>n[0]).join('')}</div><div className="text-sm font-black text-stone-900">{c.name}</div></button>)}
+                  <p className="text-sm text-stone-700 leading-relaxed mb-2">{ride.note}</p>
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map(i => <div key={i} className={`h-1 flex-1 rounded-full ${i <= ride.intensity ? 'bg-stone-900' : 'bg-stone-200'}`} />)}
+                  </div>
+                </div>
               </div>
-            </div>
-            <button onClick={() => { setShowNewClass(false); alert('Clase creada y comunicada por WhatsApp a los alumnos.'); }} className="w-full bg-yellow-300 text-stone-900 font-black rounded-2xl p-4 flex items-center justify-center gap-2 uppercase tracking-widest"><Check size={20} /> Crear clase</button>
+            ))}
           </div>
         </div>
-      </div>
+      </>
     );
+  };
 
-    const ClubHorseDetail = () => {
-      if (!selectedHorse) return null;
-      const h = selectedHorse;
-      return (
-        <>
-          <Header title={h.name} back={() => setScreen('horses')} />
-          <div className="h-64 relative overflow-hidden">
-            <HorseImg name={h.name} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30"></div>
-            <label className="absolute top-3 right-3 bg-white/90 px-3 py-1.5 rounded-md cursor-pointer">
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(h.name, e, customImages, setCustomImages, 'ecumanager_horse_images')} />
-              <div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">📷 {customImages[h.name] ? 'Cambiar' : 'Subir'} foto</div>
-            </label>
-            <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <div className="text-4xl font-black drop-shadow-lg">{h.name}</div>
-              <div className="text-sm font-bold opacity-90">{h.breed} · {h.height}</div>
+  const BadgesScreen = () => {
+    const filters = ['todas', 'Salto', 'Doma', 'Conexión', 'Hitos'];
+    const filtered = badgeFilter === 'todas' ? badges : badges.filter(b => b.category === badgeFilter);
+    const unlocked = filtered.filter(b => b.unlocked);
+    const locked = filtered.filter(b => !b.unlocked);
+    return (
+      <>
+        <Header title="Mis insignias" />
+        <div className="px-5 pt-3">
+          <div className="bg-gradient-to-br from-yellow-300 to-yellow-400 rounded-3xl p-5 mb-5">
+            <div className="text-[10px] font-black text-stone-900/70 uppercase tracking-widest">Colección</div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <div className="text-5xl font-black text-stone-900 leading-none">{stats.badgesUnlocked}</div>
+              <div className="text-2xl font-black text-stone-900/50">/ {stats.badgesTotal}</div>
+            </div>
+            <div className="h-2 bg-white/40 rounded-full mt-3 overflow-hidden">
+              <div className="h-full bg-stone-900 rounded-full" style={{ width: `${(stats.badgesUnlocked / stats.badgesTotal) * 100}%` }} />
             </div>
           </div>
-          <div className="px-5 pt-5">
-            <div className="grid grid-cols-3 gap-3 mb-5">
-              <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Monturas</div><div className="text-2xl font-black text-stone-900 mt-1">{h.rides}</div></div>
-              <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Última</div><div className="text-2xl font-black text-stone-900 mt-1">{h.lastRide}</div></div>
-              <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Jinetes</div><div className="text-2xl font-black text-stone-900 mt-1">{h.totalRiders}</div></div>
+          <div className="flex gap-2 mb-5 overflow-x-auto -mx-5 px-5 pb-1">
+            {filters.map(f => (
+              <button key={f} onClick={() => setBadgeFilter(f)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${badgeFilter === f ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f}</button>
+            ))}
+          </div>
+          {unlocked.length > 0 && (<>
+            <h2 className="text-xs font-black text-stone-900 uppercase mb-3">Desbloqueadas ({unlocked.length})</h2>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {unlocked.map(badge => <BadgeCard key={badge.id} badge={badge} onClick={() => { setSelectedBadge(badge); setScreen('badge'); }} />)}
             </div>
-            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Próximos chequeos</h2>
-            <div className="space-y-2 mb-5">
-              {upcomingHealth.map(e => (
-                <div key={e.id} className="bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3">
-                  <div className="text-2xl">{e.icon}</div>
-                  <div className="flex-1"><div className="font-black text-sm text-stone-900">{e.title}</div><div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{e.date} · {e.who}</div></div>
-                  <div className="px-2 py-1 rounded-md bg-stone-100 text-[10px] font-black text-stone-700 uppercase">{e.daysLeft}d</div>
+          </>)}
+          {locked.length > 0 && (<>
+            <h2 className="text-xs font-black text-stone-500 uppercase mb-3">Por desbloquear ({locked.length})</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {locked.map(badge => (
+                <div key={badge.id} className="relative">
+                  <BadgeCard badge={badge} onClick={() => { setSelectedBadge(badge); setScreen('badge'); }} />
+                  {badge.progress > 0 && <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30"><div className="h-full bg-yellow-300" style={{ width: `${badge.progress}%` }} /></div>}
                 </div>
               ))}
             </div>
-          </div>
-        </>
-      );
-    };
-
-    const renderClubScreen = () => {
-      if (screen === 'home') return <ClubHome />;
-      if (screen === 'students') return <ClubStudents />;
-      if (screen === 'student') return <ClubStudentDetail />;
-      if (screen === 'horses') return <ClubHorses />;
-      if (screen === 'horse') return <ClubHorseDetail />;
-      if (screen === 'classes') return <ClubClasses />;
-      if (screen === 'badges') return <ClubBadges />;
-      if (screen === 'badge') return <BadgeDetailViewer badge={selectedBadge} onBack={() => setScreen('badges')} />;
-      if (screen === 'finance') return <ClubFinance />;
-      if (screen === 'coaches') return <ClubCoaches />;
-      if (screen === 'settings') return <ClubSettings />;
-      if (screen === 'more') return <ClubMore />;
-      return <ClubHome />;
-    };
-
-    return (
-      <div className="min-h-screen w-full bg-stone-50 font-sans">
-        <div className="bg-yellow-300 text-stone-900 text-center py-1 text-[10px] font-black uppercase tracking-widest">🏛️ Modo Club · {club.shortName}</div>
-        <div className="pb-24">{renderClubScreen()}</div>
-        <div className="fixed bottom-0 left-0 right-0 z-40"><ClubBottomNav /></div>
-        {showAwardBadge && <AwardBadgeModal />}
-        {showNewClass && <NewClassModal />}
-      </div>
+          </>)}
+        </div>
+      </>
     );
-  }
+  };
 
-  // ============================================================
-  // ===== MODO JINETE =====
-  // ============================================================
-
-  const BadgeDetailViewer = ({ badge, onBack }) => {
-    if (!badge) return null;
-    const b = badge;
+  const BadgeDetailScreen = () => {
+    if (!selectedBadge) return null;
+    const b = selectedBadge;
     const isLocked = !b.unlocked;
     return (
       <>
-        <Header title="" back={onBack} dark />
-        <div className="bg-stone-900 px-5 pt-2 min-h-full pb-8">
+        <Header title="" back={() => setScreen('badges')} dark />
+        <div className="bg-stone-900 px-5 pt-2 min-h-full">
           <div className="text-center mb-4 pt-2">
             <div className="text-xs font-black text-yellow-300 uppercase tracking-widest mb-1">{isLocked ? 'Bloqueada' : `¡Hola ${user.firstName.toUpperCase()}!`}</div>
             <div className="text-xl font-black text-white">{isLocked ? 'Sigue entrenando' : 'Has desbloqueado una nueva insignia'}</div>
@@ -993,41 +637,1243 @@ function Ecumanager() {
     );
   };
 
-  const RiderBottomNav = () => {
-    const items = [
-      { id: 'home', icon: HomeIc, label: 'Inicio' },
-      { id: 'badges', icon: Medal, label: 'Insignias' },
-      { id: 'add', icon: Plus, label: '', special: true },
-      { id: 'horses', icon: Heart, label: 'Caballos' },
-      { id: 'profile', icon: User, label: 'Perfil' },
-    ];
-    return (
-      <div className="bg-white border-t border-stone-100 px-2 pt-2 pb-6 flex items-center justify-around">
-        {items.map(item => {
-          const Ic = item.icon;
-          const active = screen === item.id || (item.id === 'badges' && screen === 'badge') || (item.id === 'horses' && (screen === 'horse' || screen === 'myhorse'));
-          if (item.special) return (
-            <button key={item.id} onClick={() => { setShowLogger(true); setLoggerStep(1); }} className="bg-yellow-300 text-stone-900 rounded-full w-14 h-14 flex items-center justify-center shadow-lg -mt-6">
-              <Ic size={28} strokeWidth={3} />
+  const HorsesScreen = () => (
+    <>
+      <Header title="Caballos" />
+      <div className="px-5 pt-3">
+        <div className="flex gap-2 mb-5 bg-stone-100 rounded-full p-1">
+          <button onClick={() => setHorseTab('mine')} className={`flex-1 py-2 rounded-full text-xs font-black uppercase tracking-wider ${horseTab === 'mine' ? 'bg-stone-900 text-yellow-300 shadow' : 'text-stone-600'}`}>⭐ Mi caballo</button>
+          <button onClick={() => setHorseTab('club')} className={`flex-1 py-2 rounded-full text-xs font-black uppercase tracking-wider ${horseTab === 'club' ? 'bg-stone-900 text-yellow-300 shadow' : 'text-stone-600'}`}>Del club</button>
+        </div>
+        {horseTab === 'mine' ? (
+          myHorses.map(h => (
+            <button key={h.name} onClick={() => { setSelectedHorse(h); setHorseDetailTab('resumen'); setScreen('myhorse'); }} className="w-full bg-white border border-stone-200 rounded-3xl overflow-hidden text-left mb-4">
+              <div className="h-56 relative overflow-hidden">
+                <HorseImg name="Káiser" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div className="absolute top-3 left-3 bg-yellow-300 px-2 py-1 rounded-md"><div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">⭐ Tu caballo</div></div>
+                <div className="absolute bottom-3 left-4 right-4 text-white">
+                  <div className="text-3xl font-black drop-shadow-lg">{h.name}</div>
+                  <div className="text-xs font-bold opacity-90">{h.breed} · {h.height}</div>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <div><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Peso</div><div className="text-lg font-black text-stone-900 mt-0.5">{h.weight}kg</div></div>
+                  <div><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Condición</div><div className="text-lg font-black text-stone-900 mt-0.5">{h.condition}/9</div></div>
+                  <div><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Ánimo</div><div className="text-lg font-black text-stone-900 mt-0.5">{h.moodEmoji}</div></div>
+                </div>
+              </div>
             </button>
-          );
-          return (
-            <button key={item.id} onClick={() => setScreen(item.id)} className={`flex flex-col items-center gap-0.5 px-3 py-1 ${active ? 'text-stone-900' : 'text-stone-400'}`}>
-              <Ic size={20} strokeWidth={active ? 2.5 : 2} />
-              <span className={`text-[10px] ${active ? 'font-black' : 'font-bold'}`}>{item.label}</span>
-            </button>
-          );
-        })}
+          ))
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {horsesForRider.map(horse => (
+              <button key={horse.name} onClick={() => { setSelectedHorse(horse); setScreen('horse'); }} className="bg-white border border-stone-200 rounded-2xl overflow-hidden text-left">
+                <div className="h-32 relative overflow-hidden">
+                  <HorseImg name={horse.name} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                  {horse.favorite && <div className="absolute top-2 right-2 bg-white/30 rounded-full p-1.5"><Heart size={12} className="text-white" fill="white" /></div>}
+                  <div className="absolute bottom-2 left-3 text-white font-black text-xl drop-shadow-lg">{horse.name}</div>
+                </div>
+                <div className="p-3">
+                  <div className="text-[9px] text-stone-500 font-black uppercase tracking-wider mb-2">{horse.type}</div>
+                  <div className="flex items-center justify-between text-[10px] mb-1">
+                    <span className="text-stone-500 font-bold">{horse.rides} monturas</span>
+                    <span className="font-black text-stone-900">{horse.connection}%</span>
+                  </div>
+                  <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${horse.connection}%`, background: horse.color }} /></div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
+    </>
+  );
+
+  const HorseDetailScreen = () => {
+    if (!selectedHorse) return null;
+    const h = selectedHorse;
+    return (
+      <>
+        <Header title={h.name} back={() => setScreen('horses')} />
+        <div className="h-64 relative overflow-hidden">
+          <HorseImg name={h.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30"></div>
+          <div className="absolute top-3 right-3"><PhotoButton horseName={h.name} /></div>
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+            <div className="text-4xl font-black drop-shadow-lg">{h.name}</div>
+            <div className="text-sm font-bold opacity-90">{h.breed} · {h.height}</div>
+          </div>
+        </div>
+        <div className="px-5 pt-5">
+          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-5">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="text-[10px] font-black text-yellow-700 uppercase tracking-widest">Vuestra conexión</div>
+                <div className="text-3xl font-black text-stone-900 leading-none mt-1">{h.connection}%</div>
+              </div>
+              <div className="text-5xl">💚</div>
+            </div>
+            <div className="h-2 bg-white rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${h.connection}%`, background: h.color }} /></div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Monturas</div><div className="text-2xl font-black text-stone-900 mt-1">{h.rides}</div></div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Última</div><div className="text-2xl font-black text-stone-900 mt-1">{h.lastRide}</div></div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-3"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Jinetes</div><div className="text-2xl font-black text-stone-900 mt-1">{h.totalRiders}</div></div>
+          </div>
+        </div>
+      </>
     );
   };
 
-  const HomeScreen = () => {
-    const recentBadge = badges.find(b => b.unlocked);
+  const MyHorseScreen = () => {
+    if (!selectedHorse) return null;
+    const h = selectedHorse;
+    const tabs = [{ id: 'resumen', label: 'Resumen' },{ id: 'salud', label: 'Salud' },{ id: 'comida', label: 'Comida' },{ id: 'actividad', label: 'Actividad' },{ id: 'gastos', label: 'Gastos' }];
     return (
       <>
-        <Header title="Inicio" action={
-          <div className="flex items-center gap-2">
-            <div className="bg-yellow-300 px-2 py-1 rounded-md">
-              <div className="text-[10px] font-black text-stone-900 leading-none">{stats.badgesUnlocked}/{stats.badgesTotal}</div>
-              <div className="text-[8px] font-black text-stone-900 upp
+        <Header title={h.name} back={() => setScreen('horses')} />
+        <div className="h-56 relative overflow-hidden">
+          <HorseImg name="Káiser" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <div className="absolute top-3 left-3"><PhotoButton horseName="Káiser" /></div>
+          <div className="absolute top-3 right-3 bg-yellow-300 px-2 py-1 rounded-md"><div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">⭐ Tu caballo</div></div>
+          <div className="absolute bottom-4 left-5 right-5 text-white">
+            <div className="text-4xl font-black drop-shadow-lg">{h.name}</div>
+            <div className="text-sm font-bold opacity-90">{h.breed} · {h.height}</div>
+          </div>
+        </div>
+        <div className="px-5 pt-4">
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Peso</div><div className="text-xl font-black text-stone-900 mt-1">{h.weight}kg</div></div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Condición</div><div className="text-xl font-black text-stone-900 mt-1">{h.condition}/9</div></div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-3 text-center"><div className="text-[9px] text-stone-500 font-black uppercase tracking-widest">Ánimo</div><div className="text-xl font-black text-stone-900 mt-1">{h.moodEmoji}</div></div>
+          </div>
+          <div className="flex gap-1 mb-5 overflow-x-auto -mx-5 px-5 pb-1">
+            {tabs.map(t => (
+              <button key={t.id} onClick={() => setHorseDetailTab(t.id)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap flex-shrink-0 ${horseDetailTab === t.id ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{t.label}</button>
+            ))}
+          </div>
+          {horseDetailTab === 'resumen' && (<>
+            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Próximos eventos</h2>
+            <div className="space-y-2 mb-5">
+              {upcomingHealth.map(e => (
+                <div key={e.id} className={`rounded-2xl p-3 flex items-center gap-3 ${e.daysLeft <= 7 ? 'bg-yellow-50 border-2 border-yellow-200' : 'bg-white border border-stone-200'}`}>
+                  <div className="text-2xl">{e.icon}</div>
+                  <div className="flex-1">
+                    <div className="font-black text-sm text-stone-900">{e.title}</div>
+                    <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{e.date} · {e.who}</div>
+                  </div>
+                  <div className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${e.daysLeft <= 7 ? 'bg-yellow-300 text-stone-900' : 'bg-stone-100 text-stone-600'}`}>{e.daysLeft}d</div>
+                </div>
+              ))}
+            </div>
+            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Pasaporte oficial</h2>
+            <div className="bg-stone-900 rounded-2xl p-4 text-white">
+              <div className="grid grid-cols-2 gap-3">
+                <div><div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">DIE</div><div className="text-xs font-black mt-0.5">{h.die}</div></div>
+                <div><div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">Microchip</div><div className="text-xs font-black mt-0.5">{h.microchip}</div></div>
+                <div><div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">Nacimiento</div><div className="text-xs font-black mt-0.5">{h.birthDate}</div></div>
+                <div><div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">Sexo</div><div className="text-xs font-black mt-0.5">{h.sex}</div></div>
+              </div>
+            </div>
+          </>)}
+          {horseDetailTab === 'salud' && (<>
+            <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl p-4 text-white mb-5">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-90">Estado de salud</div>
+              <div className="text-2xl font-black mt-1">Excelente</div>
+            </div>
+            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Historial</h2>
+            <div className="space-y-2">
+              {healthRecords.map(r => (
+                <div key={r.id} className="bg-white border border-stone-200 rounded-2xl p-3">
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl">{r.icon}</div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-1">
+                        <div className="font-black text-sm text-stone-900">{r.title}</div>
+                        <div className="text-xs font-black text-stone-700">{r.cost}€</div>
+                      </div>
+                      <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider mb-1">{r.date} · {r.vet}</div>
+                      <div className="text-xs text-stone-600">{r.notes}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>)}
+          {horseDetailTab === 'comida' && (<>
+            <div className="bg-gradient-to-br from-yellow-300 to-amber-400 rounded-2xl p-4 mb-5">
+              <div className="text-[10px] font-black uppercase tracking-widest text-stone-900/70">Ración diaria</div>
+              <div className="text-2xl font-black mt-1 text-stone-900">~16 kg/día</div>
+            </div>
+            <div className="space-y-3">
+              {feedingPlan.map((m, i) => (
+                <div key={i} className="bg-white border border-stone-200 rounded-2xl p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-2xl">{m.emoji}</div>
+                    <div><div className="font-black text-stone-900">{m.meal}</div><div className="text-[10px] text-stone-500 font-black uppercase tracking-wider">{m.time}</div></div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {m.items.map((item, j) => (
+                      <div key={j} className="flex items-center justify-between text-sm">
+                        <span className="text-stone-700 font-medium">· {item.name}</span>
+                        <span className="font-black text-stone-900">{item.qty}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>)}
+          {horseDetailTab === 'actividad' && (
+            <div className="space-y-2">
+              {horseActivities.map(a => (
+                <div key={a.id} className="bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3">
+                  <div className="text-2xl">{a.icon}</div>
+                  <div className="flex-1"><div className="font-black text-sm text-stone-900">{a.title}</div><div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">{a.date} · {a.who}</div></div>
+                  <div className="text-[10px] font-black text-stone-700 bg-stone-100 px-2 py-1 rounded-md">{a.duration}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {horseDetailTab === 'gastos' && (<>
+            <div className="bg-gradient-to-br from-stone-900 to-stone-700 rounded-2xl p-5 mb-5 text-white">
+              <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Este mes</div>
+              <div className="text-4xl font-black mt-1">{totalExpenses}<span className="text-xl">€</span></div>
+            </div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+              {expenses.map((e, i) => {
+                const pct = (e.amount / totalExpenses) * 100;
+                return (
+                  <div key={i}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2"><span>{e.icon}</span><span className="text-sm font-black text-stone-900">{e.category}</span></div>
+                      <span className="text-sm font-black text-stone-900">{e.amount}€</span>
+                    </div>
+                    <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${pct}%`, background: e.color }} /></div>
+                  </div>
+                );
+              })}
+            </div>
+          </>)}
+        </div>
+      </>
+    );
+  };
+
+  const NextClassScreen = () => (
+    <>
+      <Header title="Próxima clase" back={() => setScreen('home')} />
+      <div className="px-5 pt-3">
+        <div className="bg-stone-900 rounded-3xl p-6 mb-5 text-white">
+          <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-2">{nextClass.date}</div>
+          <div className="text-3xl font-black mb-1">{nextClass.fullDate}</div>
+          <div className="flex items-center gap-2 text-stone-300 text-sm"><Clock size={16} /><span className="font-bold">{nextClass.time} · {nextClass.duration}</span></div>
+        </div>
+        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest flex items-center gap-2"><Zap size={14} className="text-yellow-500" /> Objetivos</h2>
+        <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-6 space-y-3">
+          {nextClass.objectives.map((obj, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-black text-yellow-700">{i + 1}</span></div>
+              <span className="text-sm text-stone-700 font-medium">{obj}</span>
+            </div>
+          ))}
+        </div>
+        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Última valoración</h2>
+        <div className="bg-white border border-stone-200 rounded-2xl p-4">
+          <div className="font-black text-stone-900 mb-1">{lastFeedback.coach}</div>
+          <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider mb-3">{lastFeedback.date} · con {lastFeedback.horse}</div>
+          <p className="text-sm text-stone-700 font-medium">{lastFeedback.notes}</p>
+        </div>
+      </div>
+    </>
+  );
+
+  const ProfileScreen = () => (
+    <>
+      <Header title="Tu perfil" />
+      <div className="px-5 pt-3">
+        <div className="bg-stone-900 rounded-3xl p-5 mb-5 text-white flex items-center gap-4">
+          <div className="w-20 h-20 rounded-full bg-yellow-300 text-stone-900 flex items-center justify-center font-black text-2xl">{user.avatar}</div>
+          <div>
+            <div className="text-xl font-black">{user.name}</div>
+            <div className="text-xs text-stone-400 font-bold mt-1">{user.school}</div>
+            <div className="inline-flex mt-2 bg-yellow-300 text-stone-900 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest">{user.level}</div>
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-300 to-yellow-400 rounded-3xl p-6 mb-5">
+          <div className="text-[10px] font-black text-stone-900/70 uppercase tracking-widest mb-1">Tu identidad ecuestre</div>
+          <div className="text-5xl font-black text-stone-900 leading-none mb-1">{stats.totalHours}h</div>
+          <div className="grid grid-cols-3 gap-3 mt-5 pt-5 border-t border-stone-900/20">
+            <div><div className="text-2xl font-black text-stone-900">{stats.totalRides}</div><div className="text-[10px] font-black text-stone-900/70 uppercase tracking-wider">monturas</div></div>
+            <div><div className="text-2xl font-black text-stone-900">{stats.uniqueHorses}</div><div className="text-[10px] font-black text-stone-900/70 uppercase tracking-wider">caballos</div></div>
+            <div><div className="text-2xl font-black text-stone-900">{stats.badgesUnlocked}</div><div className="text-[10px] font-black text-stone-900/70 uppercase tracking-wider">insignias</div></div>
+          </div>
+        </div>
+        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Tus habilidades</h2>
+        <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-4 mb-5">
+          {skills.map(skill => (
+            <div key={skill.name}>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-sm font-black text-stone-900">{skill.name}</span>
+                <span className="text-sm font-black text-stone-900">{skill.value}</span>
+              </div>
+              <div className="h-2 bg-stone-100 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${skill.value}%`, background: skill.color }} /></div>
+            </div>
+          ))}
+        </div>
+
+        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Administración del club</h2>
+        <button onClick={toggleClubMode} className={`w-full rounded-2xl p-4 flex items-center justify-between transition border-2 ${clubMode ? 'bg-stone-900 border-yellow-300' : 'bg-white border-stone-200'}`}>
+          <div className="flex items-center gap-3">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl ${clubMode ? 'bg-yellow-300' : 'bg-stone-100'}`}>🏛️</div>
+            <div className="text-left">
+              <div className={`text-sm font-black uppercase tracking-wider ${clubMode ? 'text-yellow-300' : 'text-stone-900'}`}>Modo Club</div>
+              <div className={`text-[10px] font-bold ${clubMode ? 'text-stone-400' : 'text-stone-500'}`}>
+                {clubMode ? '🟢 Activo · Acceso a herramientas de gestión' : 'Personaliza insignias y gestiona caballos'}
+              </div>
+            </div>
+          </div>
+          <div className={`w-11 h-6 rounded-full relative transition ${clubMode ? 'bg-yellow-300' : 'bg-stone-300'}`}>
+            <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${clubMode ? 'left-[22px]' : 'left-0.5'}`}></div>
+          </div>
+        </button>
+
+        {clubMode && (
+          <div className="mt-3 space-y-2">
+            <button onClick={() => setScreen('clubhorses')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🐎</div>
+                <div className="text-left">
+                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de caballos</div>
+                  <div className="text-[10px] font-bold text-stone-500">{clubHorses.filter(h => h.status !== 'baja').length} activos · {clubHorses.filter(h => h.status === 'baja').length} en baja</div>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-stone-400" />
+            </button>
+
+            <button onClick={() => setScreen('clubriders')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">👥</div>
+                <div className="text-left">
+                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de jinetes</div>
+                  <div className="text-[10px] font-bold text-stone-500">{clubRiders.filter(r => r.status !== 'baja').length} activos · {clubRiders.filter(r => r.status === 'baja').length} en baja</div>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-stone-400" />
+            </button>
+
+            <button onClick={() => setScreen('clubbadges')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🏅</div>
+                <div className="text-left">
+                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Personalizar insignias</div>
+                  <div className="text-[10px] font-bold text-stone-500">{Object.keys(badgeImages).length} de {badges.filter(b => b.unlocked).length} con foto real</div>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-stone-400" />
+            </button>
+
+            <button onClick={() => setScreen('clubconfig')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">⚙️</div>
+                <div className="text-left">
+                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Configuración del club</div>
+                  <div className="text-[10px] font-bold text-stone-500">Nombre, logo, colores corporativos</div>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-stone-400" />
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  // =====================================================================
+  // GESTOR DE CABALLOS DEL CLUB
+  // =====================================================================
+  const ClubHorsesScreen = () => {
+    const filters = [
+      { id: 'todos', label: 'Todos' },
+      { id: 'escuela', label: '🎓 Escuela' },
+      { id: 'propietario', label: '👤 Propietario' },
+      { id: 'mixto', label: '🔀 Mixto' },
+    ];
+    const visibleHorses = clubHorses
+      .filter(h => showArchived ? h.status === 'baja' : h.status !== 'baja')
+      .filter(h => clubHorseFilter === 'todos' ? true : h.kind === clubHorseFilter);
+
+    return (
+      <>
+        <Header title="Gestor de caballos" back={() => setScreen('profile')} action={
+          <button onClick={() => { setEditingHorseId('new'); setScreen('clubhorseedit'); }} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Plus size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Añadir</span>
+          </button>
+        } />
+        <div className="px-5 pt-3">
+          {/* Resumen */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {[
+              { label: 'Escuela', count: clubHorses.filter(h => h.kind === 'escuela' && h.status !== 'baja').length, color: 'from-blue-400 to-blue-600' },
+              { label: 'Propietario', count: clubHorses.filter(h => h.kind === 'propietario' && h.status !== 'baja').length, color: 'from-purple-400 to-purple-600' },
+              { label: 'Mixto', count: clubHorses.filter(h => h.kind === 'mixto' && h.status !== 'baja').length, color: 'from-amber-400 to-amber-600' },
+            ].map(s => (
+              <div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-2xl p-3 text-white`}>
+                <div className="text-[9px] font-black uppercase tracking-widest opacity-90">{s.label}</div>
+                <div className="text-2xl font-black leading-none mt-1">{s.count}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Filtros tipo */}
+          <div className="flex gap-2 mb-4 overflow-x-auto -mx-5 px-5 pb-1">
+            {filters.map(f => (
+              <button key={f.id} onClick={() => setClubHorseFilter(f.id)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${clubHorseFilter === f.id ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f.label}</button>
+            ))}
+          </div>
+
+          {/* Toggle archivados */}
+          <button onClick={() => setShowArchived(!showArchived)} className={`w-full mb-4 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 ${showArchived ? 'bg-stone-900 text-white' : 'bg-stone-100 text-stone-700'}`}>
+            <Archive size={14} />
+            {showArchived ? `Ocultar bajas (${clubHorses.filter(h => h.status === 'baja').length})` : `Ver bajas (${clubHorses.filter(h => h.status === 'baja').length})`}
+          </button>
+
+          {/* Lista de caballos */}
+          {visibleHorses.length === 0 ? (
+            <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-8 text-center">
+              <div className="text-4xl mb-2 opacity-50">🐎</div>
+              <div className="text-sm font-black text-stone-900 mb-1">Sin caballos {showArchived ? 'en baja' : 'en este filtro'}</div>
+              <div className="text-xs text-stone-500">{showArchived ? 'Los caballos archivados aparecerán aquí' : 'Cambia el filtro o añade un caballo nuevo'}</div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {visibleHorses.map(h => {
+                const kindMeta = KIND_LABELS[h.kind];
+                const statusMeta = STATUS_LABELS[h.status];
+                const ridersTotal = (h.riderIds?.length || 0) + (h.ownerId ? 1 : 0);
+                return (
+                  <button key={h.id} onClick={() => { setEditingHorseId(h.id); setScreen('clubhorseedit'); }} className="w-full bg-white border border-stone-200 rounded-2xl overflow-hidden text-left flex">
+                    <div className="w-20 h-20 flex-shrink-0 overflow-hidden">
+                      <HorseImg name={h.name} />
+                    </div>
+                    <div className="flex-1 p-3 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="font-black text-stone-900 truncate">{h.name}</div>
+                        <div className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap flex items-center gap-1 ${statusMeta.color}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${statusMeta.dot}`}></span>
+                          {statusMeta.label}
+                        </div>
+                      </div>
+                      <div className="text-[10px] text-stone-500 font-bold mb-1.5 truncate">{h.coat} · {h.age}a · {h.breed}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider ${kindMeta.color}`}>{kindMeta.icon} {kindMeta.label}</span>
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider bg-stone-100 text-stone-700">{h.discipline}</span>
+                        <span className="text-[9px] font-black text-stone-500">· {ridersTotal} {ridersTotal === 1 ? 'jinete' : 'jinetes'}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center pr-3"><ChevronRight size={18} className="text-stone-300" /></div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  // =====================================================================
+  // EDICIÓN / ALTA DE CABALLO DEL CLUB
+  // =====================================================================
+  const ClubHorseEditScreen = () => {
+    const isNew = editingHorseId === 'new';
+    const existing = isNew ? null : clubHorses.find(h => h.id === editingHorseId);
+    const [form, setForm] = useState(existing || {
+      name: '', kind: 'escuela', ownerId: null, riderIds: [], status: 'activo',
+      discipline: 'Salto', breed: '', height: '', age: '', coat: '', since: '', notes: '',
+      color: '#8B5A3C',
+    });
+
+    const update = (k, v) => setForm({ ...form, [k]: v });
+
+    const toggleRider = (rid) => {
+      const ids = form.riderIds || [];
+      update('riderIds', ids.includes(rid) ? ids.filter(x => x !== rid) : [...ids, rid]);
+    };
+
+    const handleSave = () => {
+      if (!form.name.trim()) { alert('El nombre es obligatorio.'); return; }
+      // Limpiar campos según tipo
+      let cleaned = { ...form };
+      if (cleaned.kind === 'escuela') cleaned.ownerId = null;
+      if (cleaned.kind === 'propietario') cleaned.riderIds = [];
+      upsertClubHorse(cleaned);
+      setScreen('clubhorses');
+    };
+
+    const showOwner = form.kind === 'propietario' || form.kind === 'mixto';
+    const showRiders = form.kind === 'escuela' || form.kind === 'mixto';
+
+    return (
+      <>
+        <Header title={isNew ? 'Nuevo caballo' : form.name || 'Editar'} back={() => setScreen('clubhorses')} action={
+          <button onClick={handleSave} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Check size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Guardar</span>
+          </button>
+        } />
+        <div className="px-5 pt-4 pb-8">
+          {/* Foto */}
+          <div className="bg-stone-100 rounded-2xl overflow-hidden mb-5 relative h-48">
+            {form.name ? <HorseImg name={form.name} /> : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-stone-200 to-stone-300">
+                <div className="text-5xl opacity-40 mb-1">🐎</div>
+                <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Sin nombre aún</div>
+              </div>
+            )}
+            {form.name && (
+              <div className="absolute top-3 right-3"><PhotoButton horseName={form.name} /></div>
+            )}
+          </div>
+
+          {/* Nombre */}
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Nombre *</div>
+            <input type="text" value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ej. Tornado"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Tipo */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Tipo *</div>
+            <div className="grid grid-cols-3 gap-2">
+              {Object.entries(KIND_LABELS).map(([k, meta]) => (
+                <button key={k} onClick={() => update('kind', k)}
+                  className={`border-2 rounded-xl p-3 text-center transition ${form.kind === k ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200 bg-white'}`}>
+                  <div className="text-2xl mb-1">{meta.icon}</div>
+                  <div className="text-[10px] font-black uppercase tracking-wider text-stone-900">{meta.label}</div>
+                </button>
+              ))}
+            </div>
+            <div className="text-[10px] text-stone-500 mt-2 leading-relaxed">
+              {form.kind === 'escuela' && '🎓 Caballo del club, compartido por varios alumnos.'}
+              {form.kind === 'propietario' && '👤 Caballo de propietario, uso exclusivo de su dueño.'}
+              {form.kind === 'mixto' && '🔀 Caballo de propietario que también se cede para clases.'}
+            </div>
+          </div>
+
+          {/* Propietario */}
+          {showOwner && (
+            <div className="mb-4">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Propietario *</div>
+              <select value={form.ownerId || ''} onChange={(e) => update('ownerId', e.target.value || null)}
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+                <option value="">— Selecciona propietario —</option>
+                {clubRiders.map(r => <option key={r.id} value={r.id}>{r.name} · {r.level}</option>)}
+              </select>
+            </div>
+          )}
+
+          {/* Jinetes autorizados */}
+          {showRiders && (
+            <div className="mb-4">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">
+                Jinetes autorizados {form.kind === 'mixto' ? '(además del propietario)' : ''}
+              </div>
+              <div className="border-2 border-stone-200 rounded-xl p-2 max-h-56 overflow-y-auto bg-white">
+                {clubRiders.filter(r => r.id !== form.ownerId).map(r => {
+                  const checked = (form.riderIds || []).includes(r.id);
+                  return (
+                    <label key={r.id} className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${checked ? 'bg-yellow-50' : ''}`}>
+                      <div>
+                        <div className="text-sm font-black text-stone-900">{r.name}</div>
+                        <div className="text-[10px] text-stone-500 font-bold">{r.level}</div>
+                      </div>
+                      <input type="checkbox" checked={checked} onChange={() => toggleRider(r.id)}
+                        className="w-5 h-5 accent-yellow-400" />
+                    </label>
+                  );
+                })}
+              </div>
+              <div className="text-[10px] text-stone-500 mt-1.5">{(form.riderIds || []).length} jinete(s) seleccionado(s)</div>
+            </div>
+          )}
+
+          {/* Disciplina */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Disciplina</div>
+            <div className="flex gap-2 flex-wrap">
+              {['Salto', 'Doma', 'Iniciación', 'Concurso completo', 'Raid', 'Otros'].map(d => (
+                <button key={d} onClick={() => update('discipline', d)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${form.discipline === d ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{d}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Datos físicos */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Edad</div>
+              <input type="number" value={form.age} onChange={(e) => update('age', e.target.value)} placeholder="7"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Alzada</div>
+              <input type="text" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="1.68m"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Capa</div>
+              <input type="text" value={form.coat} onChange={(e) => update('coat', e.target.value)} placeholder="Castaño"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">En el club desde</div>
+              <input type="text" value={form.since} onChange={(e) => update('since', e.target.value)} placeholder="2020"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+          </div>
+
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Raza</div>
+            <input type="text" value={form.breed} onChange={(e) => update('breed', e.target.value)} placeholder="PRE × Hannoveriano"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Estado */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Estado</div>
+            <div className="grid grid-cols-3 gap-2">
+              {Object.entries(STATUS_LABELS).filter(([k]) => k !== 'baja').map(([k, meta]) => (
+                <button key={k} onClick={() => update('status', k)}
+                  className={`border-2 rounded-xl p-2.5 transition ${form.status === k ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200 bg-white'}`}>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${meta.dot}`}></span>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-stone-900">{meta.label}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Notas */}
+          <label className="block mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Notas veterinarias / observaciones</div>
+            <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={3}
+              placeholder="Reposo, alergias, manías, particularidades…"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm resize-none focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Acciones peligrosas */}
+          {!isNew && (
+            <div className="border-t-2 border-stone-100 pt-5 space-y-2">
+              {existing?.status !== 'baja' ? (
+                <button onClick={() => { archiveClubHorse(existing.id); setScreen('clubhorses'); }}
+                  className="w-full bg-stone-100 text-stone-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                  <Archive size={16} /> Dar de baja
+                </button>
+              ) : (
+                <button onClick={() => { restoreClubHorse(existing.id); setScreen('clubhorses'); }}
+                  className="w-full bg-green-100 text-green-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                  <Check size={16} /> Reactivar caballo
+                </button>
+              )}
+              <button onClick={() => { deleteClubHorse(existing.id); setScreen('clubhorses'); }}
+                className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                <Trash size={16} /> Eliminar definitivamente
+              </button>
+              <div className="text-[10px] text-stone-500 text-center leading-relaxed mt-2">
+                Dar de baja conserva el historial. Eliminar borra todo y no se puede deshacer.
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  const LoggerModal = () => (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowLogger(false)}>
+      <div className="bg-white w-full rounded-t-3xl max-h-[88%] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-stone-100">
+          <div>
+            <div className="text-[10px] font-black text-yellow-600 uppercase tracking-widest">Paso {loggerStep} de 3</div>
+            <div className="text-xl font-black text-stone-900">{loggerStep === 1 && '¿Qué caballo?'}{loggerStep === 2 && '¿Cómo te sentiste?'}{loggerStep === 3 && 'Cuéntalo'}</div>
+          </div>
+          <button onClick={() => setShowLogger(false)} className="p-2"><X size={20} className="text-stone-700" /></button>
+        </div>
+        <div className="px-5 py-5 pb-8">
+          {loggerStep === 1 && (
+            <div className="grid grid-cols-2 gap-3">
+              {horsesForRider.map(h => (
+                <button key={h.name} onClick={() => { setLogData({ ...logData, horse: h.name }); setLoggerStep(2); }} className="bg-white border-2 border-stone-200 rounded-2xl p-3 text-left">
+                  <div className="w-full aspect-square rounded-xl mb-2 overflow-hidden"><HorseImg name={h.name} /></div>
+                  <div className="font-black text-sm text-stone-900">{h.name}</div>
+                </button>
+              ))}
+            </div>
+          )}
+          {loggerStep === 2 && (<>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {feelings.map(f => (
+                <button key={f.name} onClick={() => setLogData({ ...logData, feeling: f.name })} className={`border-2 rounded-2xl p-4 text-left ${logData.feeling === f.name ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200'}`}>
+                  <div className="text-3xl mb-2">{f.emoji}</div>
+                  <div className="font-black text-sm" style={{ color: f.color }}>{f.name}</div>
+                </button>
+              ))}
+            </div>
+            <button disabled={!logData.feeling} onClick={() => setLoggerStep(3)} className="w-full bg-stone-900 text-white font-black rounded-2xl p-4 disabled:bg-stone-200">Siguiente</button>
+          </>)}
+          {loggerStep === 3 && (<>
+            <textarea placeholder="¿Cómo fue la sesión?" className="w-full border-2 border-stone-200 rounded-2xl p-4 text-sm resize-none mb-4" rows={5} />
+            <button onClick={() => { setShowLogger(false); setLoggerStep(1); }} className="w-full bg-yellow-300 text-stone-900 font-black rounded-2xl p-4 flex items-center justify-center gap-2"><Check size={20} /> Guardar montura</button>
+          </>)}
+        </div>
+      </div>
+    </div>
+  );
+
+  // =====================================================================
+  // GESTOR DE JINETES DEL CLUB
+  // =====================================================================
+  const ClubRidersScreen = () => {
+    const filters = [
+      { id: 'todos', label: 'Todos' },
+      { id: 'alumno', label: '🎒 Alumnos' },
+      { id: 'propietario', label: '👤 Propietarios' },
+      { id: 'profesor', label: '🎓 Profesores' },
+    ];
+    const visibleRiders = clubRiders
+      .filter(r => showArchivedRiders ? r.status === 'baja' : r.status !== 'baja')
+      .filter(r => clubRiderFilter === 'todos' ? true : r.role === clubRiderFilter)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const initials = (name) => name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+
+    return (
+      <>
+        <Header title="Gestor de jinetes" back={() => setScreen('profile')} action={
+          <button onClick={() => { setEditingRiderId('new'); setScreen('clubrideredit'); }} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Plus size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Añadir</span>
+          </button>
+        } />
+        <div className="px-5 pt-3">
+          {/* Resumen */}
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {[
+              { label: 'Alumnos', count: clubRiders.filter(r => r.role === 'alumno' && r.status !== 'baja').length, color: 'from-sky-400 to-sky-600' },
+              { label: 'Propiet.', count: clubRiders.filter(r => r.role === 'propietario' && r.status !== 'baja').length, color: 'from-purple-400 to-purple-600' },
+              { label: 'Profes.', count: clubRiders.filter(r => r.role === 'profesor' && r.status !== 'baja').length, color: 'from-emerald-400 to-emerald-600' },
+              { label: 'Total', count: clubRiders.filter(r => r.status !== 'baja').length, color: 'from-stone-700 to-stone-900' },
+            ].map(s => (
+              <div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-2xl p-2.5 text-white`}>
+                <div className="text-[9px] font-black uppercase tracking-widest opacity-90">{s.label}</div>
+                <div className="text-xl font-black leading-none mt-1">{s.count}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2 mb-4 overflow-x-auto -mx-5 px-5 pb-1">
+            {filters.map(f => (
+              <button key={f.id} onClick={() => setClubRiderFilter(f.id)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${clubRiderFilter === f.id ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f.label}</button>
+            ))}
+          </div>
+
+          <button onClick={() => setShowArchivedRiders(!showArchivedRiders)} className={`w-full mb-4 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 ${showArchivedRiders ? 'bg-stone-900 text-white' : 'bg-stone-100 text-stone-700'}`}>
+            <Archive size={14} />
+            {showArchivedRiders ? `Ocultar bajas (${clubRiders.filter(r => r.status === 'baja').length})` : `Ver bajas (${clubRiders.filter(r => r.status === 'baja').length})`}
+          </button>
+
+          {visibleRiders.length === 0 ? (
+            <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-8 text-center">
+              <div className="text-4xl mb-2 opacity-50">👥</div>
+              <div className="text-sm font-black text-stone-900 mb-1">Sin jinetes</div>
+              <div className="text-xs text-stone-500">Cambia el filtro o añade un jinete nuevo</div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {visibleRiders.map(r => {
+                const roleMeta = ROLE_LABELS[r.role] || ROLE_LABELS.alumno;
+                const horsesCount = horsesOfRider(r.id).length;
+                return (
+                  <button key={r.id} onClick={() => { setEditingRiderId(r.id); setScreen('clubrideredit'); }} className="w-full bg-white border border-stone-200 rounded-2xl text-left flex items-center p-3 gap-3">
+                    <div className="w-12 h-12 rounded-full bg-stone-900 text-yellow-300 flex items-center justify-center font-black text-sm flex-shrink-0">{initials(r.name)}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <div className="font-black text-stone-900 truncate">{r.name}</div>
+                        {r.status === 'baja' && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-stone-200 text-stone-600 uppercase tracking-wider">Baja</span>}
+                      </div>
+                      <div className="text-[10px] text-stone-500 font-bold mb-1">{r.level} · {horsesCount} {horsesCount === 1 ? 'caballo' : 'caballos'}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider ${roleMeta.color}`}>{roleMeta.icon} {roleMeta.label}</span>
+                      </div>
+                    </div>
+                    <ChevronRight size={18} className="text-stone-300 flex-shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  // =====================================================================
+  // EDICIÓN / ALTA DE JINETE
+  // =====================================================================
+  const ClubRiderEditScreen = () => {
+    const isNew = editingRiderId === 'new';
+    const existing = isNew ? null : clubRiders.find(r => r.id === editingRiderId);
+    const [form, setForm] = useState(existing || {
+      name: '', category: 'U14', tier: 'Iniciación', email: '', phone: '',
+      joinDate: '', role: 'alumno', status: 'activo', notes: '',
+    });
+
+    const update = (k, v) => setForm({ ...form, [k]: v });
+
+    const handleSave = () => {
+      if (!form.name.trim()) { alert('El nombre es obligatorio.'); return; }
+      upsertClubRider(form);
+      setScreen('clubriders');
+    };
+
+    const linkedHorses = existing ? horsesOfRider(existing.id) : [];
+
+    return (
+      <>
+        <Header title={isNew ? 'Nuevo jinete' : form.name || 'Editar'} back={() => setScreen('clubriders')} action={
+          <button onClick={handleSave} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Check size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Guardar</span>
+          </button>
+        } />
+        <div className="px-5 pt-4 pb-8">
+          {/* Nombre */}
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Nombre completo *</div>
+            <input type="text" value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Nombre y apellidos"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Rol */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Rol en el club *</div>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(ROLE_LABELS).map(([k, meta]) => (
+                <button key={k} onClick={() => update('role', k)}
+                  className={`border-2 rounded-xl p-3 text-center transition flex items-center gap-2 justify-center ${form.role === k ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200 bg-white'}`}>
+                  <span className="text-lg">{meta.icon}</span>
+                  <span className="text-xs font-black uppercase tracking-wider text-stone-900">{meta.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Categoría + Nivel */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div>
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Categoría</div>
+              <select value={form.category} onChange={(e) => update('category', e.target.value)}
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Nivel</div>
+              <select value={form.tier} onChange={(e) => update('tier', e.target.value)}
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+                {TIERS.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Contacto */}
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Email</div>
+            <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="ejemplo@correo.com"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Teléfono</div>
+              <input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+34 600 000 000"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">En el club desde</div>
+              <input type="text" value={form.joinDate} onChange={(e) => update('joinDate', e.target.value)} placeholder="Ene 2024"
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+          </div>
+
+          {/* Caballos vinculados (solo lectura) */}
+          {existing && linkedHorses.length > 0 && (
+            <div className="mb-4">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Caballos vinculados ({linkedHorses.length})</div>
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-2 space-y-1">
+                {linkedHorses.map(h => {
+                  const role = h.ownerId === existing.id ? 'Propietario' : 'Autorizado';
+                  return (
+                    <div key={h.id} className="flex items-center gap-2 p-1.5">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0"><HorseImg name={h.name} /></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-black text-stone-900 truncate">{h.name}</div>
+                        <div className="text-[9px] text-stone-500 font-bold uppercase tracking-wider">{role} · {h.kind}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="text-[10px] text-stone-500 mt-1.5">Para cambiar las vinculaciones, edita el caballo correspondiente.</div>
+            </div>
+          )}
+
+          {/* Notas */}
+          <label className="block mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Notas</div>
+            <textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={3}
+              placeholder="Alergias, contacto familiar, observaciones…"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm resize-none focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Acciones */}
+          {!isNew && (
+            <div className="border-t-2 border-stone-100 pt-5 space-y-2">
+              {existing?.status !== 'baja' ? (
+                <button onClick={() => { archiveClubRider(existing.id); setScreen('clubriders'); }}
+                  className="w-full bg-stone-100 text-stone-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                  <Archive size={16} /> Dar de baja
+                </button>
+              ) : (
+                <button onClick={() => { restoreClubRider(existing.id); setScreen('clubriders'); }}
+                  className="w-full bg-green-100 text-green-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                  <Check size={16} /> Reactivar jinete
+                </button>
+              )}
+              <button onClick={() => { deleteClubRider(existing.id); setScreen('clubriders'); }}
+                className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                <Trash size={16} /> Eliminar definitivamente
+              </button>
+              <div className="text-[10px] text-stone-500 text-center leading-relaxed mt-2">
+                Dar de baja conserva el historial. Eliminar borra el jinete y lo desvincula de todos sus caballos.
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  // =====================================================================
+  // CONFIGURACIÓN DEL CLUB
+  // =====================================================================
+  const ClubConfigScreen = () => {
+    const [form, setForm] = useState(clubConfig);
+    const update = (k, v) => setForm({ ...form, [k]: v });
+
+    const handleSave = () => {
+      if (!form.name.trim()) { alert('El nombre del club es obligatorio.'); return; }
+      saveClubConfig(form);
+      setScreen('profile');
+    };
+
+    const handleReset = () => {
+      if (!confirm('¿Restaurar la configuración por defecto? Esto NO borra los caballos ni jinetes.')) return;
+      saveClubConfig(defaultClubConfig);
+      setForm(defaultClubConfig);
+    };
+
+    const handleLocalLogoUpload = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { alert('El logo es muy grande. Máx 2MB.'); return; }
+      const reader = new FileReader();
+      reader.onload = (e) => update('logo', e.target.result);
+      reader.readAsDataURL(file);
+    };
+
+    // Paletas predefinidas
+    const palettes = [
+      { name: 'Clásico', primary: '#1c1917', accent: '#FDE047' },
+      { name: 'Burdeos', primary: '#7F1D1D', accent: '#FCA5A5' },
+      { name: 'Bosque', primary: '#14532D', accent: '#86EFAC' },
+      { name: 'Marino', primary: '#1E3A8A', accent: '#93C5FD' },
+      { name: 'Cobre', primary: '#7C2D12', accent: '#FDBA74' },
+      { name: 'Violeta', primary: '#4C1D95', accent: '#C4B5FD' },
+    ];
+
+    return (
+      <>
+        <Header title="Configuración del club" back={() => setScreen('profile')} action={
+          <button onClick={handleSave} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Check size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Guardar</span>
+          </button>
+        } />
+        <div className="px-5 pt-4 pb-8">
+          {/* Preview branding */}
+          <div className="rounded-3xl p-5 mb-5 flex items-center gap-4" style={{ background: form.primaryColor, color: 'white' }}>
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: form.accentColor }}>
+              {form.logo ? (
+                <img src={form.logo} alt="logo" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-3xl">🏇</span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-70">Preview</div>
+              <div className="text-xl font-black truncate">{form.name || 'Nombre del club'}</div>
+              <div className="text-xs opacity-70 truncate">{form.location || 'Ubicación'}</div>
+            </div>
+          </div>
+
+          {/* Nombre */}
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Nombre del club *</div>
+            <input type="text" value={form.name} onChange={(e) => update('name', e.target.value)}
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          <label className="block mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Nombre corto</div>
+            <input type="text" value={form.shortName} onChange={(e) => update('shortName', e.target.value)} placeholder="Para espacios reducidos"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          <label className="block mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Ubicación</div>
+            <input type="text" value={form.location} onChange={(e) => update('location', e.target.value)} placeholder="Ciudad, provincia"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Logo */}
+          <div className="mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Logo del club</div>
+            <div className="flex items-center gap-3">
+              <div className="w-20 h-20 rounded-2xl bg-stone-100 flex items-center justify-center overflow-hidden border-2 border-stone-200 flex-shrink-0">
+                {form.logo ? (
+                  <img src={form.logo} alt="logo" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-3xl opacity-40">🏇</span>
+                )}
+              </div>
+              <div className="flex-1 space-y-2">
+                <label className="block bg-stone-900 text-white px-3 py-2 rounded-xl cursor-pointer text-center">
+                  <input type="file" accept="image/*" className="hidden" onChange={handleLocalLogoUpload} />
+                  <div className="text-xs font-black uppercase tracking-widest">📷 {form.logo ? 'Cambiar logo' : 'Subir logo'}</div>
+                </label>
+                {form.logo && (
+                  <button onClick={() => update('logo', null)} className="w-full bg-stone-100 text-stone-700 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest">Quitar</button>
+                )}
+              </div>
+            </div>
+            <div className="text-[10px] text-stone-500 mt-1.5">Recomendado: cuadrado, mínimo 200×200px. Máx 2MB.</div>
+          </div>
+
+          {/* Paletas */}
+          <div className="mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Paleta corporativa</div>
+            <div className="grid grid-cols-3 gap-2">
+              {palettes.map(p => {
+                const selected = form.primaryColor === p.primary && form.accentColor === p.accent;
+                return (
+                  <button key={p.name} onClick={() => setForm({ ...form, primaryColor: p.primary, accentColor: p.accent })}
+                    className={`border-2 rounded-xl p-2 transition ${selected ? 'border-yellow-400' : 'border-stone-200'}`}>
+                    <div className="h-10 rounded-lg overflow-hidden flex">
+                      <div className="flex-1" style={{ background: p.primary }}></div>
+                      <div className="flex-1" style={{ background: p.accent }}></div>
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-stone-900 mt-1.5 text-center">{p.name}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Colores custom */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Color principal</div>
+              <div className="flex items-center gap-2 border-2 border-stone-200 rounded-xl p-2">
+                <input type="color" value={form.primaryColor} onChange={(e) => update('primaryColor', e.target.value)} className="w-10 h-10 rounded cursor-pointer" />
+                <input type="text" value={form.primaryColor} onChange={(e) => update('primaryColor', e.target.value)} className="flex-1 text-xs font-mono outline-none" />
+              </div>
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Color acento</div>
+              <div className="flex items-center gap-2 border-2 border-stone-200 rounded-xl p-2">
+                <input type="color" value={form.accentColor} onChange={(e) => update('accentColor', e.target.value)} className="w-10 h-10 rounded cursor-pointer" />
+                <input type="text" value={form.accentColor} onChange={(e) => update('accentColor', e.target.value)} className="flex-1 text-xs font-mono outline-none" />
+              </div>
+            </label>
+          </div>
+
+          {/* Mensaje de bienvenida */}
+          <label className="block mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Mensaje de bienvenida</div>
+            <textarea value={form.welcomeMessage} onChange={(e) => update('welcomeMessage', e.target.value)} rows={3}
+              placeholder="Mensaje opcional que verán los jinetes al abrir la app"
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm resize-none focus:border-yellow-400 outline-none" />
+          </label>
+
+          {/* Datos */}
+          <div className="bg-stone-50 rounded-2xl p-4 mb-5">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-3">Datos almacenados</div>
+            <div className="space-y-1 text-xs text-stone-700">
+              <div className="flex justify-between"><span>Caballos del club</span><span className="font-black">{clubHorses.length}</span></div>
+              <div className="flex justify-between"><span>Jinetes registrados</span><span className="font-black">{clubRiders.length}</span></div>
+              <div className="flex justify-between"><span>Fotos de caballos</span><span className="font-black">{Object.keys(customImages).length}</span></div>
+              <div className="flex justify-between"><span>Fotos de insignias</span><span className="font-black">{Object.keys(badgeImages).length}</span></div>
+            </div>
+          </div>
+
+          <button onClick={handleReset} className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+            <Trash size={16} /> Restaurar configuración por defecto
+          </button>
+        </div>
+      </>
+    );
+  };
+
+  // =====================================================================
+  // GESTOR DE INSIGNIAS DEL CLUB
+  // =====================================================================
+  const ClubBadgesScreen = () => {
+    const filters = ['todas', 'con foto', 'sin foto', 'bloqueadas'];
+    const unlockedBadges = badges.filter(b => b.unlocked);
+    const lockedBadges = badges.filter(b => !b.unlocked);
+
+    const filtered = (() => {
+      if (clubBadgeFilter === 'todas') return badges;
+      if (clubBadgeFilter === 'con foto') return unlockedBadges.filter(b => badgeImages[b.id]);
+      if (clubBadgeFilter === 'sin foto') return unlockedBadges.filter(b => !badgeImages[b.id]);
+      if (clubBadgeFilter === 'bloqueadas') return lockedBadges;
+      return badges;
+    })();
+
+    const withPhoto = unlockedBadges.filter(b => badgeImages[b.id]).length;
+
+    return (
+      <>
+        <Header title="Personalizar insignias" back={() => setScreen('profile')} />
+        <div className="px-5 pt-3">
+          {/* Resumen */}
+          <div className="bg-gradient-to-br from-yellow-300 to-yellow-400 rounded-3xl p-5 mb-4">
+            <div className="text-[10px] font-black text-stone-900/70 uppercase tracking-widest">Personalización del club</div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <div className="text-5xl font-black text-stone-900 leading-none">{withPhoto}</div>
+              <div className="text-2xl font-black text-stone-900/50">/ {unlockedBadges.length}</div>
+            </div>
+            <div className="text-xs font-bold text-stone-900/70 mt-1">insignias con foto real del club</div>
+            <div className="h-2 bg-white/40 rounded-full mt-3 overflow-hidden">
+              <div className="h-full bg-stone-900 rounded-full" style={{ width: `${unlockedBadges.length > 0 ? (withPhoto / unlockedBadges.length) * 100 : 0}%` }} />
+            </div>
+          </div>
+
+          {/* Tip */}
+          <div className="bg-stone-50 border border-stone-200 rounded-2xl p-3 mb-4 flex gap-2">
+            <div className="text-lg">💡</div>
+            <div className="text-xs text-stone-700 leading-relaxed">
+              Sube fotos reales del club (jinetes, caballos, momentos) para que las insignias de tus alumnos sean únicas. Las fotos aparecerán en el centro de cada insignia.
+            </div>
+          </div>
+
+          {/* Filtros */}
+          <div className="flex gap-2 mb-4 overflow-x-auto -mx-5 px-5 pb-1">
+            {filters.map(f => (
+              <button key={f} onClick={() => setClubBadgeFilter(f)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${clubBadgeFilter === f ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f}</button>
+            ))}
+          </div>
+
+          {/* Lista compacta para gestión */}
+          <div className="space-y-2">
+            {filtered.map(b => {
+              const isLocked = !b.unlocked;
+              const customPhoto = badgeImages[b.id];
+              return (
+                <div key={b.id} className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex items-center p-3 gap-3">
+                  <div className="w-14 h-14 rounded-xl flex-shrink-0 relative overflow-hidden" style={{ background: isLocked ? 'linear-gradient(135deg, #475569, #64748B)' : `linear-gradient(135deg, ${b.gradient[0]}, ${b.gradient[1]})` }}>
+                    {customPhoto && !isLocked ? (
+                      <img src={customPhoto} alt={b.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl" style={{ filter: isLocked ? 'grayscale(1) opacity(0.5)' : 'none' }}>{isLocked ? '🔒' : b.icon}</div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-black text-sm text-stone-900 truncate">{b.title}</div>
+                    <div className="text-[10px] text-stone-500 font-bold truncate">{b.category} · {b.subtitle}</div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      {isLocked ? (
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider bg-stone-200 text-stone-600">Bloqueada</span>
+                      ) : customPhoto ? (
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider bg-green-100 text-green-700">✓ Foto real</span>
+                      ) : (
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider bg-stone-100 text-stone-600">Icono por defecto</span>
+                      )}
+                    </div>
+                  </div>
+                  {!isLocked && (
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <label className="bg-stone-900 text-yellow-300 px-2.5 py-1.5 rounded-md cursor-pointer">
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleBadgeImageUpload(b.id, e)} />
+                        <div className="text-[10px] font-black uppercase tracking-widest">📷 {customPhoto ? 'Cambiar' : 'Foto'}</div>
+                      </label>
+                      {customPhoto && (
+                        <button onClick={() => resetBadgeImage(b.id)} className="bg-stone-100 text-stone-700 p-1.5 rounded-md">
+                          <Trash size={14} />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const renderScreen = () => {
+    if (screen === 'home') return <HomeScreen />;
+    if (screen === 'badges') return <BadgesScreen />;
+    if (screen === 'badge') return <BadgeDetailScreen />;
+    if (screen === 'horses') return <HorsesScreen />;
+    if (screen === 'horse') return <HorseDetailScreen />;
+    if (screen === 'myhorse') return <MyHorseScreen />;
+    if (screen === 'next') return <NextClassScreen />;
+    if (screen === 'profile') return <ProfileScreen />;
+    if (screen === 'clubhorses') return <ClubHorsesScreen />;
+    if (screen === 'clubhorseedit') return <ClubHorseEditScreen />;
+    if (screen === 'clubriders') return <ClubRidersScreen />;
+    if (screen === 'clubrideredit') return <ClubRiderEditScreen />;
+    if (screen === 'clubconfig') return <ClubConfigScreen />;
+    if (screen === 'clubbadges') return <ClubBadgesScreen />;
+    return <HomeScreen />;
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-white font-sans">
+      {clubMode && (
+        <div className="text-center py-1.5 text-[10px] font-black uppercase tracking-widest" style={{ background: clubConfig.primaryColor, color: clubConfig.accentColor }}>
+          🏛️ Modo Club · {clubConfig.shortName || clubConfig.name}
+        </div>
+      )}
+      <div className="pb-24">{renderScreen()}</div>
+      <div className="fixed bottom-0 left-0 right-0 z-40"><BottomNav /></div>
+      {showLogger && <LoggerModal />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Ecumanager />);
+</script>
+</body>
+</html>
