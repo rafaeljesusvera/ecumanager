@@ -475,24 +475,29 @@ function Equmanager() {
         setClubClasses(data.clubClasses || []);
         if (!silent) setSyncMessage('Sincronizado');
       } else {
-        // Club nuevo: sembrar con datos por defecto SOLO si entras como club (admin)
-        // Si entras como jinete a un club que no existe, no sembramos para no corromper datos.
-        if (userType === 'club') {
-          setClubHorses(defaultClubHorses);
-          setClubRiders(defaultClubRiders);
-          setClubConfig(defaultClubConfig);
-          setCustomImages({});
-          setBadgeImages({});
-          setClubClasses(defaultClubClasses);
-          if (!silent) setSyncMessage('Club nuevo creado');
-        } else {
-          setClubHorses([]);
-          setClubRiders([]);
-          setClubConfig(defaultClubConfig);
-          setCustomImages({});
-          setBadgeImages({});
-          setClubClasses([]);
-          if (!silent) setSyncMessage('Club aún sin datos');
+        // Club nuevo: sembrar con datos por defecto (tanto si entras como club como jinete).
+        // Si entras como jinete a un club inexistente, también sembramos para que veas algo,
+        // y guardamos inmediatamente en la nube para que el admin (cuando entre) lo encuentre.
+        setClubHorses(defaultClubHorses);
+        setClubRiders(defaultClubRiders);
+        setClubConfig(defaultClubConfig);
+        setCustomImages({});
+        setBadgeImages({});
+        setClubClasses(defaultClubClasses);
+        if (!silent) setSyncMessage(userType === 'club' ? 'Club nuevo creado' : 'Club sin datos · sembrando demo');
+        // Guardar inmediatamente para que el siguiente dispositivo vea los mismos datos
+        try {
+          await cloudSave(code, {
+            clubHorses: defaultClubHorses,
+            clubRiders: defaultClubRiders,
+            clubConfig: defaultClubConfig,
+            customImages: {},
+            badgeImages: {},
+            clubClasses: defaultClubClasses,
+          });
+          lastSavedUpdatedAt.current = new Date().toISOString();
+        } catch (e) {
+          console.error('No se pudo sembrar club nuevo en cloud:', e);
         }
       }
       if (!silent) {
@@ -1086,7 +1091,7 @@ function Equmanager() {
         <div className="h-64 relative overflow-hidden">
           <HorseImg name={h.name} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30"></div>
-          {userType === 'club' && <div className="absolute top-3 right-3"><PhotoButton horseName={h.name} /></div>}
+          <div className="absolute top-3 right-3"><PhotoButton horseName={h.name} /></div>
           <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
             <div className="text-4xl font-black drop-shadow-lg">{h.name}</div>
             <div className="text-sm font-bold opacity-90">{h.breed} · {h.height}</div>
@@ -1123,7 +1128,7 @@ function Equmanager() {
         <div className="h-56 relative overflow-hidden">
           <HorseImg name="Káiser" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-          {userType === 'club' && <div className="absolute top-3 left-3"><PhotoButton horseName="Káiser" /></div>}
+          <div className="absolute top-3 left-3"><PhotoButton horseName="Káiser" /></div>
           <div className="absolute top-3 right-3 bg-yellow-300 px-2 py-1 rounded-md"><div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">⭐ Tu caballo</div></div>
           <div className="absolute bottom-4 left-5 right-5 text-white">
             <div className="text-4xl font-black drop-shadow-lg">{h.name}</div>
