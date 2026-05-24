@@ -8,16 +8,61 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 html, body, #root { height: 100%; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
 *::-webkit-scrollbar { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
-const { useState } = React;
+const { useState, useEffect, useRef } = React;
+
+// ============ CONFIGURACIÓN SUPABASE ============
+const SUPABASE_URL = 'https://mbpmoipqcaaudwtzjydn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_UJsJcTAfaU-Vuo3NTNzbRg_mceqVPu0';
+const SUPABASE_BUCKET = 'ecumanager';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Sube un dataURL (base64) al bucket y devuelve la URL pública
+async function uploadDataUrl(path, dataUrl) {
+  // dataUrl: "data:image/jpeg;base64,..."
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const { error } = await supabase.storage.from(SUPABASE_BUCKET).upload(path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
+  if (error) throw error;
+  const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
+  // Añadimos cache-buster para que al sobrescribir se vea la nueva foto
+  return data.publicUrl + '?t=' + Date.now();
+}
+
+// Lee la fila completa de un club
+async function cloudLoad(clubCode) {
+  const { data, error } = await supabase
+    .from('club_data')
+    .select('data')
+    .eq('club_code', clubCode)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? data.data : null;
+}
+
+// Upsert: crea o actualiza el registro de un club
+async function cloudSave(clubCode, payload) {
+  const { error } = await supabase
+    .from('club_data')
+    .upsert({ club_code: clubCode, data: payload, updated_at: new Date().toISOString() }, { onConflict: 'club_code' });
+  if (error) throw error;
+}
+
+// Sanea el código del club (alfanumérico + guiones, minúsculas)
+function sanitizeClubCode(code) {
+  return (code || '').toLowerCase().trim().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+}
 
 const Icon = ({ d, size = 20, strokeWidth = 2, className = '', fill = 'none' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>{d}</svg>
@@ -41,8 +86,19 @@ const Medal = (p) => <Icon {...p} d={<><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13
 const Settings = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>} />;
 const Trash = (p) => <Icon {...p} d={<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></>} />;
 const Archive = (p) => <Icon {...p} d={<><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></>} />;
+const RefreshCw = (p) => <Icon {...p} d={<><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></>} />;
+const LogOut = (p) => <Icon {...p} d={<><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>} />;
+const Cloud = (p) => <Icon {...p} d={<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>} />;
 
 function Ecumanager() {
+  // === Sincronización en la nube ===
+  const [clubCode, setClubCode] = useState(() => {
+    try { return localStorage.getItem('ecumanager_club_code') || ''; } catch (e) { return ''; }
+  });
+  const [syncStatus, setSyncStatus] = useState('idle'); // 'idle' | 'loading' | 'syncing' | 'error' | 'ok'
+  const [syncMessage, setSyncMessage] = useState('');
+  const initialLoadDone = useRef(false);
+
   const [screen, setScreen] = useState('home');
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [selectedBadge, setSelectedBadge] = useState(null);
@@ -60,19 +116,9 @@ function Ecumanager() {
   const [showArchivedRiders, setShowArchivedRiders] = useState(false);
   const [clubBadgeFilter, setClubBadgeFilter] = useState('todas');
 
-  const [customImages, setCustomImages] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ecumanager_horse_images');
-      return saved ? JSON.parse(saved) : {};
-    } catch (e) { return {}; }
-  });
+  const [customImages, setCustomImages] = useState({});
 
-  const [badgeImages, setBadgeImages] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ecumanager_badge_images');
-      return saved ? JSON.parse(saved) : {};
-    } catch (e) { return {}; }
-  });
+  const [badgeImages, setBadgeImages] = useState({});
 
   const [clubMode, setClubMode] = useState(() => {
     try { return localStorage.getItem('ecumanager_club_mode') === '1'; }
@@ -89,12 +135,23 @@ function Ecumanager() {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { alert('La foto es muy grande. Máx 5MB.'); return; }
+    if (!clubCode) { alert('Falta código de club.'); return; }
+    setSyncStatus('syncing'); setSyncMessage('Subiendo foto…');
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const newImages = { ...customImages, [horseName]: e.target.result };
-      setCustomImages(newImages);
-      try { localStorage.setItem('ecumanager_horse_images', JSON.stringify(newImages)); }
-      catch (err) { alert('No se pudo guardar. Memoria llena.'); }
+    reader.onload = async (e) => {
+      try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const safeName = horseName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const path = `${clubCode}/horses/${safeName}.${ext}`;
+        const publicUrl = await uploadDataUrl(path, e.target.result);
+        setCustomImages(prev => ({ ...prev, [horseName]: publicUrl }));
+        setSyncStatus('ok'); setSyncMessage('Foto sincronizada');
+        setTimeout(() => setSyncStatus('idle'), 1500);
+      } catch (err) {
+        console.error(err);
+        setSyncStatus('error'); setSyncMessage('Error al subir foto');
+        alert('No se pudo subir la foto: ' + err.message);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -103,21 +160,32 @@ function Ecumanager() {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { alert('La foto es muy grande. Máx 5MB.'); return; }
+    if (!clubCode) { alert('Falta código de club.'); return; }
+    setSyncStatus('syncing'); setSyncMessage('Subiendo foto…');
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const newImages = { ...badgeImages, [badgeId]: e.target.result };
-      setBadgeImages(newImages);
-      try { localStorage.setItem('ecumanager_badge_images', JSON.stringify(newImages)); }
-      catch (err) { alert('No se pudo guardar. Memoria llena.'); }
+    reader.onload = async (e) => {
+      try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const path = `${clubCode}/badges/${badgeId}.${ext}`;
+        const publicUrl = await uploadDataUrl(path, e.target.result);
+        setBadgeImages(prev => ({ ...prev, [badgeId]: publicUrl }));
+        setSyncStatus('ok'); setSyncMessage('Foto sincronizada');
+        setTimeout(() => setSyncStatus('idle'), 1500);
+      } catch (err) {
+        console.error(err);
+        setSyncStatus('error'); setSyncMessage('Error al subir foto');
+        alert('No se pudo subir la foto: ' + err.message);
+      }
     };
     reader.readAsDataURL(file);
   };
 
   const resetBadgeImage = (badgeId) => {
-    const newImages = { ...badgeImages };
-    delete newImages[badgeId];
-    setBadgeImages(newImages);
-    try { localStorage.setItem('ecumanager_badge_images', JSON.stringify(newImages)); } catch (e) {}
+    setBadgeImages(prev => {
+      const next = { ...prev };
+      delete next[badgeId];
+      return next;
+    });
   };
 
   const HorseImg = ({ name }) => {
@@ -168,16 +236,10 @@ function Ecumanager() {
     { id: 'r8', name: 'Ana Beltrán', level: 'U16 · Medio', category: 'U16', tier: 'Medio', email: '', phone: '', joinDate: 'Sep 2023', role: 'alumno', status: 'activo', notes: '' },
   ];
 
-  const [clubRiders, setClubRiders] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ecumanager_club_riders');
-      return saved ? JSON.parse(saved) : defaultClubRiders;
-    } catch (e) { return defaultClubRiders; }
-  });
+  const [clubRiders, setClubRiders] = useState([]);
 
   const saveClubRiders = (next) => {
     setClubRiders(next);
-    try { localStorage.setItem('ecumanager_club_riders', JSON.stringify(next)); } catch (e) {}
   };
 
   const upsertClubRider = (rider) => {
@@ -225,25 +287,32 @@ function Ecumanager() {
     welcomeMessage: '',
   };
 
-  const [clubConfig, setClubConfig] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ecumanager_club_config');
-      return saved ? { ...defaultClubConfig, ...JSON.parse(saved) } : defaultClubConfig;
-    } catch (e) { return defaultClubConfig; }
-  });
+  const [clubConfig, setClubConfig] = useState(defaultClubConfig);
 
   const saveClubConfig = (next) => {
     setClubConfig(next);
-    try { localStorage.setItem('ecumanager_club_config', JSON.stringify(next)); } catch (e) {}
   };
 
   const handleLogoUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) { alert('El logo es muy grande. Máx 2MB.'); return; }
+    if (!clubCode) { alert('Falta código de club.'); return; }
+    setSyncStatus('syncing'); setSyncMessage('Subiendo logo…');
     const reader = new FileReader();
-    reader.onload = (e) => {
-      saveClubConfig({ ...clubConfig, logo: e.target.result });
+    reader.onload = async (e) => {
+      try {
+        const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+        const path = `${clubCode}/logo.${ext}`;
+        const publicUrl = await uploadDataUrl(path, e.target.result);
+        saveClubConfig({ ...clubConfig, logo: publicUrl });
+        setSyncStatus('ok'); setSyncMessage('Logo sincronizado');
+        setTimeout(() => setSyncStatus('idle'), 1500);
+      } catch (err) {
+        console.error(err);
+        setSyncStatus('error');
+        alert('No se pudo subir el logo: ' + err.message);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -258,16 +327,10 @@ function Ecumanager() {
     { id: 'h6', name: 'Rayo', color: '#3D2817', kind: 'mixto', ownerId: 'r4', riderIds: ['r2'], status: 'activo', discipline: 'Doma', breed: 'KWPN', height: '1.66m', age: 5, coat: 'Castaño oscuro', since: '2021', notes: '' },
   ];
 
-  const [clubHorses, setClubHorses] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ecumanager_club_horses');
-      return saved ? JSON.parse(saved) : defaultClubHorses;
-    } catch (e) { return defaultClubHorses; }
-  });
+  const [clubHorses, setClubHorses] = useState([]);
 
   const saveClubHorses = (next) => {
     setClubHorses(next);
-    try { localStorage.setItem('ecumanager_club_horses', JSON.stringify(next)); } catch (e) {}
   };
 
   const upsertClubHorse = (horse) => {
@@ -290,6 +353,95 @@ function Ecumanager() {
   const deleteClubHorse = (id) => {
     if (!confirm('¿Eliminar definitivamente este caballo del club? Esto NO se puede deshacer.')) return;
     saveClubHorses(clubHorses.filter(h => h.id !== id));
+  };
+
+  // === SINCRONIZACIÓN: descarga al cambiar clubCode ===
+  const loadFromCloud = async (code) => {
+    if (!code) return;
+    setSyncStatus('loading'); setSyncMessage('Cargando datos del club…');
+    try {
+      const data = await cloudLoad(code);
+      if (data) {
+        // Cargar datos existentes
+        setClubHorses(data.clubHorses || []);
+        setClubRiders(data.clubRiders || []);
+        setClubConfig({ ...defaultClubConfig, ...(data.clubConfig || {}) });
+        setCustomImages(data.customImages || {});
+        setBadgeImages(data.badgeImages || {});
+        setSyncMessage('Sincronizado');
+      } else {
+        // Club nuevo: sembrar con datos por defecto
+        setClubHorses(defaultClubHorses);
+        setClubRiders(defaultClubRiders);
+        setClubConfig(defaultClubConfig);
+        setCustomImages({});
+        setBadgeImages({});
+        setSyncMessage('Club nuevo creado');
+      }
+      setSyncStatus('ok');
+      setTimeout(() => setSyncStatus('idle'), 1500);
+      // Marcar la carga inicial como completa DESPUÉS de aplicar los datos
+      setTimeout(() => { initialLoadDone.current = true; }, 100);
+    } catch (err) {
+      console.error(err);
+      setSyncStatus('error');
+      setSyncMessage('Error al cargar: ' + err.message);
+    }
+  };
+
+  // Carga al montar y cuando cambia el código de club
+  useEffect(() => {
+    initialLoadDone.current = false;
+    if (clubCode) {
+      loadFromCloud(clubCode);
+    }
+  }, [clubCode]);
+
+  // Sube con debounce cuando cambia algo de los datos persistentes
+  useEffect(() => {
+    if (!clubCode || !initialLoadDone.current) return;
+    const handle = setTimeout(async () => {
+      try {
+        setSyncStatus('syncing');
+        await cloudSave(clubCode, {
+          clubHorses, clubRiders, clubConfig, customImages, badgeImages
+        });
+        setSyncStatus('ok'); setSyncMessage('Sincronizado');
+        setTimeout(() => setSyncStatus('idle'), 1200);
+      } catch (err) {
+        console.error(err);
+        setSyncStatus('error'); setSyncMessage('Error al guardar');
+      }
+    }, 700);
+    return () => clearTimeout(handle);
+  }, [clubHorses, clubRiders, clubConfig, customImages, badgeImages, clubCode]);
+
+  // Guarda el código de club en localStorage como preferencia local
+  useEffect(() => {
+    try {
+      if (clubCode) localStorage.setItem('ecumanager_club_code', clubCode);
+      else localStorage.removeItem('ecumanager_club_code');
+    } catch (e) {}
+  }, [clubCode]);
+
+  // Función pública para forzar refresh (botón en UI)
+  const refreshFromCloud = () => {
+    if (!clubCode) return;
+    initialLoadDone.current = false;
+    loadFromCloud(clubCode);
+  };
+
+  // Cerrar sesión del club: limpia estado y vuelve a la pantalla de entrada
+  const exitClub = () => {
+    if (!confirm('¿Salir del club? Tus datos seguirán guardados en la nube, podrás volver con el mismo código.')) return;
+    initialLoadDone.current = false;
+    setClubCode('');
+    setClubHorses([]);
+    setClubRiders([]);
+    setClubConfig(defaultClubConfig);
+    setCustomImages({});
+    setBadgeImages({});
+    setScreen('home');
   };
 
   // === Derivado: lista que ve el jinete en "Caballos del club" (sin bajas, con campos de UI) ===
@@ -1594,8 +1746,23 @@ function Ecumanager() {
       const file = event.target.files[0];
       if (!file) return;
       if (file.size > 2 * 1024 * 1024) { alert('El logo es muy grande. Máx 2MB.'); return; }
+      if (!clubCode) { alert('Falta código de club.'); return; }
+      setSyncStatus('syncing'); setSyncMessage('Subiendo logo…');
       const reader = new FileReader();
-      reader.onload = (e) => update('logo', e.target.result);
+      reader.onload = async (e) => {
+        try {
+          const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+          const path = `${clubCode}/logo.${ext}`;
+          const publicUrl = await uploadDataUrl(path, e.target.result);
+          update('logo', publicUrl);
+          setSyncStatus('ok'); setSyncMessage('Logo sincronizado');
+          setTimeout(() => setSyncStatus('idle'), 1500);
+        } catch (err) {
+          console.error(err);
+          setSyncStatus('error');
+          alert('No se pudo subir el logo: ' + err.message);
+        }
+      };
       reader.readAsDataURL(file);
     };
 
@@ -1734,9 +1901,18 @@ function Ecumanager() {
             </div>
           </div>
 
-          <button onClick={handleReset} className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+          <button onClick={handleReset} className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider mb-2">
             <Trash size={16} /> Restaurar configuración por defecto
           </button>
+
+          <div className="bg-stone-50 rounded-2xl p-4 mt-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Código de club actual</div>
+            <div className="font-mono text-sm font-black text-stone-900 mb-3">#{clubCode}</div>
+            <div className="text-[10px] text-stone-600 leading-relaxed mb-3">Comparte este código con tu socio para que vea los mismos datos. Cualquier dispositivo que use este código ve y edita el mismo club.</div>
+            <button onClick={exitClub} className="w-full bg-stone-900 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+              <LogOut size={16} /> Salir del club
+            </button>
+          </div>
         </div>
       </>
     );
@@ -1859,11 +2035,88 @@ function Ecumanager() {
     return <HomeScreen />;
   };
 
+  // === Pantalla de entrada al club ===
+  const ClubCodeScreen = () => {
+    const [code, setCode] = useState('');
+    const [busy, setBusy] = useState(false);
+
+    const enter = async () => {
+      const clean = sanitizeClubCode(code);
+      if (clean.length < 3) { alert('El código debe tener al menos 3 caracteres (letras, números o guiones).'); return; }
+      setBusy(true);
+      setClubCode(clean);
+    };
+
+    return (
+      <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-white">
+          <div className="text-6xl mb-4">🏇</div>
+          <div className="text-3xl font-black mb-1">Ecumanager</div>
+          <div className="text-sm text-stone-400 font-bold mb-10 text-center max-w-xs">Introduce el código de tu club para acceder a su contenido</div>
+
+          <div className="w-full max-w-xs">
+            <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-1.5">Código de club</div>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') enter(); }}
+              placeholder="p.ej. lafinca"
+              autoFocus
+              className="w-full bg-stone-800 border-2 border-stone-700 rounded-xl p-4 text-base font-bold text-white placeholder-stone-500 focus:border-yellow-400 outline-none"
+            />
+            <div className="text-[10px] text-stone-500 mt-2 leading-relaxed">
+              Letras, números y guiones. Si el código no existe, se creará un club nuevo. Si ya existe, verás sus datos.
+            </div>
+
+            <button onClick={enter} disabled={busy} className="w-full mt-5 bg-yellow-300 text-stone-900 font-black py-4 rounded-xl uppercase tracking-widest text-sm disabled:opacity-50">
+              {busy ? 'Cargando…' : 'Entrar al club'}
+            </button>
+          </div>
+        </div>
+        <div className="pb-6 text-center text-[10px] text-stone-600 font-bold">
+          Prototipo · Datos compartidos vía Supabase
+        </div>
+      </div>
+    );
+  };
+
+  // === Indicador flotante de sincronización ===
+  const SyncIndicator = () => {
+    if (syncStatus === 'idle') return null;
+    const styles = {
+      loading: { bg: 'bg-stone-900', text: 'text-yellow-300', icon: <RefreshCw size={14} className="spin" /> },
+      syncing: { bg: 'bg-stone-900', text: 'text-yellow-300', icon: <Cloud size={14} className="spin" /> },
+      ok: { bg: 'bg-green-600', text: 'text-white', icon: <Check size={14} /> },
+      error: { bg: 'bg-red-600', text: 'text-white', icon: <X size={14} /> },
+    };
+    const s = styles[syncStatus] || styles.loading;
+    return (
+      <div className={`fixed top-2 left-1/2 -translate-x-1/2 z-[60] ${s.bg} ${s.text} px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg`}>
+        {s.icon}
+        <span>{syncMessage || syncStatus}</span>
+      </div>
+    );
+  };
+
+  // Si no hay código de club, mostrar pantalla de entrada
+  if (!clubCode) {
+    return <ClubCodeScreen />;
+  }
+
   return (
     <div className="min-h-screen w-full bg-white font-sans">
+      <SyncIndicator />
       {clubMode && (
-        <div className="text-center py-1.5 text-[10px] font-black uppercase tracking-widest" style={{ background: clubConfig.primaryColor, color: clubConfig.accentColor }}>
-          🏛️ Modo Club · {clubConfig.shortName || clubConfig.name}
+        <div className="text-center py-1.5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2" style={{ background: clubConfig.primaryColor, color: clubConfig.accentColor }}>
+          <span>🏛️ Modo Club · {clubConfig.shortName || clubConfig.name}</span>
+          <span className="opacity-60">·</span>
+          <button onClick={refreshFromCloud} className="flex items-center gap-1 hover:opacity-80" title="Recargar desde la nube">
+            <RefreshCw size={11} className={syncStatus === 'loading' || syncStatus === 'syncing' ? 'spin' : ''} />
+            <span>Refrescar</span>
+          </button>
+          <span className="opacity-60">·</span>
+          <span className="opacity-80">#{clubCode}</span>
         </div>
       )}
       <div className="pb-24">{renderScreen()}</div>
