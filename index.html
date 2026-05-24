@@ -18,7 +18,41 @@ html, body, #root { height: 100%; margin: 0; font-family: -apple-system, BlinkMa
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <div id="boot-message" style="padding:20px;font-family:-apple-system,sans-serif;color:#666;text-align:center;padding-top:40vh;">
+    <div style="font-size:48px;margin-bottom:12px;">🏇</div>
+    <div style="font-weight:900;margin-bottom:8px;">Cargando Ecumanager…</div>
+    <div id="boot-status" style="font-size:11px;color:#999;font-family:monospace;">Esperando librerías</div>
+  </div>
+</div>
+<script>
+  // Detector de fallos de carga: si en 8 segundos React no ha montado, mostrar diagnóstico
+  window._bootStart = Date.now();
+  window._bootCheck = setInterval(function() {
+    var s = document.getElementById('boot-status');
+    if (!s) { clearInterval(window._bootCheck); return; }
+    var elapsed = ((Date.now() - window._bootStart) / 1000).toFixed(1);
+    var libs = [];
+    libs.push('React: ' + (window.React ? '✓' : '✗'));
+    libs.push('ReactDOM: ' + (window.ReactDOM ? '✓' : '✗'));
+    libs.push('Supabase: ' + (window.supabase ? '✓' : '✗'));
+    libs.push('Babel: ' + (window.Babel ? '✓' : '✗'));
+    s.innerHTML = elapsed + 's · ' + libs.join(' · ');
+    if (elapsed > 8) {
+      clearInterval(window._bootCheck);
+      s.innerHTML = '⚠️ Algo no carga. Estado: ' + libs.join(' · ') + '<br><br>Comprueba tu conexión o desactiva bloqueadores.';
+      s.style.color = '#c00';
+    }
+  }, 200);
+  // Error global handler antes de React
+  window.addEventListener('error', function(e) {
+    var s = document.getElementById('boot-status');
+    if (s) {
+      s.innerHTML = '⚠️ ' + (e.message || 'Error') + '<br>en ' + (e.filename || '?') + ':' + (e.lineno || '?');
+      s.style.color = '#c00';
+    }
+  });
+</script>
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useRef } = React;
 
@@ -26,23 +60,30 @@ const { useState, useEffect, useRef } = React;
 const SUPABASE_URL = 'https://mbpmoipqcaaudwtzjydn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_UJsJcTAfaU-Vuo3NTNzbRg_mceqVPu0';
 const SUPABASE_BUCKET = 'ecumanager';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Sube un dataURL (base64) al bucket y devuelve la URL pública
+// Cliente lazy: lo creamos cuando se use por primera vez,
+// no al cargar el script (window.supabase puede no estar listo aún).
+let _supabase = null;
+function getSupabase() {
+  if (_supabase) return _supabase;
+  if (!window.supabase || !window.supabase.createClient) {
+    throw new Error('Supabase SDK no cargado todavía. Recarga la página.');
+  }
+  _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  return _supabase;
+}
+
 async function uploadDataUrl(path, dataUrl) {
-  // dataUrl: "data:image/jpeg;base64,..."
   const res = await fetch(dataUrl);
   const blob = await res.blob();
-  const { error } = await supabase.storage.from(SUPABASE_BUCKET).upload(path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
+  const { error } = await getSupabase().storage.from(SUPABASE_BUCKET).upload(path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
   if (error) throw error;
-  const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
-  // Añadimos cache-buster para que al sobrescribir se vea la nueva foto
+  const { data } = getSupabase().storage.from(SUPABASE_BUCKET).getPublicUrl(path);
   return data.publicUrl + '?t=' + Date.now();
 }
 
-// Lee la fila completa de un club
 async function cloudLoad(clubCode) {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('club_data')
     .select('data')
     .eq('club_code', clubCode)
@@ -51,15 +92,13 @@ async function cloudLoad(clubCode) {
   return data ? data.data : null;
 }
 
-// Upsert: crea o actualiza el registro de un club
 async function cloudSave(clubCode, payload) {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('club_data')
     .upsert({ club_code: clubCode, data: payload, updated_at: new Date().toISOString() }, { onConflict: 'club_code' });
   if (error) throw error;
 }
 
-// Sanea el código del club (alfanumérico + guiones, minúsculas)
 function sanitizeClubCode(code) {
   return (code || '').toLowerCase().trim().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
 }
@@ -120,16 +159,13 @@ function Ecumanager() {
 
   const [badgeImages, setBadgeImages] = useState({});
 
-  const [clubMode, setClubMode] = useState(() => {
-    try { return localStorage.getItem('ecumanager_club_mode') === '1'; }
-    catch (e) { return false; }
+  // Tipo de sesión: 'club' (admin) o 'rider' (jinete) o null (no logado)
+  const [userType, setUserType] = useState(() => {
+    try { return localStorage.getItem('ecumanager_user_type') || ''; } catch (e) { return ''; }
   });
-
-  const toggleClubMode = () => {
-    const next = !clubMode;
-    setClubMode(next);
-    try { localStorage.setItem('ecumanager_club_mode', next ? '1' : '0'); } catch (e) {}
-  };
+  const [riderName, setRiderName] = useState(() => {
+    try { return localStorage.getItem('ecumanager_rider_name') || ''; } catch (e) { return ''; }
+  });
 
   const handleImageUpload = (horseName, event) => {
     const file = event.target.files[0];
@@ -433,8 +469,14 @@ function Ecumanager() {
 
   // Cerrar sesión del club: limpia estado y vuelve a la pantalla de entrada
   const exitClub = () => {
-    if (!confirm('¿Salir del club? Tus datos seguirán guardados en la nube, podrás volver con el mismo código.')) return;
+    if (!confirm('¿Cambiar de sesión? Tus datos seguirán guardados en la nube.')) return;
     initialLoadDone.current = false;
+    try {
+      localStorage.removeItem('ecumanager_user_type');
+      localStorage.removeItem('ecumanager_rider_name');
+    } catch (e) {}
+    setUserType('');
+    setRiderName('');
     setClubCode('');
     setClubHorses([]);
     setClubRiders([]);
@@ -512,7 +554,7 @@ function Ecumanager() {
     rehabilitacion: { label: 'Rehabilitación', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
     baja: { label: 'Baja', color: 'bg-stone-200 text-stone-600', dot: 'bg-stone-400' },
   };
-  const riderName = (id) => clubRiders.find(r => r.id === id)?.name || '—';
+  const riderNameById = (id) => clubRiders.find(r => r.id === id)?.name || '—';
 
   const ROLE_LABELS = {
     alumno: { label: 'Alumno', color: 'bg-sky-100 text-sky-700', icon: '🎒' },
@@ -557,7 +599,7 @@ function Ecumanager() {
             </div>
           </div>
         </button>
-        {clubMode && !isLocked && (
+        {userType === 'club' && !isLocked && (
           <label className="absolute top-2 right-2 bg-stone-900 px-2 py-1 rounded-md shadow-lg cursor-pointer z-10 flex items-center gap-1">
             <input type="file" accept="image/*" className="hidden" onChange={(e) => handleBadgeImageUpload(badge.id, e)} />
             <span className="text-xs">📷</span>
@@ -1078,69 +1120,60 @@ function Ecumanager() {
           ))}
         </div>
 
-        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Administración del club</h2>
-        <button onClick={toggleClubMode} className={`w-full rounded-2xl p-4 flex items-center justify-between transition border-2 ${clubMode ? 'bg-stone-900 border-yellow-300' : 'bg-white border-stone-200'}`}>
-          <div className="flex items-center gap-3">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl ${clubMode ? 'bg-yellow-300' : 'bg-stone-100'}`}>🏛️</div>
-            <div className="text-left">
-              <div className={`text-sm font-black uppercase tracking-wider ${clubMode ? 'text-yellow-300' : 'text-stone-900'}`}>Modo Club</div>
-              <div className={`text-[10px] font-bold ${clubMode ? 'text-stone-400' : 'text-stone-500'}`}>
-                {clubMode ? '🟢 Activo · Acceso a herramientas de gestión' : 'Personaliza insignias y gestiona caballos'}
-              </div>
+        {userType === 'club' ? (
+          <>
+            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Administración del club</h2>
+            <div className="space-y-2 mb-5">
+              <button onClick={() => setScreen('clubhorses')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🐎</div>
+                  <div className="text-left">
+                    <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de caballos</div>
+                    <div className="text-[10px] font-bold text-stone-500">{clubHorses.filter(h => h.status !== 'baja').length} activos · {clubHorses.filter(h => h.status === 'baja').length} en baja</div>
+                  </div>
+                </div>
+                <ChevronRight size={20} className="text-stone-400" />
+              </button>
+
+              <button onClick={() => setScreen('clubriders')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">👥</div>
+                  <div className="text-left">
+                    <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de jinetes</div>
+                    <div className="text-[10px] font-bold text-stone-500">{clubRiders.filter(r => r.status !== 'baja').length} activos · {clubRiders.filter(r => r.status === 'baja').length} en baja</div>
+                  </div>
+                </div>
+                <ChevronRight size={20} className="text-stone-400" />
+              </button>
+
+              <button onClick={() => setScreen('clubbadges')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🏅</div>
+                  <div className="text-left">
+                    <div className="text-sm font-black uppercase tracking-wider text-stone-900">Personalizar insignias</div>
+                    <div className="text-[10px] font-bold text-stone-500">{Object.keys(badgeImages).length} de {badges.filter(b => b.unlocked).length} con foto real</div>
+                  </div>
+                </div>
+                <ChevronRight size={20} className="text-stone-400" />
+              </button>
+
+              <button onClick={() => setScreen('clubconfig')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">⚙️</div>
+                  <div className="text-left">
+                    <div className="text-sm font-black uppercase tracking-wider text-stone-900">Configuración del club</div>
+                    <div className="text-[10px] font-bold text-stone-500">Nombre, logo, colores corporativos</div>
+                  </div>
+                </div>
+                <ChevronRight size={20} className="text-stone-400" />
+              </button>
             </div>
-          </div>
-          <div className={`w-11 h-6 rounded-full relative transition ${clubMode ? 'bg-yellow-300' : 'bg-stone-300'}`}>
-            <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${clubMode ? 'left-[22px]' : 'left-0.5'}`}></div>
-          </div>
+          </>
+        ) : null}
+
+        <button onClick={exitClub} className="w-full bg-stone-100 text-stone-700 font-black py-3 rounded-2xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+          <LogOut size={16} /> Cambiar de sesión
         </button>
-
-        {clubMode && (
-          <div className="mt-3 space-y-2">
-            <button onClick={() => setScreen('clubhorses')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🐎</div>
-                <div className="text-left">
-                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de caballos</div>
-                  <div className="text-[10px] font-bold text-stone-500">{clubHorses.filter(h => h.status !== 'baja').length} activos · {clubHorses.filter(h => h.status === 'baja').length} en baja</div>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-stone-400" />
-            </button>
-
-            <button onClick={() => setScreen('clubriders')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">👥</div>
-                <div className="text-left">
-                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Gestor de jinetes</div>
-                  <div className="text-[10px] font-bold text-stone-500">{clubRiders.filter(r => r.status !== 'baja').length} activos · {clubRiders.filter(r => r.status === 'baja').length} en baja</div>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-stone-400" />
-            </button>
-
-            <button onClick={() => setScreen('clubbadges')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">🏅</div>
-                <div className="text-left">
-                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Personalizar insignias</div>
-                  <div className="text-[10px] font-bold text-stone-500">{Object.keys(badgeImages).length} de {badges.filter(b => b.unlocked).length} con foto real</div>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-stone-400" />
-            </button>
-
-            <button onClick={() => setScreen('clubconfig')} className="w-full bg-white border-2 border-stone-200 rounded-2xl p-4 flex items-center justify-between hover:border-yellow-300 transition">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center text-xl">⚙️</div>
-                <div className="text-left">
-                  <div className="text-sm font-black uppercase tracking-wider text-stone-900">Configuración del club</div>
-                  <div className="text-[10px] font-bold text-stone-500">Nombre, logo, colores corporativos</div>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-stone-400" />
-            </button>
-          </div>
-        )}
       </div>
     </>
   );
@@ -2018,6 +2051,11 @@ function Ecumanager() {
   };
 
   const renderScreen = () => {
+    // Pantallas admin solo accesibles para userType === 'club'
+    const adminScreens = ['clubhorses','clubhorseedit','clubriders','clubrideredit','clubconfig','clubbadges'];
+    if (adminScreens.includes(screen) && userType !== 'club') {
+      return <ProfileScreen />;
+    }
     if (screen === 'home') return <HomeScreen />;
     if (screen === 'badges') return <BadgesScreen />;
     if (screen === 'badge') return <BadgeDetailScreen />;
@@ -2035,48 +2073,103 @@ function Ecumanager() {
     return <HomeScreen />;
   };
 
-  // === Pantalla de entrada al club ===
+  // === Pantalla de entrada: elegir tipo + código de club ===
   const ClubCodeScreen = () => {
+    const [step, setStep] = useState('choose'); // 'choose' | 'club' | 'rider'
     const [code, setCode] = useState('');
-    const [busy, setBusy] = useState(false);
+    const [name, setName] = useState('');
 
-    const enter = async () => {
+    const enterAsClub = () => {
       const clean = sanitizeClubCode(code);
-      if (clean.length < 3) { alert('El código debe tener al menos 3 caracteres (letras, números o guiones).'); return; }
-      setBusy(true);
+      if (clean.length < 3) { alert('El código debe tener al menos 3 caracteres.'); return; }
+      try { localStorage.setItem('ecumanager_user_type', 'club'); } catch (e) {}
+      setUserType('club');
       setClubCode(clean);
     };
 
+    const enterAsRider = () => {
+      const clean = sanitizeClubCode(code);
+      if (clean.length < 3) { alert('El código del club debe tener al menos 3 caracteres.'); return; }
+      if (!name.trim()) { alert('Indica tu nombre.'); return; }
+      try {
+        localStorage.setItem('ecumanager_user_type', 'rider');
+        localStorage.setItem('ecumanager_rider_name', name.trim());
+      } catch (e) {}
+      setUserType('rider');
+      setRiderName(name.trim());
+      setClubCode(clean);
+    };
+
+    if (step === 'choose') {
+      return (
+        <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900">
+          <div className="flex-1 flex flex-col items-center justify-center px-6 text-white">
+            <div className="text-6xl mb-4">🏇</div>
+            <div className="text-3xl font-black mb-1">Ecumanager</div>
+            <div className="text-sm text-stone-400 font-bold mb-10 text-center max-w-xs">¿Cómo entras a la app?</div>
+
+            <div className="w-full max-w-xs space-y-3">
+              <button onClick={() => setStep('rider')} className="w-full bg-white text-stone-900 rounded-2xl p-5 text-left">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="text-3xl">🎒</div>
+                  <div className="text-lg font-black uppercase tracking-wider">Soy jinete</div>
+                </div>
+                <div className="text-xs text-stone-600 font-bold">Veo mis paseos, insignias y los caballos del club</div>
+              </button>
+
+              <button onClick={() => setStep('club')} className="w-full bg-yellow-300 text-stone-900 rounded-2xl p-5 text-left">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="text-3xl">🏛️</div>
+                  <div className="text-lg font-black uppercase tracking-wider">Soy del club</div>
+                </div>
+                <div className="text-xs text-stone-800 font-bold">Gestiono caballos, jinetes, insignias y configuración</div>
+              </button>
+            </div>
+          </div>
+          <div className="pb-6 text-center text-[10px] text-stone-600 font-bold">Prototipo · Datos compartidos vía Supabase</div>
+        </div>
+      );
+    }
+
+    // Formulario para club o jinete
+    const isClub = step === 'club';
     return (
       <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900">
+        <div className="px-5 pt-5">
+          <button onClick={() => setStep('choose')} className="flex items-center gap-1 text-white text-sm font-black">
+            <ChevronLeft size={20} /> Volver
+          </button>
+        </div>
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-white">
-          <div className="text-6xl mb-4">🏇</div>
-          <div className="text-3xl font-black mb-1">Ecumanager</div>
-          <div className="text-sm text-stone-400 font-bold mb-10 text-center max-w-xs">Introduce el código de tu club para acceder a su contenido</div>
+          <div className="text-6xl mb-4">{isClub ? '🏛️' : '🎒'}</div>
+          <div className="text-2xl font-black mb-1">{isClub ? 'Entrar como club' : 'Entrar como jinete'}</div>
+          <div className="text-sm text-stone-400 font-bold mb-8 text-center max-w-xs">
+            {isClub ? 'Elige un código para tu club. Si ya existe, accederás a su contenido.' : 'Introduce el código del club al que perteneces y tu nombre.'}
+          </div>
 
-          <div className="w-full max-w-xs">
-            <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-1.5">Código de club</div>
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') enter(); }}
-              placeholder="p.ej. lafinca"
-              autoFocus
-              className="w-full bg-stone-800 border-2 border-stone-700 rounded-xl p-4 text-base font-bold text-white placeholder-stone-500 focus:border-yellow-400 outline-none"
-            />
-            <div className="text-[10px] text-stone-500 mt-2 leading-relaxed">
-              Letras, números y guiones. Si el código no existe, se creará un club nuevo. Si ya existe, verás sus datos.
+          <div className="w-full max-w-xs space-y-3">
+            {!isClub && (
+              <div>
+                <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-1.5">Tu nombre</div>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="p.ej. Carlota Van der Berg"
+                  className="w-full bg-stone-800 border-2 border-stone-700 rounded-xl p-4 text-base font-bold text-white placeholder-stone-500 focus:border-yellow-400 outline-none" />
+              </div>
+            )}
+            <div>
+              <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-1.5">Código de club</div>
+              <input type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="p.ej. lafinca"
+                onKeyDown={(e) => { if (e.key === 'Enter') (isClub ? enterAsClub : enterAsRider)(); }}
+                autoFocus={isClub}
+                className="w-full bg-stone-800 border-2 border-stone-700 rounded-xl p-4 text-base font-bold text-white placeholder-stone-500 focus:border-yellow-400 outline-none" />
+              <div className="text-[10px] text-stone-500 mt-1.5">Letras, números y guiones.</div>
             </div>
 
-            <button onClick={enter} disabled={busy} className="w-full mt-5 bg-yellow-300 text-stone-900 font-black py-4 rounded-xl uppercase tracking-widest text-sm disabled:opacity-50">
-              {busy ? 'Cargando…' : 'Entrar al club'}
+            <button onClick={isClub ? enterAsClub : enterAsRider} className="w-full bg-yellow-300 text-stone-900 font-black py-4 rounded-xl uppercase tracking-widest text-sm">
+              {isClub ? 'Entrar al club' : 'Entrar como jinete'}
             </button>
           </div>
         </div>
-        <div className="pb-6 text-center text-[10px] text-stone-600 font-bold">
-          Prototipo · Datos compartidos vía Supabase
-        </div>
+        <div className="pb-6"></div>
       </div>
     );
   };
@@ -2099,26 +2192,28 @@ function Ecumanager() {
     );
   };
 
-  // Si no hay código de club, mostrar pantalla de entrada
-  if (!clubCode) {
+  // Si falta tipo de usuario o código de club, mostrar pantalla de entrada
+  if (!userType || !clubCode) {
     return <ClubCodeScreen />;
   }
+
+  const isClubUser = userType === 'club';
+  const headerBg = isClubUser ? clubConfig.primaryColor : '#1c1917';
+  const headerFg = isClubUser ? clubConfig.accentColor : '#FDE047';
 
   return (
     <div className="min-h-screen w-full bg-white font-sans">
       <SyncIndicator />
-      {clubMode && (
-        <div className="text-center py-1.5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2" style={{ background: clubConfig.primaryColor, color: clubConfig.accentColor }}>
-          <span>🏛️ Modo Club · {clubConfig.shortName || clubConfig.name}</span>
-          <span className="opacity-60">·</span>
-          <button onClick={refreshFromCloud} className="flex items-center gap-1 hover:opacity-80" title="Recargar desde la nube">
-            <RefreshCw size={11} className={syncStatus === 'loading' || syncStatus === 'syncing' ? 'spin' : ''} />
-            <span>Refrescar</span>
-          </button>
-          <span className="opacity-60">·</span>
-          <span className="opacity-80">#{clubCode}</span>
-        </div>
-      )}
+      <div className="text-center py-1.5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2" style={{ background: headerBg, color: headerFg }}>
+        <span>{isClubUser ? '🏛️ Modo Club' : '🎒 Modo Jinete'} · {clubConfig.shortName || clubConfig.name || clubCode}</span>
+        <span className="opacity-60">·</span>
+        <button onClick={refreshFromCloud} className="flex items-center gap-1 hover:opacity-80" title="Recargar desde la nube">
+          <RefreshCw size={11} className={syncStatus === 'loading' || syncStatus === 'syncing' ? 'spin' : ''} />
+          <span>Refrescar</span>
+        </button>
+        <span className="opacity-60">·</span>
+        <span className="opacity-80">#{clubCode}</span>
+      </div>
       <div className="pb-24">{renderScreen()}</div>
       <div className="fixed bottom-0 left-0 right-0 z-40"><BottomNav /></div>
       {showLogger && <LoggerModal />}
@@ -2126,7 +2221,53 @@ function Ecumanager() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Ecumanager />);
+// === Error Boundary: si algo peta, lo muestra en pantalla en vez de quedarse en blanco ===
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null, info: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) { this.setState({ error, info }); console.error('App error:', error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{padding: 20, fontFamily: 'monospace', background: '#fee', color: '#900', minHeight: '100vh'}}>
+          <h1 style={{fontSize: 20, fontWeight: 900, marginBottom: 12}}>⚠️ Error en la app</h1>
+          <div style={{fontSize: 14, marginBottom: 12}}><b>Mensaje:</b> {String(this.state.error.message || this.state.error)}</div>
+          <pre style={{fontSize: 11, background: '#fdd', padding: 10, borderRadius: 6, overflow: 'auto', whiteSpace: 'pre-wrap'}}>{this.state.error.stack || ''}</pre>
+          {this.state.info && this.state.info.componentStack && (
+            <pre style={{fontSize: 11, background: '#fdd', padding: 10, borderRadius: 6, marginTop: 10, overflow: 'auto', whiteSpace: 'pre-wrap'}}>{this.state.info.componentStack}</pre>
+          )}
+          <button onClick={() => { try { localStorage.clear(); } catch(e){}; location.reload(); }} style={{marginTop: 16, padding: '10px 16px', background: '#900', color: 'white', border: 'none', borderRadius: 6, fontWeight: 900, cursor: 'pointer'}}>
+            Limpiar todo y recargar
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// === Espera a que el SDK de Supabase esté cargado antes de montar la app ===
+function mountApp() {
+  if (!window.supabase || !window.supabase.createClient) {
+    // Reintenta cada 50ms hasta 5 segundos
+    if (!window._mountAttempts) window._mountAttempts = 0;
+    window._mountAttempts++;
+    if (window._mountAttempts > 100) {
+      document.getElementById('root').innerHTML = '<div style="padding:20px;font-family:monospace;color:#900"><h1>⚠️ No se pudo cargar el SDK de Supabase</h1><p>Comprueba tu conexión y recarga la página. Si el problema persiste, puede ser que unpkg.com esté caído.</p></div>';
+      return;
+    }
+    setTimeout(mountApp, 50);
+    return;
+  }
+  try {
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ErrorBoundary><Ecumanager /></ErrorBoundary>
+    );
+  } catch (e) {
+    document.getElementById('root').innerHTML = '<div style="padding:20px;font-family:monospace;color:#900"><h1>⚠️ Error al iniciar</h1><pre>' + (e.message || e) + '</pre></div>';
+  }
+}
+mountApp();
 </script>
 </body>
 </html>
