@@ -154,6 +154,8 @@ function Ecumanager() {
   const [clubRiderFilter, setClubRiderFilter] = useState('todos');
   const [showArchivedRiders, setShowArchivedRiders] = useState(false);
   const [clubBadgeFilter, setClubBadgeFilter] = useState('todas');
+  const [editingClassId, setEditingClassId] = useState(null);
+  const [clubClassFilter, setClubClassFilter] = useState('proximas');
 
   const [customImages, setCustomImages] = useState({});
 
@@ -391,6 +393,68 @@ function Ecumanager() {
     saveClubHorses(clubHorses.filter(h => h.id !== id));
   };
 
+  // === CLASES DEL CLUB ===
+  // Helpers de fecha
+  const fmtDate = (d) => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const addDays = (date, days) => {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    return d;
+  };
+  const todayStr = fmtDate(new Date());
+
+  // Genera datos demo a partir de la fecha actual
+  const _today = new Date();
+  const defaultClubClasses = [
+    { id: 'c1', date: fmtDate(addDays(_today, 1)),  time: '18:00', duration: 60, coachId: null, riderId: 'r1', horseId: 'h1', discipline: 'Salto', objectives: ['Trabajar líneas de 4 trancos', 'Mantener ritmo en curvas'], status: 'programada', feedback: '', feedbackRating: 0 },
+    { id: 'c2', date: fmtDate(addDays(_today, 2)),  time: '17:00', duration: 45, coachId: null, riderId: 'r3', horseId: 'h4', discipline: 'Iniciación', objectives: ['Aprender a poner los estribos'], status: 'programada', feedback: '', feedbackRating: 0 },
+    { id: 'c3', date: fmtDate(addDays(_today, 3)),  time: '19:00', duration: 60, coachId: null, riderId: 'r2', horseId: 'h2', discipline: 'Doma', objectives: ['Flexiones laterales', 'Transiciones aire-aire'], status: 'programada', feedback: '', feedbackRating: 0 },
+    { id: 'c4', date: fmtDate(addDays(_today, -2)), time: '18:30', duration: 75, coachId: null, riderId: 'r1', horseId: 'h3', discipline: 'Salto', objectives: ['Primer salto de 1m'], status: 'realizada', feedback: 'Gran progreso. El primer salto de 1m fue limpio.', feedbackRating: 5 },
+    { id: 'c5', date: fmtDate(addDays(_today, -5)), time: '17:30', duration: 60, coachId: null, riderId: 'r8', horseId: 'h2', discipline: 'Doma', objectives: ['Mejorar contacto con la rienda'], status: 'realizada', feedback: 'Buen control. Trabajar más la posición de las manos.', feedbackRating: 4 },
+  ];
+
+  const [clubClasses, setClubClasses] = useState([]);
+
+  const saveClubClasses = (next) => setClubClasses(next);
+
+  const upsertClubClass = (klass) => {
+    if (klass.id && clubClasses.some(c => c.id === klass.id)) {
+      saveClubClasses(clubClasses.map(c => c.id === klass.id ? klass : c));
+    } else {
+      const newClass = { ...klass, id: 'c' + Date.now() };
+      saveClubClasses([...clubClasses, newClass]);
+    }
+  };
+
+  const deleteClubClass = (id) => {
+    if (!confirm('¿Eliminar esta clase? Esto no se puede deshacer.')) return;
+    saveClubClasses(clubClasses.filter(c => c.id !== id));
+  };
+
+  // Helpers de datos
+  const horseById = (id) => clubHorses.find(h => h.id === id);
+  const riderById = (id) => clubRiders.find(r => r.id === id);
+  const formatHumanDate = (dateStr) => {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+    const dStr = fmtDate(date);
+    if (dStr === fmtDate(today)) return 'Hoy';
+    if (dStr === fmtDate(tomorrow)) return 'Mañana';
+    if (dStr === fmtDate(yesterday)) return 'Ayer';
+    const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  };
+
   // === SINCRONIZACIÓN: descarga al cambiar clubCode ===
   const loadFromCloud = async (code) => {
     if (!code) return;
@@ -404,6 +468,7 @@ function Ecumanager() {
         setClubConfig({ ...defaultClubConfig, ...(data.clubConfig || {}) });
         setCustomImages(data.customImages || {});
         setBadgeImages(data.badgeImages || {});
+        setClubClasses(data.clubClasses || []);
         setSyncMessage('Sincronizado');
       } else {
         // Club nuevo: sembrar con datos por defecto
@@ -412,6 +477,7 @@ function Ecumanager() {
         setClubConfig(defaultClubConfig);
         setCustomImages({});
         setBadgeImages({});
+        setClubClasses(defaultClubClasses);
         setSyncMessage('Club nuevo creado');
       }
       setSyncStatus('ok');
@@ -440,7 +506,7 @@ function Ecumanager() {
       try {
         setSyncStatus('syncing');
         await cloudSave(clubCode, {
-          clubHorses, clubRiders, clubConfig, customImages, badgeImages
+          clubHorses, clubRiders, clubConfig, customImages, badgeImages, clubClasses
         });
         setSyncStatus('ok'); setSyncMessage('Sincronizado');
         setTimeout(() => setSyncStatus('idle'), 1200);
@@ -450,7 +516,7 @@ function Ecumanager() {
       }
     }, 700);
     return () => clearTimeout(handle);
-  }, [clubHorses, clubRiders, clubConfig, customImages, badgeImages, clubCode]);
+  }, [clubHorses, clubRiders, clubConfig, customImages, badgeImages, clubClasses, clubCode]);
 
   // Guarda el código de club en localStorage como preferencia local
   useEffect(() => {
@@ -492,6 +558,7 @@ function Ecumanager() {
     setClubConfig(defaultClubConfig);
     setCustomImages({});
     setBadgeImages({});
+    setClubClasses([]);
     setScreen('home');
   };
 
@@ -541,8 +608,53 @@ function Ecumanager() {
     { category: 'Veterinario', amount: 85, color: '#EF4444', icon: '🏥' },
   ];
   const totalExpenses = expenses.reduce((a, b) => a + b.amount, 0);
-  const nextClass = { date: 'Mañana', fullDate: 'Sábado 24 Mayo', time: '18:00', duration: '1h', horse: 'Tornado', coach: 'Marina López', objectives: ['Trabajar líneas de 4 trancos', 'Mantener ritmo en curvas', 'Calentar 15 min al trote'] };
-  const lastFeedback = { coach: 'Marina López', date: '20 May', horse: 'Trueno', notes: 'Carlota mostró gran progreso. El primer salto de 1m fue limpio.' };
+  // Encuentra al rider actual (el del modo jinete) buscando por nombre
+  const currentRider = riderName ? clubRiders.find(r => r.name.toLowerCase() === riderName.toLowerCase()) : null;
+
+  // Próxima clase del jinete actual (futuras + programadas)
+  const _futureClasses = clubClasses
+    .filter(c => c.status === 'programada' && (c.date > todayStr || (c.date === todayStr && c.time >= new Date().toTimeString().slice(0, 5))))
+    .filter(c => currentRider ? c.riderId === currentRider.id : false)
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const _nextRaw = _futureClasses[0];
+  const nextClass = _nextRaw ? (() => {
+    const h = horseById(_nextRaw.horseId);
+    const coach = _nextRaw.coachId ? riderById(_nextRaw.coachId) : null;
+    return {
+      raw: _nextRaw,
+      date: formatHumanDate(_nextRaw.date),
+      fullDate: (() => {
+        const [y,m,d] = _nextRaw.date.split('-').map(Number);
+        const dt = new Date(y, m-1, d);
+        const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+        return `${days[dt.getDay()]} ${dt.getDate()} ${months[dt.getMonth()]}`;
+      })(),
+      time: _nextRaw.time,
+      duration: `${_nextRaw.duration} min`,
+      horse: h ? h.name : '— caballo —',
+      coach: coach ? coach.name : '— sin profesor —',
+      objectives: _nextRaw.objectives || [],
+    };
+  })() : null;
+
+  // Última valoración recibida por el jinete actual
+  const _lastDoneClass = clubClasses
+    .filter(c => c.status === 'realizada' && c.feedback && c.feedback.trim())
+    .filter(c => currentRider ? c.riderId === currentRider.id : false)
+    .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))[0];
+  const lastFeedback = _lastDoneClass ? (() => {
+    const h = horseById(_lastDoneClass.horseId);
+    const coach = _lastDoneClass.coachId ? riderById(_lastDoneClass.coachId) : null;
+    return {
+      raw: _lastDoneClass,
+      coach: coach ? coach.name : '— sin profesor —',
+      date: formatHumanDate(_lastDoneClass.date),
+      horse: h ? h.name : '— caballo —',
+      notes: _lastDoneClass.feedback,
+      rating: _lastDoneClass.feedbackRating || 0,
+    };
+  })() : null;
   const feelings = [
     { name: 'Conexión', color: '#10b981', emoji: '💚' },
     { name: 'Tranquila', color: '#3b82f6', emoji: '💙' },
@@ -651,7 +763,7 @@ function Ecumanager() {
       { id: 'clubhome', icon: Home, label: 'Inicio', activeOn: ['clubhome','home'] },
       { id: 'clubhorses', icon: Heart, label: 'Caballos', activeOn: ['clubhorses','clubhorseedit'] },
       { id: 'clubriders', icon: User, label: 'Jinetes', activeOn: ['clubriders','clubrideredit'] },
-      { id: 'clubclasses', icon: Calendar, label: 'Clases', activeOn: ['clubclasses'] },
+      { id: 'clubclasses', icon: Calendar, label: 'Clases', activeOn: ['clubclasses','clubclassedit'] },
       { id: 'clubmore', icon: Settings, label: 'Más', activeOn: ['clubmore','clubbadges','clubconfig','profile'] },
     ];
 
@@ -726,17 +838,28 @@ function Ecumanager() {
               <div className="text-[10px] font-bold text-stone-400 mt-0.5">{stats.monthRides} monturas</div>
             </div>
           </div>
-          <button onClick={() => setScreen('next')} className="w-full bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-yellow-300 flex items-center justify-center"><Calendar size={20} className="text-stone-900" strokeWidth={2.5} /></div>
-              <div className="text-left">
-                <div className="text-[10px] text-yellow-700 font-black uppercase tracking-widest">Próxima clase</div>
-                <div className="text-sm font-black text-stone-900">{nextClass.date} · {nextClass.time}</div>
-                <div className="text-xs text-stone-600 font-bold">con {nextClass.horse} · {nextClass.coach}</div>
+          {nextClass ? (
+            <button onClick={() => setScreen('next')} className="w-full bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-yellow-300 flex items-center justify-center"><Calendar size={20} className="text-stone-900" strokeWidth={2.5} /></div>
+                <div className="text-left">
+                  <div className="text-[10px] text-yellow-700 font-black uppercase tracking-widest">Próxima clase</div>
+                  <div className="text-sm font-black text-stone-900">{nextClass.date} · {nextClass.time}</div>
+                  <div className="text-xs text-stone-600 font-bold">con {nextClass.horse} · {nextClass.coach}</div>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-stone-400" />
+            </button>
+          ) : (
+            <div className="w-full bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-4 mb-5 flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-stone-200 flex items-center justify-center"><Calendar size={20} className="text-stone-500" strokeWidth={2.5} /></div>
+              <div>
+                <div className="text-[10px] text-stone-500 font-black uppercase tracking-widest">Próxima clase</div>
+                <div className="text-sm font-bold text-stone-600">Sin clases programadas</div>
+                <div className="text-[10px] text-stone-500">El club te asignará una pronto</div>
               </div>
             </div>
-            <ChevronRight size={20} className="text-stone-400" />
-          </button>
+          )}
           <h2 className="text-lg font-black text-stone-900 uppercase mb-3">Tu historia</h2>
           <div className="space-y-3">
             {feed.map(ride => (
@@ -1084,26 +1207,57 @@ function Ecumanager() {
     <>
       <Header title="Próxima clase" back={() => setScreen('home')} />
       <div className="px-5 pt-3">
-        <div className="bg-stone-900 rounded-3xl p-6 mb-5 text-white">
-          <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-2">{nextClass.date}</div>
-          <div className="text-3xl font-black mb-1">{nextClass.fullDate}</div>
-          <div className="flex items-center gap-2 text-stone-300 text-sm"><Clock size={16} /><span className="font-bold">{nextClass.time} · {nextClass.duration}</span></div>
-        </div>
-        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest flex items-center gap-2"><Zap size={14} className="text-yellow-500" /> Objetivos</h2>
-        <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-6 space-y-3">
-          {nextClass.objectives.map((obj, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-black text-yellow-700">{i + 1}</span></div>
-              <span className="text-sm text-stone-700 font-medium">{obj}</span>
+        {nextClass ? (
+          <>
+            <div className="bg-stone-900 rounded-3xl p-6 mb-5 text-white">
+              <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest mb-2">{nextClass.date}</div>
+              <div className="text-3xl font-black mb-1">{nextClass.fullDate}</div>
+              <div className="flex items-center gap-2 text-stone-300 text-sm mb-3"><Clock size={16} /><span className="font-bold">{nextClass.time} · {nextClass.duration}</span></div>
+              <div className="pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+                <div>
+                  <div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">Caballo</div>
+                  <div className="text-sm font-black mt-0.5">{nextClass.horse}</div>
+                </div>
+                <div>
+                  <div className="text-[9px] font-black text-yellow-300 uppercase tracking-widest">Profesor</div>
+                  <div className="text-sm font-black mt-0.5">{nextClass.coach}</div>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-        <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Última valoración</h2>
-        <div className="bg-white border border-stone-200 rounded-2xl p-4">
-          <div className="font-black text-stone-900 mb-1">{lastFeedback.coach}</div>
-          <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider mb-3">{lastFeedback.date} · con {lastFeedback.horse}</div>
-          <p className="text-sm text-stone-700 font-medium">{lastFeedback.notes}</p>
-        </div>
+            {nextClass.objectives.length > 0 && (<>
+              <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest flex items-center gap-2"><Zap size={14} className="text-yellow-500" /> Objetivos</h2>
+              <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-6 space-y-3">
+                {nextClass.objectives.map((obj, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-black text-yellow-700">{i + 1}</span></div>
+                    <span className="text-sm text-stone-700 font-medium">{obj}</span>
+                  </div>
+                ))}
+              </div>
+            </>)}
+          </>
+        ) : (
+          <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-8 text-center mb-6">
+            <div className="text-4xl mb-2 opacity-50">📅</div>
+            <div className="text-sm font-black text-stone-900 mb-1">Sin clases programadas</div>
+            <div className="text-xs text-stone-500">Cuando el club te asigne una, aparecerá aquí</div>
+          </div>
+        )}
+        {lastFeedback ? (
+          <>
+            <h2 className="text-xs font-black text-stone-900 mb-3 uppercase tracking-widest">Última valoración</h2>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <div className="flex items-start justify-between mb-1">
+                <div className="font-black text-stone-900">{lastFeedback.coach}</div>
+                {lastFeedback.rating > 0 && (
+                  <div className="text-xs">{'⭐'.repeat(lastFeedback.rating)}</div>
+                )}
+              </div>
+              <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider mb-3">{lastFeedback.date} · con {lastFeedback.horse}</div>
+              <p className="text-sm text-stone-700 font-medium">{lastFeedback.notes}</p>
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   );
@@ -1577,6 +1731,42 @@ function Ecumanager() {
             </button>
           </div>
 
+          {/* Próximas clases */}
+          {(() => {
+            const upcoming = clubClasses
+              .filter(c => c.status === 'programada' && c.date >= todayStr)
+              .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+              .slice(0, 3);
+            if (upcoming.length === 0) return null;
+            return (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-xs font-black text-stone-900 uppercase tracking-widest">Próximas clases</h2>
+                  <button onClick={() => setScreen('clubclasses')} className="text-[10px] font-black text-yellow-600 uppercase tracking-widest">Ver todas →</button>
+                </div>
+                <div className="space-y-2 mb-5">
+                  {upcoming.map(c => {
+                    const r = riderById(c.riderId);
+                    const h = horseById(c.horseId);
+                    return (
+                      <button key={c.id} onClick={() => { setEditingClassId(c.id); setScreen('clubclassedit'); }} className="w-full bg-white border border-stone-200 rounded-2xl p-3 text-left flex gap-3">
+                        <div className="w-14 flex-shrink-0 flex flex-col items-center justify-center bg-stone-900 text-white rounded-xl py-1.5">
+                          <div className="text-[9px] font-black uppercase tracking-widest text-yellow-300">{formatHumanDate(c.date).slice(0,3)}</div>
+                          <div className="text-xs font-black">{c.time}</div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-black text-sm text-stone-900 truncate">{r ? r.name : '— jinete —'}</div>
+                          <div className="text-[10px] text-stone-500 font-bold truncate">🐎 {h ? h.name : '—'} · {c.discipline}</div>
+                        </div>
+                        <ChevronRight size={18} className="text-stone-300 self-center" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
+
           {/* Composición de jinetes */}
           <h2 className="text-xs font-black text-stone-900 uppercase mb-3 tracking-widest">Composición del club</h2>
           <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-5">
@@ -1626,49 +1816,331 @@ function Ecumanager() {
   };
 
   // =====================================================================
-  // CLUB · CLASES (placeholder)
+  // CLUB · CLASES (gestor completo)
   // =====================================================================
-  const ClubClassesScreen = () => (
-    <>
-      <Header title="Clases" />
-      <div className="px-5 pt-3">
-        <div className="bg-gradient-to-br from-stone-900 to-stone-700 rounded-3xl p-6 text-white mb-5">
-          <div className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">Próximamente</div>
-          <div className="text-2xl font-black mt-1">Gestor de clases</div>
-          <div className="text-xs text-stone-300 font-bold mt-2 leading-relaxed">
-            Programa clases, asigna jinetes y caballos, define objetivos y registra valoraciones. Los jinetes verán su próxima clase en su app.
-          </div>
-        </div>
+  const ClubClassesScreen = () => {
+    const filters = [
+      { id: 'proximas', label: 'Próximas' },
+      { id: 'hoy', label: 'Hoy' },
+      { id: 'pasadas', label: 'Pasadas' },
+      { id: 'canceladas', label: 'Canceladas' },
+      { id: 'todas', label: 'Todas' },
+    ];
 
-        <h2 className="text-xs font-black text-stone-900 uppercase mb-3 tracking-widest">Qué podrás hacer</h2>
-        <div className="space-y-2 mb-5">
-          {[
-            { icon: '📅', title: 'Crear clases', desc: 'Día, hora, duración, profesor' },
-            { icon: '🎯', title: 'Definir objetivos', desc: 'Qué se va a trabajar en cada sesión' },
-            { icon: '🐎', title: 'Asignar caballo', desc: 'Cada jinete con su montura' },
-            { icon: '📝', title: 'Registrar valoración', desc: 'Feedback del profesor tras la clase' },
-            { icon: '📊', title: 'Histórico', desc: 'Ver clases pasadas por jinete o caballo' },
-          ].map((item, i) => (
-            <div key={i} className="bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-3 opacity-60">
-              <div className="text-2xl">{item.icon}</div>
-              <div className="flex-1">
-                <div className="text-sm font-black text-stone-900">{item.title}</div>
-                <div className="text-[10px] text-stone-500 font-bold">{item.desc}</div>
+    const today = todayStr;
+    let visible = [...clubClasses];
+    if (clubClassFilter === 'proximas') {
+      visible = visible.filter(c => c.date >= today && c.status === 'programada');
+      visible.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+    } else if (clubClassFilter === 'hoy') {
+      visible = visible.filter(c => c.date === today);
+      visible.sort((a, b) => a.time.localeCompare(b.time));
+    } else if (clubClassFilter === 'pasadas') {
+      visible = visible.filter(c => c.status === 'realizada' || (c.date < today && c.status !== 'cancelada'));
+      visible.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+    } else if (clubClassFilter === 'canceladas') {
+      visible = visible.filter(c => c.status === 'cancelada');
+      visible.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+    } else {
+      visible.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+    }
+
+    // Agrupar por fecha
+    const grouped = {};
+    visible.forEach(c => {
+      if (!grouped[c.date]) grouped[c.date] = [];
+      grouped[c.date].push(c);
+    });
+    const orderedDates = Object.keys(grouped);
+
+    const statusMeta = {
+      programada: { label: 'Programada', color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },
+      realizada: { label: 'Realizada', color: 'bg-green-100 text-green-700', dot: 'bg-green-500' },
+      cancelada: { label: 'Cancelada', color: 'bg-stone-200 text-stone-600', dot: 'bg-stone-400' },
+    };
+
+    return (
+      <>
+        <Header title="Clases" action={
+          <button onClick={() => { setEditingClassId('new'); setScreen('clubclassedit'); }} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Plus size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Nueva</span>
+          </button>
+        } />
+        <div className="px-5 pt-3">
+          {/* Resumen */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {[
+              { label: 'Próximas', count: clubClasses.filter(c => c.date >= today && c.status === 'programada').length, color: 'from-blue-400 to-blue-600' },
+              { label: 'Hoy', count: clubClasses.filter(c => c.date === today).length, color: 'from-yellow-400 to-yellow-500' },
+              { label: 'Realizadas', count: clubClasses.filter(c => c.status === 'realizada').length, color: 'from-green-400 to-green-600' },
+            ].map(s => (
+              <div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-2xl p-3 text-white`}>
+                <div className="text-[9px] font-black uppercase tracking-widest opacity-90">{s.label}</div>
+                <div className="text-2xl font-black leading-none mt-1">{s.count}</div>
               </div>
-              <Lock size={14} className="text-stone-400" />
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-3 flex gap-2">
-          <div className="text-lg">💡</div>
-          <div className="text-xs text-stone-700 leading-relaxed">
-            Este módulo aún no está activo en el prototipo. Pídeselo a tu desarrollador cuando quieras desbloquearlo.
+            ))}
           </div>
+
+          {/* Filtros */}
+          <div className="flex gap-2 mb-4 overflow-x-auto -mx-5 px-5 pb-1">
+            {filters.map(f => (
+              <button key={f.id} onClick={() => setClubClassFilter(f.id)} className={`px-3.5 py-2 rounded-full text-xs font-black uppercase tracking-wider whitespace-nowrap ${clubClassFilter === f.id ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{f.label}</button>
+            ))}
+          </div>
+
+          {/* Lista */}
+          {orderedDates.length === 0 ? (
+            <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-8 text-center">
+              <div className="text-4xl mb-2 opacity-50">📅</div>
+              <div className="text-sm font-black text-stone-900 mb-1">Sin clases</div>
+              <div className="text-xs text-stone-500">Cambia el filtro o programa una clase nueva</div>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {orderedDates.map(date => (
+                <div key={date}>
+                  <div className="text-xs font-black text-stone-900 uppercase tracking-widest mb-2">{formatHumanDate(date)}</div>
+                  <div className="space-y-2">
+                    {grouped[date].map(c => {
+                      const r = riderById(c.riderId);
+                      const h = horseById(c.horseId);
+                      const coach = c.coachId ? riderById(c.coachId) : null;
+                      const sMeta = statusMeta[c.status] || statusMeta.programada;
+                      return (
+                        <button key={c.id} onClick={() => { setEditingClassId(c.id); setScreen('clubclassedit'); }} className="w-full bg-white border border-stone-200 rounded-2xl p-3 text-left flex gap-3">
+                          <div className="w-14 flex-shrink-0 flex flex-col items-center justify-center bg-stone-900 text-white rounded-xl py-1.5">
+                            <div className="text-[9px] font-black uppercase tracking-widest text-yellow-300">{c.time.split(':')[0]}h</div>
+                            <div className="text-xs font-black">{c.time.split(':')[1]}m</div>
+                            <div className="text-[9px] font-black mt-0.5 opacity-60">{c.duration}'</div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <div className="font-black text-sm text-stone-900 truncate">{r ? r.name : '— jinete —'}</div>
+                              <div className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap flex items-center gap-1 ${sMeta.color}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${sMeta.dot}`}></span>{sMeta.label}
+                              </div>
+                            </div>
+                            <div className="text-[10px] text-stone-500 font-bold truncate">
+                              🐎 {h ? h.name : '— caballo —'} · {c.discipline}
+                              {coach && <> · 🎓 {coach.name.split(' ')[0]}</>}
+                            </div>
+                            {c.status === 'realizada' && c.feedback && (
+                              <div className="text-[10px] text-stone-700 mt-1 italic line-clamp-2">"{c.feedback}"</div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  };
+
+  // =====================================================================
+  // CLUB · EDICIÓN / ALTA DE CLASE
+  // =====================================================================
+  const ClubClassEditScreen = () => {
+    const isNew = editingClassId === 'new';
+    const existing = isNew ? null : clubClasses.find(c => c.id === editingClassId);
+    const [form, setForm] = useState(existing || {
+      date: todayStr,
+      time: '18:00',
+      duration: 60,
+      coachId: null,
+      riderId: '',
+      horseId: '',
+      discipline: 'Salto',
+      objectives: [],
+      status: 'programada',
+      feedback: '',
+      feedbackRating: 0,
+    });
+    const [newObjective, setNewObjective] = useState('');
+
+    const update = (k, v) => setForm({ ...form, [k]: v });
+
+    const handleSave = () => {
+      if (!form.riderId) { alert('Selecciona un jinete.'); return; }
+      if (!form.horseId) { alert('Selecciona un caballo.'); return; }
+      if (!form.date || !form.time) { alert('Fecha y hora son obligatorias.'); return; }
+      upsertClubClass(form);
+      setScreen('clubclasses');
+    };
+
+    const addObjective = () => {
+      const t = newObjective.trim();
+      if (!t) return;
+      update('objectives', [...(form.objectives || []), t]);
+      setNewObjective('');
+    };
+
+    const removeObjective = (idx) => {
+      update('objectives', form.objectives.filter((_, i) => i !== idx));
+    };
+
+    const activeRiders = clubRiders.filter(r => r.status === 'activo');
+    const teachers = activeRiders.filter(r => r.role === 'profesor');
+    const students = activeRiders.filter(r => r.role !== 'profesor');
+    const activeHorses = clubHorses.filter(h => h.status !== 'baja');
+
+    const isPast = form.date < todayStr || (form.date === todayStr && form.time < new Date().toTimeString().slice(0, 5));
+    const canMarkDone = form.status === 'programada' && isPast;
+
+    return (
+      <>
+        <Header title={isNew ? 'Nueva clase' : 'Editar clase'} back={() => setScreen('clubclasses')} action={
+          <button onClick={handleSave} className="bg-yellow-300 text-stone-900 px-3 py-1.5 rounded-md flex items-center gap-1 shadow">
+            <Check size={16} strokeWidth={3} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Guardar</span>
+          </button>
+        } />
+        <div className="px-5 pt-4 pb-8">
+          {/* Fecha y hora */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Fecha *</div>
+              <input type="date" value={form.date} onChange={(e) => update('date', e.target.value)}
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+            <label className="block">
+              <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Hora *</div>
+              <input type="time" value={form.time} onChange={(e) => update('time', e.target.value)}
+                className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none" />
+            </label>
+          </div>
+
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Duración</div>
+            <div className="flex gap-2 flex-wrap">
+              {[30, 45, 60, 75, 90, 120].map(d => (
+                <button key={d} onClick={() => update('duration', d)}
+                  className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${form.duration === d ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{d}'</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Jinete */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Jinete *</div>
+            <select value={form.riderId} onChange={(e) => update('riderId', e.target.value)}
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+              <option value="">— Selecciona jinete —</option>
+              {students.map(r => <option key={r.id} value={r.id}>{r.name} · {r.level}</option>)}
+            </select>
+          </div>
+
+          {/* Caballo */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Caballo *</div>
+            <select value={form.horseId} onChange={(e) => update('horseId', e.target.value)}
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+              <option value="">— Selecciona caballo —</option>
+              {activeHorses.map(h => <option key={h.id} value={h.id}>{h.name} · {h.discipline} {h.status === 'rehabilitacion' ? '(rehab)' : ''}</option>)}
+            </select>
+          </div>
+
+          {/* Profesor (opcional) */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Profesor</div>
+            <select value={form.coachId || ''} onChange={(e) => update('coachId', e.target.value || null)}
+              className="w-full border-2 border-stone-200 rounded-xl p-3 text-sm font-bold focus:border-yellow-400 outline-none bg-white">
+              <option value="">— Sin asignar —</option>
+              {teachers.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+            </select>
+            {teachers.length === 0 && <div className="text-[10px] text-stone-500 mt-1">No hay profesores. Añade jinetes con rol "Profesor" en el gestor de jinetes.</div>}
+          </div>
+
+          {/* Disciplina */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Disciplina</div>
+            <div className="flex gap-2 flex-wrap">
+              {['Salto', 'Doma', 'Iniciación', 'Concurso completo', 'Raid', 'Otros'].map(d => (
+                <button key={d} onClick={() => update('discipline', d)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${form.discipline === d ? 'bg-stone-900 text-yellow-300' : 'bg-stone-100 text-stone-600'}`}>{d}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Objetivos */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Objetivos de la clase</div>
+            <div className="space-y-1.5 mb-2">
+              {(form.objectives || []).map((obj, i) => (
+                <div key={i} className="bg-yellow-50 border border-yellow-200 rounded-xl p-2.5 flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-yellow-300 flex items-center justify-center text-[10px] font-black text-stone-900 flex-shrink-0">{i + 1}</div>
+                  <div className="flex-1 text-sm text-stone-800">{obj}</div>
+                  <button onClick={() => removeObjective(i)} className="p-1 text-stone-400 hover:text-red-500">
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input type="text" value={newObjective} onChange={(e) => setNewObjective(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addObjective(); } }}
+                placeholder="Añadir objetivo…"
+                className="flex-1 border-2 border-stone-200 rounded-xl p-2.5 text-sm focus:border-yellow-400 outline-none" />
+              <button onClick={addObjective} className="bg-stone-900 text-white px-4 rounded-xl text-xs font-black uppercase tracking-widest">
+                Añadir
+              </button>
+            </div>
+          </div>
+
+          {/* Estado */}
+          <div className="mb-4">
+            <div className="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1.5">Estado</div>
+            <div className="grid grid-cols-3 gap-2">
+              {['programada','realizada','cancelada'].map(s => (
+                <button key={s} onClick={() => update('status', s)}
+                  className={`border-2 rounded-xl p-2.5 text-center transition ${form.status === s ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200 bg-white'}`}>
+                  <div className="text-xs font-black uppercase tracking-wider text-stone-900 capitalize">{s}</div>
+                </button>
+              ))}
+            </div>
+            {canMarkDone && (
+              <button onClick={() => update('status', 'realizada')} className="w-full mt-2 bg-green-100 text-green-700 font-black py-2 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+                <Check size={14} /> Marcar como realizada
+              </button>
+            )}
+          </div>
+
+          {/* Valoración (solo si realizada) */}
+          {form.status === 'realizada' && (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4">
+              <div className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-2">📝 Valoración del profesor</div>
+              <textarea value={form.feedback} onChange={(e) => update('feedback', e.target.value)} rows={4}
+                placeholder="Cómo fue la clase, progreso del jinete, qué trabajar la próxima vez…"
+                className="w-full border-2 border-green-200 rounded-xl p-3 text-sm resize-none focus:border-green-400 outline-none bg-white mb-3" />
+              <div className="text-[10px] font-black text-green-700 uppercase tracking-widest mb-1.5">Puntuación de la sesión</div>
+              <div className="flex gap-1">
+                {[1,2,3,4,5].map(n => (
+                  <button key={n} onClick={() => update('feedbackRating', n)} className="text-2xl">
+                    {n <= (form.feedbackRating || 0) ? '⭐' : '☆'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Acciones */}
+          {!isNew && (
+            <div className="border-t-2 border-stone-100 pt-5">
+              <button onClick={() => { deleteClubClass(existing.id); setScreen('clubclasses'); }}
+                className="w-full bg-red-50 text-red-700 font-black py-3 rounded-xl flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                <Trash size={16} /> Eliminar clase
+              </button>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
 
   // =====================================================================
   // CLUB · MÁS (menú con accesos secundarios)
@@ -2285,7 +2757,7 @@ function Ecumanager() {
 
   const renderScreen = () => {
     // Pantallas solo para club
-    const clubOnly = ['clubhome','clubhorses','clubhorseedit','clubriders','clubrideredit','clubconfig','clubbadges','clubclasses','clubmore'];
+    const clubOnly = ['clubhome','clubhorses','clubhorseedit','clubriders','clubrideredit','clubconfig','clubbadges','clubclasses','clubclassedit','clubmore'];
     // Pantallas solo para jinete
     const riderOnly = ['horse','myhorse','next','badge'];
 
@@ -2308,6 +2780,7 @@ function Ecumanager() {
     if (screen === 'clubconfig') return <ClubConfigScreen />;
     if (screen === 'clubbadges') return <ClubBadgesScreen />;
     if (screen === 'clubclasses') return <ClubClassesScreen />;
+    if (screen === 'clubclassedit') return <ClubClassEditScreen />;
     if (screen === 'clubmore') return <ClubMoreScreen />;
     return userType === 'club' ? <ClubHomeScreen /> : <HomeScreen />;
   };
