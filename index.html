@@ -88,13 +88,16 @@ function Ecumanager() {
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   };
 
+  // Fotos reales de caballos. Si alguna no carga, cambia la URL por una tuya.
+  // Para reemplazar: ve a Google → "horse breed bay portrait" → click derecho en la foto → "Copy image address"
   const horseImages = {
-    Tornado: makeHorseSVG('#5C3318', '#2A1608', '#E8C9A0', '#B88A5A', 'galloping'),
-    Luna: makeHorseSVG('#C99654', '#F5E6C8', '#FFF4D6', '#E8D4A8', 'standing'),
-    Trueno: makeHorseSVG('#1A1410', '#000000', '#9C9088', '#5C544C', 'jumping'),
-    Estrella: makeHorseSVG('#F8F4EC', '#FFFFFF', '#7A7268', '#A8A095', 'standing'),
-    Centella: makeHorseSVG('#A04818', '#5C2A08', '#F4C896', '#D89858', 'galloping'),
-    Rayo: makeHorseSVG('#2A1808', '#0A0400', '#8C6A4A', '#5C3E22', 'jumping'),
+    Tornado:  'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/640px-Nokota_Horses_cropped.jpg',
+    Luna:     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Palomino.jpg/640px-Palomino.jpg',
+    Trueno:   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Friesian_Horse_%28cropped%29.jpg/640px-Friesian_Horse_%28cropped%29.jpg',
+    Estrella: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Andalusian_horse-2.jpg/640px-Andalusian_horse-2.jpg',
+    Centella: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Arabian_horse.jpg/640px-Arabian_horse.jpg',
+    Rayo:     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/HanoverianGelding.jpg/640px-HanoverianGelding.jpg',
+    Kaiser:   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Friesian_Horse_%28cropped%29.jpg/640px-Friesian_Horse_%28cropped%29.jpg',
   };
 
   const feed = [
@@ -112,7 +115,7 @@ function Ecumanager() {
     { name: 'Rayo', color: '#3D2817', rides: 6, lastRide: '3 sem', connection: 58, type: 'Castaño oscuro · 5 años', breed: 'KWPN', height: '1.66m', favorite: false, totalRiders: 2, since: '2021' },
   ].map(h => ({ ...h, image: horseImages[h.name] }));
 
-  const myHorses = [{ name: 'Káiser', color: '#3D2817', image: makeHorseSVG('#3D2817', '#1F1408', '#D4B896', '#A88A66', 'standing'), breed: 'KWPN', height: '1.70m', microchip: '981100002847163', die: 'ES-2018-0084712', birthDate: '12 Abr 2018', sex: 'Macho castrado', stable: 'Box 14 · Cuadra Sur', since: 'Marzo 2022', weight: 542, weightTrend: '+3', condition: 5, mood: 'Activo', moodEmoji: '⚡', ridesMonth: 18, hoursMonth: 22 }];
+  const myHorses = [{ name: 'Káiser', color: '#3D2817', image: horseImages.Kaiser, breed: 'KWPN', height: '1.70m', microchip: '981100002847163', die: 'ES-2018-0084712', birthDate: '12 Abr 2018', sex: 'Macho castrado', stable: 'Box 14 · Cuadra Sur', since: 'Marzo 2022', weight: 542, weightTrend: '+3', condition: 5, mood: 'Activo', moodEmoji: '⚡', ridesMonth: 18, hoursMonth: 22 }];
 
   const healthRecords = [
     { id: 1, icon: '🏥', title: 'Revisión general', date: '15 Abr 2026', vet: 'Dr. Martínez', notes: 'Todo correcto.', cost: 85 },
@@ -788,9 +791,9 @@ function Ecumanager() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex flex-col font-sans relative">
-      <div className="flex-1 overflow-y-auto">{renderScreen()}</div>
-      <BottomNav />
+    <div className="min-h-screen w-full bg-white font-sans">
+      <div className="pb-24">{renderScreen()}</div>
+      <div className="fixed bottom-0 left-0 right-0 z-40"><BottomNav /></div>
       {showLogger && <LoggerModal />}
     </div>
   );
