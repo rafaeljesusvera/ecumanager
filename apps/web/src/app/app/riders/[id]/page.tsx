@@ -3,7 +3,6 @@ import { db, schema } from '@equmanager/database';
 import { and, desc, eq } from 'drizzle-orm';
 import {
   TrashIcon,
-  CheckIcon,
   CalendarBlankIcon,
   MedalIcon,
   TicketIcon,
@@ -12,6 +11,7 @@ import { RIDER_CATEGORIES, RIDER_TIERS } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
 import { DetailShell, DetailSection } from '@/components/detail/DetailShell';
 import { Badge, Button, Field, Input, Select, Textarea } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { deleteRiderAction, updateRiderAction } from '../actions';
@@ -110,9 +110,9 @@ export default async function RiderDetailPage({
     >
       <DetailSection
         title="Datos generales"
-        description="Información visible a instructores y al propio alumno."
+        description="Se guarda solo al salir de cada campo."
       >
-        <form
+        <AutoSaveForm
           action={updateRiderAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -169,12 +169,7 @@ export default async function RiderDetailPage({
               />
             </Field>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection

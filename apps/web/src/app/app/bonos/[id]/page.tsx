@@ -3,12 +3,12 @@ import { db, schema } from '@equmanager/database';
 import { and, desc, eq } from 'drizzle-orm';
 import {
   TrashIcon,
-  CheckIcon,
   GraduationCapIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { DetailShell, DetailSection } from '@/components/detail/DetailShell';
 import { Badge, Button, Field, Input, Textarea } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatCents, formatDate } from '@/lib/format';
 import { deleteBonoAction, updateBonoAction } from '../actions';
@@ -76,8 +76,8 @@ export default async function BonoDetailPage({
         tone: bono.active ? 'success' : 'neutral',
       }}
     >
-      <DetailSection title="Datos del bono">
-        <form
+      <DetailSection title="Datos del bono" description="Se guarda automáticamente al salir de cada campo.">
+        <AutoSaveForm
           action={updateBonoAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -138,12 +138,7 @@ export default async function BonoDetailPage({
               />
             </Field>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection

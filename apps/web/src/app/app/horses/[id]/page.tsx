@@ -3,7 +3,6 @@ import { db, schema } from '@equmanager/database';
 import { and, desc, eq } from 'drizzle-orm';
 import {
   TrashIcon,
-  CheckIcon,
   ClipboardTextIcon,
   CalendarBlankIcon,
   ChatCircleTextIcon,
@@ -22,6 +21,7 @@ import {
   Textarea,
   Badge,
 } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatDate, formatDateTime } from '@/lib/format';
 import {
@@ -135,9 +135,9 @@ export default async function HorseDetailPage({
     >
       <DetailSection
         title="Datos generales"
-        description="Cambios visibles al instante para mozos, instructores y propietarios."
+        description="Se guarda solo al salir de cada campo."
       >
-        <form
+        <AutoSaveForm
           action={updateHorseAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -197,12 +197,7 @@ export default async function HorseDetailPage({
               />
             </Field>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection

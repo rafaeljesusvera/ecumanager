@@ -3,7 +3,6 @@ import { db, schema } from '@equmanager/database';
 import { and, asc, eq } from 'drizzle-orm';
 import {
   TrashIcon,
-  CheckIcon,
   PlusIcon,
   CalendarBlankIcon,
   GraduationCapIcon,
@@ -12,6 +11,7 @@ import { COURSE_STATUSES, DISCIPLINES } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
 import { DetailShell, DetailSection } from '@/components/detail/DetailShell';
 import { Button, Field, Input, Select, Textarea } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatCents, formatDateTime, toDatetimeLocal } from '@/lib/format';
 import {
@@ -100,8 +100,8 @@ export default async function CourseDetailPage({
               : 'neutral',
       }}
     >
-      <DetailSection title="Datos del curso">
-        <form
+      <DetailSection title="Datos del curso" description="Se guarda automáticamente al salir de cada campo.">
+        <AutoSaveForm
           action={updateCourseAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -182,12 +182,7 @@ export default async function CourseDetailPage({
               />
             </Field>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection

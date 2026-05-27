@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { ToastHost } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
   title: {
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className="min-h-screen bg-stone-50 font-sans text-stone-900">
         {children}
+        <ToastHost />
       </body>
     </html>
   );

@@ -20,9 +20,11 @@ export const badges = pgTable(
       .references(() => clubs.id, { onDelete: 'cascade' }),
     code: text('code').notNull(),
     name: text('name').notNull(),
+    subtitle: text('subtitle'),
+    categoryLabel: text('category_label'),
     description: text('description'),
     iconUrl: text('icon_url'),
-    color: text('color').notNull().default('#fbbf24'),
+    color: text('color').notNull().default('#3f8649'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .default(sql`now()`),

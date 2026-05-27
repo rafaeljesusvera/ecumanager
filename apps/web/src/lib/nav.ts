@@ -39,6 +39,7 @@ export function buildNav(roles: ClubRole[]): NavSection[] {
         { href: '/app/events', label: 'Eventos', icon: 'Trophy', roles: ['owner', 'admin', 'instructor'] },
         { href: '/app/news', label: 'Noticias', icon: 'Newspaper', roles: ['owner', 'admin', 'instructor'] },
         { href: '/app/bonos', label: 'Bonos', icon: 'Ticket', roles: ['owner', 'admin', 'instructor'] },
+        { href: '/app/badges', label: 'Insignias', icon: 'Medal', roles: ['owner', 'admin', 'instructor'] },
       ],
     });
     sections.push({

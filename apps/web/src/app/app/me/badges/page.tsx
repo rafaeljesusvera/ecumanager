@@ -5,6 +5,7 @@ import { ensureSession, assertRole } from '@/lib/db';
 import { ensureRiderForProfile } from '@/lib/db/rider';
 import { PageHeader } from '@/components/page/PageHeader';
 import { EmptyState } from '@/components/ui';
+import { BadgeCard } from '@/components/badge/BadgeCard';
 import { formatDate } from '@/lib/format';
 
 export const metadata = { title: 'Mis insignias' };
@@ -27,6 +28,8 @@ export default async function MeBadgesPage() {
       awardedAt: schema.riderBadges.awardedAt,
       notes: schema.riderBadges.notes,
       name: schema.badges.name,
+      subtitle: schema.badges.subtitle,
+      categoryLabel: schema.badges.categoryLabel,
       description: schema.badges.description,
       iconUrl: schema.badges.iconUrl,
       color: schema.badges.color,
@@ -41,7 +44,7 @@ export default async function MeBadgesPage() {
       <PageHeader
         eyebrow="Alumno"
         title="Mis insignias"
-        description="Reconocimientos por hitos en tu progreso ecuestre."
+        description="Tus reconocimientos en formato carta. Tócalas para ver la fecha y la nota del instructor."
       />
 
       {badges.length === 0 ? (
@@ -51,37 +54,30 @@ export default async function MeBadgesPage() {
           description="Tu instructor las otorga al cumplir hitos: primer galope, primer salto, primera competición..."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {badges.map((b) => (
-            <article
-              key={b.id}
-              className="rounded-3xl border border-stone-200 bg-white p-5 shadow-card"
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ backgroundColor: `${b.color}20`, color: b.color }}
-                >
-                  <MedalIcon size={28} weight="fill" />
+            <div key={b.id}>
+              <BadgeCard
+                clubName={session.primary.clubName}
+                recipientName={rider!.name}
+                badge={b}
+              />
+              <div className="mt-3 rounded-2xl border border-stone-200 bg-white p-3 text-xs">
+                <div className="font-bold text-stone-900">
+                  Entregada {formatDate(b.awardedAt)}
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-stone-900">{b.name}</h3>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500">
-                    {formatDate(b.awardedAt)}
+                {b.notes && (
+                  <p className="mt-1 font-medium italic text-stone-600">
+                    «{b.notes}»
                   </p>
-                </div>
+                )}
+                {b.description && !b.notes && (
+                  <p className="mt-1 font-medium text-stone-500">
+                    {b.description}
+                  </p>
+                )}
               </div>
-              {b.description && (
-                <p className="mt-3 text-sm font-medium leading-relaxed text-stone-600">
-                  {b.description}
-                </p>
-              )}
-              {b.notes && (
-                <p className="mt-2 text-xs font-medium italic text-stone-500">
-                  «{b.notes}»
-                </p>
-              )}
-            </article>
+            </div>
           ))}
         </div>
       )}

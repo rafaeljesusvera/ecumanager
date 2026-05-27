@@ -3,13 +3,13 @@ import { db, schema } from '@equmanager/database';
 import { and, eq } from 'drizzle-orm';
 import {
   TrashIcon,
-  CheckIcon,
   GraduationCapIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { EVENT_KINDS, EVENT_STATUSES } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
 import { DetailShell, DetailSection } from '@/components/detail/DetailShell';
 import { Button, Field, Input, Select, Textarea } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatDateTime, toDatetimeLocal } from '@/lib/format';
 import { deleteEventAction, updateEventAction } from '../actions';
@@ -87,8 +87,8 @@ export default async function EventDetailPage({
               : 'neutral',
       }}
     >
-      <DetailSection title="Datos del evento">
-        <form
+      <DetailSection title="Datos del evento" description="Se guarda automáticamente al salir de cada campo.">
+        <AutoSaveForm
           action={updateEventAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -160,12 +160,7 @@ export default async function EventDetailPage({
               />
             </Field>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection

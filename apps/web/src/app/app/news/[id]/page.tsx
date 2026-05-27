@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import { db, schema } from '@equmanager/database';
 import { and, eq } from 'drizzle-orm';
-import { TrashIcon, CheckIcon } from '@phosphor-icons/react/dist/ssr';
+import { TrashIcon } from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { DetailShell, DetailSection } from '@/components/detail/DetailShell';
 import { Button, Field, Input, Textarea } from '@/components/ui';
+import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatDate } from '@/lib/format';
 import { deleteNewsAction, updateNewsAction } from '../actions';
@@ -56,8 +57,8 @@ export default async function NewsDetailPage({
         news.pinned ? { label: 'Fijada', tone: 'brand' } : undefined
       }
     >
-      <DetailSection title="Contenido">
-        <form
+      <DetailSection title="Contenido" description="Se guarda al salir de cada campo.">
+        <AutoSaveForm
           action={updateNewsAction}
           className="grid grid-cols-1 gap-4 md:grid-cols-6"
         >
@@ -91,12 +92,7 @@ export default async function NewsDetailPage({
               Fijar en tablón
             </label>
           </div>
-          <div className="md:col-span-6 flex justify-end">
-            <Button type="submit">
-              <CheckIcon size={14} weight="bold" /> Guardar cambios
-            </Button>
-          </div>
-        </form>
+        </AutoSaveForm>
       </DetailSection>
 
       <DetailSection
