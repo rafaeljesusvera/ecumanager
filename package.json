@@ -1,0 +1,42 @@
+{
+  "name": "equmanager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de gestión integral para clubes ecuestres",
+  "license": "MIT",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore",
+    "db:generate": "pnpm --filter @equmanager/database generate",
+    "db:push": "pnpm --filter @equmanager/database push",
+    "db:migrate": "pnpm --filter @equmanager/database migrate",
+    "db:studio": "pnpm --filter @equmanager/database studio",
+    "db:seed": "pnpm --filter @equmanager/database seed",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build --filter='./packages/*' && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "@types/node": "^22.7.4",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "turbo": "^2.1.3",
+    "typescript": "^5.6.3"
+  }
+}

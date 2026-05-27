@@ -1,0 +1,31 @@
+{
+  "name": "@equmanager/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "build": "expo export",
+    "lint": "echo 'mobile lint pendiente'",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'mobile tests pendientes'",
+    "clean": "rm -rf .expo dist"
+  },
+  "dependencies": {
+    "@equmanager/auth": "workspace:*",
+    "@equmanager/domain": "workspace:*",
+    "expo": "~52.0.0",
+    "expo-router": "~4.0.0",
+    "expo-status-bar": "~2.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.0"
+  },
+  "devDependencies": {
+    "@equmanager/config": "workspace:*",
+    "@types/react": "~18.3.11",
+    "typescript": "^5.6.3"
+  }
+}

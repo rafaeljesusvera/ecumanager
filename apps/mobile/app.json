@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Equmanager",
+    "slug": "equmanager",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "equmanager",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.equmanager.app" },
+    "android": { "package": "com.equmanager.app" },
+    "web": { "bundler": "metro" },
+    "plugins": ["expo-router"]
+  }
+}
