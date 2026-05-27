@@ -1,6 +1,6 @@
 'use server';
 
-import { createServerClient } from '@equmanager/auth';
+import { createAdminClient, createServerClient } from '@equmanager/auth';
 import { redirect } from 'next/navigation';
 
 export async function signInWithPassword(formData: FormData) {
@@ -16,25 +16,48 @@ export async function signInWithPassword(formData: FormData) {
   redirect('/app');
 }
 
+/**
+ * Signup directo sin confirmación de email: creamos el usuario con
+ * `email_confirm: true` usando la service role key y a continuación
+ * iniciamos sesión con el cliente SSR. Cuando vayamos a producción real
+ * volveremos a activar la doble verificación.
+ */
 export async function signUpWithPassword(formData: FormData) {
   const email = String(formData.get('email') ?? '').trim();
   const password = String(formData.get('password') ?? '');
   const fullName = String(formData.get('fullName') ?? '').trim();
 
-  const supabase = await createServerClient();
-  const { error } = await supabase.auth.signUp({
+  if (!email || password.length < 8) {
+    redirect('/signup?error=' + encodeURIComponent('Email o contraseña inválidos'));
+  }
+
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-    },
+    email_confirm: true,
+    user_metadata: { full_name: fullName },
   });
 
   if (error) {
     redirect(`/signup?error=${encodeURIComponent(error.message)}`);
   }
-  redirect('/signup?message=Revisa+tu+email+para+confirmar+la+cuenta');
+  if (!data?.user) {
+    redirect('/signup?error=' + encodeURIComponent('No se pudo crear la cuenta'));
+  }
+
+  // Inicia sesión inmediatamente con el cliente SSR para que las cookies
+  // queden establecidas en la respuesta.
+  const supabase = await createServerClient();
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (signInError) {
+    redirect(`/login?error=${encodeURIComponent(signInError.message)}`);
+  }
+
+  redirect('/onboarding');
 }
 
 export async function signOut() {
