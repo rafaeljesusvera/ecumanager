@@ -1,14 +1,17 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { eq } from 'drizzle-orm';
-import { HorseIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react/dist/ssr';
+import { HorseIcon, ArrowRightIcon } from '@phosphor-icons/react/dist/ssr';
 import { HORSE_KINDS, HORSE_STATUSES } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
 import { PageHeader } from '@/components/page/PageHeader';
 import { Badge, Button, Field, Input, Select, EmptyState } from '@/components/ui';
 import { AutoSubmitSelect } from '@/components/ui/AutoSubmitSelect';
+import { CreatePanel } from '@/components/ui/CreatePanel';
+import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import {
   createHorseAction,
-  deleteHorseAction,
   updateHorseStatusAction,
 } from './actions';
 
@@ -36,20 +39,19 @@ export default async function HorsesPage() {
       <PageHeader
         eyebrow="Hípica"
         title="Caballos"
-        description="Da de alta los caballos del club. Cada uno puede asignarse a un propietario y aparecer en clases."
+        description="Da de alta los caballos del club. Pulsa cualquier caballo para abrir su ficha."
       />
 
-      <section className="mb-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-card">
-        <h2 className="mb-4 text-base font-bold text-stone-900">
-          Añadir caballo
-        </h2>
-        <form
-          action={createHorseAction}
-          className="grid grid-cols-1 gap-3 md:grid-cols-5"
-        >
-          <Field label="Nombre">
-            <Input required name="name" placeholder="Sultán" />
-          </Field>
+      <CreatePanel label="Nuevo caballo" defaultOpen={horses.length === 0}>
+        <form action={createHorseAction} className="grid grid-cols-1 gap-4 md:grid-cols-6">
+          <div className="md:col-span-2 md:row-span-2">
+            <PhotoUpload folder="horses" label="Foto del caballo" />
+          </div>
+          <div className="md:col-span-2">
+            <Field label="Nombre">
+              <Input required name="name" placeholder="Sultán" />
+            </Field>
+          </div>
           <Field label="Tipo">
             <Select name="kind" defaultValue="caballo">
               {HORSE_KINDS.map((k) => (
@@ -71,38 +73,52 @@ export default async function HorsesPage() {
               placeholder="2018"
             />
           </Field>
-          <div className="flex items-end">
-            <Button type="submit" className="w-full">
-              <PlusIcon size={14} weight="bold" /> Añadir
+          <Field label="Color">
+            <Input name="color" placeholder="Castaño" />
+          </Field>
+          <div className="md:col-span-4">
+            <Button type="submit" className="w-full md:w-auto">
+              Crear y abrir ficha
             </Button>
           </div>
         </form>
-      </section>
+      </CreatePanel>
 
       {horses.length === 0 ? (
         <EmptyState
           icon={<HorseIcon size={40} weight="duotone" />}
           title="Aún no hay caballos"
-          description="Empieza por dar de alta uno. Después podrás asignarles propietario, mozos y clases."
+          description="Crea el primero con el formulario de arriba. Después podrás asignarles propietarios, mozos y clases."
         />
       ) : (
         <div className="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-stone-50 text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
               <tr>
+                <th className="w-14 px-4 py-3"></th>
                 <th className="px-4 py-3 text-left">Nombre</th>
                 <th className="px-4 py-3 text-left">Tipo</th>
                 <th className="px-4 py-3 text-left">Raza</th>
                 <th className="px-4 py-3 text-left">Año</th>
                 <th className="px-4 py-3 text-left">Estado</th>
-                <th className="px-4 py-3 text-right">Acciones</th>
+                <th className="w-10 px-4 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {horses.map((h) => (
-                <tr key={h.id} className="hover:bg-stone-50">
+                <tr key={h.id} className="group hover:bg-brand-50/40">
+                  <td className="px-4 py-2">
+                    <Link href={`/app/horses/${h.id}` as never} className="block">
+                      <Avatar src={h.photoUrl} name={h.name} />
+                    </Link>
+                  </td>
                   <td className="px-4 py-3 font-bold text-stone-900">
-                    {h.name}
+                    <Link
+                      href={`/app/horses/${h.id}` as never}
+                      className="hover:text-brand-700"
+                    >
+                      {h.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 capitalize text-stone-700">
                     {h.kind}
@@ -112,10 +128,7 @@ export default async function HorsesPage() {
                     {h.birthYear ?? '—'}
                   </td>
                   <td className="px-4 py-3">
-                    <form
-                      action={updateHorseStatusAction}
-                      className="inline-flex"
-                    >
+                    <form action={updateHorseStatusAction} className="inline-flex">
                       <input type="hidden" name="id" value={h.id} />
                       <AutoSubmitSelect name="status" defaultValue={h.status}>
                         {HORSE_STATUSES.map((s) => (
@@ -127,16 +140,12 @@ export default async function HorsesPage() {
                     </form>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <form action={deleteHorseAction} className="inline-block">
-                      <input type="hidden" name="id" value={h.id} />
-                      <button
-                        type="submit"
-                        className="rounded-lg p-1.5 text-stone-400 transition hover:bg-red-50 hover:text-red-600"
-                        title="Eliminar"
-                      >
-                        <TrashIcon size={16} weight="bold" />
-                      </button>
-                    </form>
+                    <Link
+                      href={`/app/horses/${h.id}` as never}
+                      className="inline-flex items-center text-stone-400 transition group-hover:text-brand-600"
+                    >
+                      <ArrowRightIcon size={16} weight="bold" />
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -157,6 +166,21 @@ export default async function HorsesPage() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function Avatar({ src, name }: { src: string | null; name: string }) {
+  if (src) {
+    return (
+      <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-stone-100">
+        <Image src={src} alt={name} fill className="object-cover" sizes="40px" />
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+      <HorseIcon size={18} weight="duotone" />
     </div>
   );
 }

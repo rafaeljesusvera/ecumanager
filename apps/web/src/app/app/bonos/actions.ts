@@ -23,18 +23,59 @@ export async function createBonoAction(formData: FormData) {
   const totalClasses = Number(formData.get('totalClasses')) || 10;
   const priceCents = parseEurosToCents(String(formData.get('price')));
   const validityDays = Number(formData.get('validityDays')) || 180;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
 
   if (!name) return;
 
-  await db.insert(schema.bonos).values({
-    clubId: session.primary.clubId,
-    name,
-    description,
-    totalClasses,
-    priceCents,
-    validityDays,
-  });
+  const [created] = await db
+    .insert(schema.bonos)
+    .values({
+      clubId: session.primary.clubId,
+      name,
+      description,
+      totalClasses,
+      priceCents,
+      validityDays,
+      photoUrl,
+    })
+    .returning();
   revalidatePath('/app/bonos');
+  if (created) redirect(`/app/bonos/${created.id}`);
+}
+
+export async function updateBonoAction(formData: FormData) {
+  const session = await assertStaff();
+  const id = String(formData.get('id'));
+  const name = String(formData.get('name') ?? '').trim();
+  const description = String(formData.get('description') ?? '').trim() || null;
+  const totalClasses = Number(formData.get('totalClasses')) || 10;
+  const priceCents = parseEurosToCents(String(formData.get('price')));
+  const validityDays = Number(formData.get('validityDays')) || 180;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+  const active = formData.get('active') === 'on';
+
+  if (!name) return;
+
+  await db
+    .update(schema.bonos)
+    .set({
+      name,
+      description,
+      totalClasses,
+      priceCents,
+      validityDays,
+      photoUrl,
+      active,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(schema.bonos.id, id),
+        eq(schema.bonos.clubId, session.primary.clubId),
+      ),
+    );
+  revalidatePath('/app/bonos');
+  revalidatePath(`/app/bonos/${id}`);
 }
 
 export async function toggleBonoActiveAction(formData: FormData) {
@@ -65,4 +106,5 @@ export async function deleteBonoAction(formData: FormData) {
       ),
     );
   revalidatePath('/app/bonos');
+  redirect('/app/bonos');
 }

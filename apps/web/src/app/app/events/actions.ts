@@ -31,23 +31,74 @@ export async function createEventAction(formData: FormData) {
   const startsAt = new Date(String(formData.get('startsAt')));
   const priceCents = parseEurosToCents(String(formData.get('price')));
   const maxAttendees = Number(formData.get('maxAttendees')) || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
 
   if (!title || Number.isNaN(startsAt.getTime()) || !EVENT_KINDS.includes(kind))
     return;
 
-  await db.insert(schema.events).values({
-    clubId: session.primary.clubId,
-    title,
-    kind,
-    description,
-    location,
-    startsAt,
-    priceCents,
-    maxAttendees,
-    status: 'publicado',
-    createdBy: session.user.id,
-  });
+  const [created] = await db
+    .insert(schema.events)
+    .values({
+      clubId: session.primary.clubId,
+      title,
+      kind,
+      description,
+      location,
+      startsAt,
+      priceCents,
+      maxAttendees,
+      photoUrl,
+      status: 'publicado',
+      createdBy: session.user.id,
+    })
+    .returning();
   revalidatePath('/app/events');
+  if (created) redirect(`/app/events/${created.id}`);
+}
+
+export async function updateEventAction(formData: FormData) {
+  const session = await assertStaff();
+  const id = String(formData.get('id'));
+  const title = String(formData.get('title') ?? '').trim();
+  const kind = (formData.get('kind') ?? 'otros') as EventKind;
+  const status = (formData.get('status') ?? 'publicado') as EventStatus;
+  const location = String(formData.get('location') ?? '').trim() || null;
+  const description = String(formData.get('description') ?? '').trim() || null;
+  const startsAt = new Date(String(formData.get('startsAt')));
+  const priceCents = parseEurosToCents(String(formData.get('price')));
+  const maxAttendees = Number(formData.get('maxAttendees')) || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+
+  if (
+    !title ||
+    Number.isNaN(startsAt.getTime()) ||
+    !EVENT_KINDS.includes(kind) ||
+    !EVENT_STATUSES.includes(status)
+  )
+    return;
+
+  await db
+    .update(schema.events)
+    .set({
+      title,
+      kind,
+      description,
+      location,
+      startsAt,
+      priceCents,
+      maxAttendees,
+      photoUrl,
+      status,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(schema.events.id, id),
+        eq(schema.events.clubId, session.primary.clubId),
+      ),
+    );
+  revalidatePath('/app/events');
+  revalidatePath(`/app/events/${id}`);
 }
 
 export async function updateEventStatusAction(formData: FormData) {
@@ -79,4 +130,5 @@ export async function deleteEventAction(formData: FormData) {
       ),
     );
   revalidatePath('/app/events');
+  redirect('/app/events');
 }

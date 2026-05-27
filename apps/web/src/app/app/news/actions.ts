@@ -20,18 +20,47 @@ export async function createNewsAction(formData: FormData) {
   const title = String(formData.get('title') ?? '').trim();
   const body = String(formData.get('body') ?? '').trim();
   const pinned = formData.get('pinned') === 'on';
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
 
   if (!title || !body) return;
 
-  await db.insert(schema.news).values({
-    clubId: session.primary.clubId,
-    title,
-    body,
-    pinned,
-    publishedAt: new Date(),
-    createdBy: session.user.id,
-  });
+  const [created] = await db
+    .insert(schema.news)
+    .values({
+      clubId: session.primary.clubId,
+      title,
+      body,
+      pinned,
+      photoUrl,
+      publishedAt: new Date(),
+      createdBy: session.user.id,
+    })
+    .returning();
   revalidatePath('/app/news');
+  if (created) redirect(`/app/news/${created.id}`);
+}
+
+export async function updateNewsAction(formData: FormData) {
+  const session = await assertStaff();
+  const id = String(formData.get('id'));
+  const title = String(formData.get('title') ?? '').trim();
+  const body = String(formData.get('body') ?? '').trim();
+  const pinned = formData.get('pinned') === 'on';
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+
+  if (!title || !body) return;
+
+  await db
+    .update(schema.news)
+    .set({ title, body, pinned, photoUrl, updatedAt: new Date() })
+    .where(
+      and(
+        eq(schema.news.id, id),
+        eq(schema.news.clubId, session.primary.clubId),
+      ),
+    );
+  revalidatePath('/app/news');
+  revalidatePath(`/app/news/${id}`);
 }
 
 export async function deleteNewsAction(formData: FormData) {
@@ -46,6 +75,7 @@ export async function deleteNewsAction(formData: FormData) {
       ),
     );
   revalidatePath('/app/news');
+  redirect('/app/news');
 }
 
 export async function togglePinNewsAction(formData: FormData) {

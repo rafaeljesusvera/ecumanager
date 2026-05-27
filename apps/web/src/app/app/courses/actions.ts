@@ -30,22 +30,71 @@ export async function createCourseAction(formData: FormData) {
     : null;
   const priceCents = parseEurosToCents(String(formData.get('price')));
   const maxStudents = Number(formData.get('maxStudents')) || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
 
   if (!title) return;
 
-  await db.insert(schema.courses).values({
-    clubId: session.primary.clubId,
-    title,
-    description,
-    discipline,
-    startDate,
-    endDate,
-    priceCents,
-    maxStudents,
-    status: 'publicado',
-    createdBy: session.user.id,
-  });
+  const [created] = await db
+    .insert(schema.courses)
+    .values({
+      clubId: session.primary.clubId,
+      title,
+      description,
+      discipline,
+      startDate,
+      endDate,
+      priceCents,
+      maxStudents,
+      photoUrl,
+      status: 'publicado',
+      createdBy: session.user.id,
+    })
+    .returning();
   revalidatePath('/app/courses');
+  if (created) redirect(`/app/courses/${created.id}`);
+}
+
+export async function updateCourseAction(formData: FormData) {
+  const session = await assertStaff();
+  const id = String(formData.get('id'));
+  const title = String(formData.get('title') ?? '').trim();
+  const description = String(formData.get('description') ?? '').trim() || null;
+  const discipline = String(formData.get('discipline') ?? 'iniciacion');
+  const startDate = formData.get('startDate')
+    ? new Date(String(formData.get('startDate')))
+    : null;
+  const endDate = formData.get('endDate')
+    ? new Date(String(formData.get('endDate')))
+    : null;
+  const priceCents = parseEurosToCents(String(formData.get('price')));
+  const maxStudents = Number(formData.get('maxStudents')) || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+  const status = (formData.get('status') ?? 'publicado') as CourseStatus;
+
+  if (!title || !COURSE_STATUSES.includes(status)) return;
+
+  await db
+    .update(schema.courses)
+    .set({
+      title,
+      description,
+      discipline,
+      startDate,
+      endDate,
+      priceCents,
+      maxStudents,
+      photoUrl,
+      status,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(schema.courses.id, id),
+        eq(schema.courses.clubId, session.primary.clubId),
+      ),
+    );
+  revalidatePath('/app/courses');
+  revalidatePath(`/app/courses/${id}`);
 }
 
 export async function updateCourseStatusAction(formData: FormData) {
@@ -77,4 +126,31 @@ export async function deleteCourseAction(formData: FormData) {
       ),
     );
   revalidatePath('/app/courses');
+  redirect('/app/courses');
+}
+
+export async function addCourseSessionAction(formData: FormData) {
+  await assertStaff();
+  const courseId = String(formData.get('courseId'));
+  const date = new Date(String(formData.get('date')));
+  const durationMinutes = Number(formData.get('duration')) || 60;
+  const notes = String(formData.get('notes') ?? '').trim() || null;
+
+  if (!courseId || Number.isNaN(date.getTime())) return;
+
+  await db.insert(schema.courseSessions).values({
+    courseId,
+    date,
+    durationMinutes,
+    notes,
+  });
+  revalidatePath(`/app/courses/${courseId}`);
+}
+
+export async function deleteCourseSessionAction(formData: FormData) {
+  await assertStaff();
+  const id = String(formData.get('id'));
+  const courseId = String(formData.get('courseId'));
+  await db.delete(schema.courseSessions).where(eq(schema.courseSessions.id, id));
+  revalidatePath(`/app/courses/${courseId}`);
 }

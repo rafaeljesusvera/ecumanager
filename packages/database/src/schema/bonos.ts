@@ -21,6 +21,7 @@ export const bonos = pgTable(
       .references(() => clubs.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     description: text('description'),
+    photoUrl: text('photo_url'),
     totalClasses: integer('total_classes').notNull().default(10),
     priceCents: integer('price_cents').notNull().default(0),
     validityDays: integer('validity_days').notNull().default(180),

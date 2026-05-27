@@ -28,18 +28,62 @@ export async function createHorseAction(formData: FormData) {
   const breed = String(formData.get('breed') ?? '').trim() || null;
   const birthYear = Number(formData.get('birthYear')) || null;
   const color = String(formData.get('color') ?? '').trim() || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
 
   if (!name || !HORSE_KINDS.includes(kind)) return;
 
-  await db.insert(schema.horses).values({
-    clubId: session.primary.clubId,
-    name,
-    kind,
-    breed,
-    birthYear,
-    color,
-  });
+  const [created] = await db
+    .insert(schema.horses)
+    .values({
+      clubId: session.primary.clubId,
+      name,
+      kind,
+      breed,
+      birthYear,
+      color,
+      photoUrl,
+    })
+    .returning();
   revalidatePath('/app/horses');
+  if (created) redirect(`/app/horses/${created.id}`);
+}
+
+export async function updateHorseAction(formData: FormData) {
+  const session = await assertStaff();
+  const id = String(formData.get('id'));
+  const name = String(formData.get('name') ?? '').trim();
+  const kind = (formData.get('kind') ?? 'caballo') as HorseKind;
+  const breed = String(formData.get('breed') ?? '').trim() || null;
+  const birthYear = Number(formData.get('birthYear')) || null;
+  const color = String(formData.get('color') ?? '').trim() || null;
+  const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+  const notes = String(formData.get('notes') ?? '').trim() || null;
+  const status = (formData.get('status') ?? 'activo') as HorseStatus;
+
+  if (!name || !HORSE_KINDS.includes(kind) || !HORSE_STATUSES.includes(status))
+    return;
+
+  await db
+    .update(schema.horses)
+    .set({
+      name,
+      kind,
+      breed,
+      birthYear,
+      color,
+      photoUrl,
+      notes,
+      status,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(schema.horses.id, id),
+        eq(schema.horses.clubId, session.primary.clubId),
+      ),
+    );
+  revalidatePath('/app/horses');
+  revalidatePath(`/app/horses/${id}`);
 }
 
 export async function updateHorseStatusAction(formData: FormData) {
@@ -71,4 +115,73 @@ export async function deleteHorseAction(formData: FormData) {
       ),
     );
   revalidatePath('/app/horses');
+  redirect('/app/horses');
+}
+
+export async function addHorseOwnerAction(formData: FormData) {
+  const session = await assertStaff();
+  const horseId = String(formData.get('horseId'));
+  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const role =
+    (formData.get('role') ?? 'owner') === 'authorized'
+      ? 'authorized'
+      : 'owner';
+
+  if (!horseId || !email) return;
+
+  // Verifica que el caballo pertenece al club
+  const [horse] = await db
+    .select()
+    .from(schema.horses)
+    .where(
+      and(
+        eq(schema.horses.id, horseId),
+        eq(schema.horses.clubId, session.primary.clubId),
+      ),
+    )
+    .limit(1);
+  if (!horse) return;
+
+  const [profile] = await db
+    .select()
+    .from(schema.profiles)
+    .where(eq(schema.profiles.email, email))
+    .limit(1);
+  if (!profile) return;
+
+  // Asegurar que es miembro horse_owner del club
+  const [existingMember] = await db
+    .select()
+    .from(schema.clubMembers)
+    .where(
+      and(
+        eq(schema.clubMembers.clubId, session.primary.clubId),
+        eq(schema.clubMembers.profileId, profile.id),
+      ),
+    )
+    .limit(1);
+  if (!existingMember) {
+    await db.insert(schema.clubMembers).values({
+      clubId: session.primary.clubId,
+      profileId: profile.id,
+      role: 'horse_owner',
+    });
+  }
+
+  await db
+    .insert(schema.horseOwners)
+    .values({ horseId, profileId: profile.id, role })
+    .onConflictDoNothing();
+
+  revalidatePath(`/app/horses/${horseId}`);
+}
+
+export async function removeHorseOwnerAction(formData: FormData) {
+  await assertStaff();
+  const id = String(formData.get('id'));
+  const horseId = String(formData.get('horseId'));
+  await db
+    .delete(schema.horseOwners)
+    .where(eq(schema.horseOwners.id, id));
+  revalidatePath(`/app/horses/${horseId}`);
 }

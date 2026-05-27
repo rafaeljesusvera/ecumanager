@@ -1,9 +1,10 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { desc, eq } from 'drizzle-orm';
 import {
   NewspaperIcon,
-  PlusIcon,
-  TrashIcon,
+  ArrowRightIcon,
   PushPinIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
@@ -16,12 +17,10 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
+import { CreatePanel } from '@/components/ui/CreatePanel';
+import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatDate } from '@/lib/format';
-import {
-  createNewsAction,
-  deleteNewsAction,
-  togglePinNewsAction,
-} from './actions';
+import { createNewsAction } from './actions';
 
 export const metadata = { title: 'Noticias' };
 export const dynamic = 'force-dynamic';
@@ -41,38 +40,44 @@ export default async function NewsPage() {
       <PageHeader
         eyebrow="Hípica"
         title="Noticias"
-        description="Tablón comunicaciones para alumnos, propietarios y mozos."
+        description="Tablón de comunicación. Pulsa una noticia para editarla o despublicarla."
       />
 
-      <section className="mb-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-card">
-        <h2 className="mb-4 text-base font-bold text-stone-900">
-          Publicar noticia
-        </h2>
-        <form action={createNewsAction} className="space-y-3">
-          <Field label="Título">
-            <Input
-              required
-              name="title"
-              placeholder="Cambio de horario por puente"
-            />
-          </Field>
-          <Field label="Cuerpo">
-            <Textarea
-              required
-              name="body"
-              rows={4}
-              placeholder="Detalles que tus alumnos deben saber..."
-            />
-          </Field>
-          <label className="flex items-center gap-2 text-xs font-bold text-stone-700">
-            <input type="checkbox" name="pinned" className="h-4 w-4 accent-brand-700" />
-            Fijar en tablón
-          </label>
-          <Button type="submit">
-            <PlusIcon size={14} weight="bold" /> Publicar
-          </Button>
+      <CreatePanel label="Publicar noticia" defaultOpen={list.length === 0}>
+        <form action={createNewsAction} className="grid grid-cols-1 gap-4 md:grid-cols-6">
+          <div className="md:col-span-2 md:row-span-4">
+            <PhotoUpload folder="news" label="Foto" aspect="wide" />
+          </div>
+          <div className="md:col-span-4">
+            <Field label="Título">
+              <Input
+                required
+                name="title"
+                placeholder="Cambio de horario por puente"
+              />
+            </Field>
+          </div>
+          <div className="md:col-span-4">
+            <Field label="Cuerpo">
+              <Textarea
+                required
+                name="body"
+                rows={4}
+                placeholder="Detalles que tus alumnos deben saber..."
+              />
+            </Field>
+          </div>
+          <div className="md:col-span-4">
+            <label className="flex items-center gap-2 text-xs font-bold text-stone-700">
+              <input type="checkbox" name="pinned" className="h-4 w-4 accent-brand-700" />
+              Fijar en tablón
+            </label>
+          </div>
+          <div className="md:col-span-4">
+            <Button type="submit">Publicar</Button>
+          </div>
         </form>
-      </section>
+      </CreatePanel>
 
       {list.length === 0 ? (
         <EmptyState
@@ -83,58 +88,44 @@ export default async function NewsPage() {
       ) : (
         <div className="space-y-3">
           {list.map((n) => (
-            <article
+            <Link
               key={n.id}
-              className="rounded-3xl border border-stone-200 bg-white p-5 shadow-card"
+              href={`/app/news/${n.id}` as never}
+              className="group flex gap-4 overflow-hidden rounded-3xl border border-stone-200 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-300"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-stone-900">
-                      {n.title}
-                    </h3>
-                    {n.pinned && (
-                      <Badge tone="brand">
-                        <PushPinIcon size={10} weight="bold" /> Fijada
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
-                    {formatDate(n.publishedAt)}
-                  </p>
+              {n.photoUrl && (
+                <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl bg-stone-100">
+                  <Image
+                    src={n.photoUrl}
+                    alt={n.title}
+                    fill
+                    className="object-cover"
+                    sizes="128px"
+                  />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <form action={togglePinNewsAction}>
-                    <input type="hidden" name="id" value={n.id} />
-                    <input
-                      type="hidden"
-                      name="pinned"
-                      value={String(n.pinned)}
-                    />
-                    <button
-                      type="submit"
-                      className="rounded-lg p-1.5 text-stone-400 transition hover:bg-brand-50 hover:text-brand-700"
-                      title={n.pinned ? 'Quitar fijada' : 'Fijar'}
-                    >
-                      <PushPinIcon size={16} weight="bold" />
-                    </button>
-                  </form>
-                  <form action={deleteNewsAction}>
-                    <input type="hidden" name="id" value={n.id} />
-                    <button
-                      type="submit"
-                      className="rounded-lg p-1.5 text-stone-400 transition hover:bg-red-50 hover:text-red-600"
-                      title="Eliminar"
-                    >
-                      <TrashIcon size={16} weight="bold" />
-                    </button>
-                  </form>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-stone-900 group-hover:text-brand-700">
+                    {n.title}
+                  </h3>
+                  {n.pinned && (
+                    <Badge tone="brand">
+                      <PushPinIcon size={10} weight="bold" /> Fijada
+                    </Badge>
+                  )}
                 </div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
+                  {formatDate(n.publishedAt)}
+                </p>
+                <p className="mt-1 line-clamp-2 text-sm font-medium leading-relaxed text-stone-600">
+                  {n.body}
+                </p>
               </div>
-              <p className="mt-2 whitespace-pre-wrap text-sm font-medium leading-relaxed text-stone-700">
-                {n.body}
-              </p>
-            </article>
+              <div className="self-center text-stone-300 group-hover:text-brand-600">
+                <ArrowRightIcon size={16} weight="bold" />
+              </div>
+            </Link>
           ))}
         </div>
       )}

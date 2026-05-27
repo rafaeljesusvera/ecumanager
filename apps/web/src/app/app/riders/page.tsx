@@ -1,9 +1,10 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { eq } from 'drizzle-orm';
 import {
   GraduationCapIcon,
-  PlusIcon,
-  TrashIcon,
+  ArrowRightIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { RIDER_CATEGORIES, RIDER_TIERS } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
@@ -16,7 +17,9 @@ import {
   Input,
   Select,
 } from '@/components/ui';
-import { createRiderAction, deleteRiderAction } from './actions';
+import { CreatePanel } from '@/components/ui/CreatePanel';
+import { PhotoUpload } from '@/components/ui/PhotoUpload';
+import { createRiderAction } from './actions';
 
 export const metadata = { title: 'Alumnos' };
 export const dynamic = 'force-dynamic';
@@ -36,23 +39,24 @@ export default async function RidersPage() {
       <PageHeader
         eyebrow="Hípica"
         title="Alumnos"
-        description="Tus jinetes y corredores. Pueden estar vinculados a una cuenta o quedar como invitados."
+        description="Tus jinetes y corredores. Pulsa cualquiera para abrir su ficha."
       />
 
-      <section className="mb-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-card">
-        <h2 className="mb-4 text-base font-bold text-stone-900">
-          Añadir alumno
-        </h2>
-        <form
-          action={createRiderAction}
-          className="grid grid-cols-1 gap-3 md:grid-cols-5"
-        >
-          <Field label="Nombre">
-            <Input required name="name" placeholder="Lucía Pérez" />
-          </Field>
-          <Field label="Email">
-            <Input name="email" type="email" placeholder="lucia@correo.com" />
-          </Field>
+      <CreatePanel label="Nuevo alumno" defaultOpen={riders.length === 0}>
+        <form action={createRiderAction} className="grid grid-cols-1 gap-4 md:grid-cols-6">
+          <div className="md:col-span-2 md:row-span-3">
+            <PhotoUpload folder="riders" label="Foto del alumno" />
+          </div>
+          <div className="md:col-span-2">
+            <Field label="Nombre">
+              <Input required name="name" placeholder="Lucía Pérez" />
+            </Field>
+          </div>
+          <div className="md:col-span-2">
+            <Field label="Email">
+              <Input name="email" type="email" placeholder="lucia@correo.com" />
+            </Field>
+          </div>
           <Field label="Teléfono">
             <Input name="phone" placeholder="600 000 000" />
           </Field>
@@ -74,62 +78,65 @@ export default async function RidersPage() {
               ))}
             </Select>
           </Field>
-          <div className="md:col-span-5">
-            <Button type="submit">
-              <PlusIcon size={14} weight="bold" /> Añadir alumno
-            </Button>
+          <div className="md:col-span-4">
+            <Button type="submit">Crear y abrir ficha</Button>
           </div>
         </form>
-      </section>
+      </CreatePanel>
 
       {riders.length === 0 ? (
         <EmptyState
           icon={<GraduationCapIcon size={40} weight="duotone" />}
           title="Aún no hay alumnos"
-          description="Cuando un alumno se una con tu código de hípica aparecerá aquí. También puedes darlo de alta tú."
+          description="Crea el primero o pídeles que se unan con el código de tu hípica."
         />
       ) : (
         <div className="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-stone-50 text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
               <tr>
+                <th className="w-14 px-4 py-3"></th>
                 <th className="px-4 py-3 text-left">Nombre</th>
                 <th className="px-4 py-3 text-left">Categoría</th>
                 <th className="px-4 py-3 text-left">Nivel</th>
                 <th className="px-4 py-3 text-left">Email</th>
                 <th className="px-4 py-3 text-left">Estado</th>
-                <th className="px-4 py-3 text-right">Acciones</th>
+                <th className="w-10 px-4 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {riders.map((r) => (
-                <tr key={r.id} className="hover:bg-stone-50">
+                <tr key={r.id} className="group hover:bg-brand-50/40">
+                  <td className="px-4 py-2">
+                    <Link href={`/app/riders/${r.id}` as never}>
+                      <Avatar src={r.photoUrl} name={r.name} />
+                    </Link>
+                  </td>
                   <td className="px-4 py-3 font-bold text-stone-900">
-                    {r.name}
+                    <Link
+                      href={`/app/riders/${r.id}` as never}
+                      className="hover:text-brand-700"
+                    >
+                      {r.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 text-stone-700">
                     {r.category.replace('_', ' ')}
                   </td>
                   <td className="px-4 py-3 text-stone-700">{r.tier}</td>
-                  <td className="px-4 py-3 text-stone-500">
-                    {r.email ?? '—'}
-                  </td>
+                  <td className="px-4 py-3 text-stone-500">{r.email ?? '—'}</td>
                   <td className="px-4 py-3">
                     <Badge tone={r.status === 'activo' ? 'success' : 'neutral'}>
                       {r.status}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <form action={deleteRiderAction} className="inline-block">
-                      <input type="hidden" name="id" value={r.id} />
-                      <button
-                        type="submit"
-                        className="rounded-lg p-1.5 text-stone-400 transition hover:bg-red-50 hover:text-red-600"
-                        title="Eliminar"
-                      >
-                        <TrashIcon size={16} weight="bold" />
-                      </button>
-                    </form>
+                    <Link
+                      href={`/app/riders/${r.id}` as never}
+                      className="inline-flex items-center text-stone-400 transition group-hover:text-brand-600"
+                    >
+                      <ArrowRightIcon size={16} weight="bold" />
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -137,6 +144,21 @@ export default async function RidersPage() {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+function Avatar({ src, name }: { src: string | null; name: string }) {
+  if (src) {
+    return (
+      <div className="relative h-10 w-10 overflow-hidden rounded-full bg-stone-100">
+        <Image src={src} alt={name} fill className="object-cover" sizes="40px" />
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+      <GraduationCapIcon size={18} weight="duotone" />
     </div>
   );
 }

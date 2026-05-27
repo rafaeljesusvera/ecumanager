@@ -1,11 +1,12 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { eq, sql } from 'drizzle-orm';
 import {
   BookOpenTextIcon,
-  PlusIcon,
-  TrashIcon,
+  ArrowRightIcon,
 } from '@phosphor-icons/react/dist/ssr';
-import { COURSE_STATUSES, DISCIPLINES } from '@equmanager/domain';
+import { DISCIPLINES } from '@equmanager/domain';
 import { ensureSession, assertRole } from '@/lib/db';
 import { PageHeader } from '@/components/page/PageHeader';
 import {
@@ -17,13 +18,10 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
-import { AutoSubmitSelect } from '@/components/ui/AutoSubmitSelect';
+import { CreatePanel } from '@/components/ui/CreatePanel';
+import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { formatCents, formatDate } from '@/lib/format';
-import {
-  createCourseAction,
-  deleteCourseAction,
-  updateCourseStatusAction,
-} from './actions';
+import { createCourseAction } from './actions';
 
 export const metadata = { title: 'Cursos' };
 export const dynamic = 'force-dynamic';
@@ -42,6 +40,7 @@ export default async function CoursesPage() {
       endDate: schema.courses.endDate,
       priceCents: schema.courses.priceCents,
       maxStudents: schema.courses.maxStudents,
+      photoUrl: schema.courses.photoUrl,
       status: schema.courses.status,
       enrollments: sql<number>`(
         SELECT count(*)::int FROM enrollments e
@@ -57,16 +56,15 @@ export default async function CoursesPage() {
       <PageHeader
         eyebrow="Hípica"
         title="Cursos"
-        description="Programas de varias sesiones que tus alumnos pueden comprar y reservar."
+        description="Programas de varias sesiones. Pulsa un curso para editar sus datos y gestionar sesiones."
       />
 
-      <section className="mb-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-card">
-        <h2 className="mb-4 text-base font-bold text-stone-900">Nuevo curso</h2>
-        <form
-          action={createCourseAction}
-          className="grid grid-cols-1 gap-3 md:grid-cols-6"
-        >
-          <div className="md:col-span-3">
+      <CreatePanel label="Nuevo curso" defaultOpen={courses.length === 0}>
+        <form action={createCourseAction} className="grid grid-cols-1 gap-4 md:grid-cols-6">
+          <div className="md:col-span-2 md:row-span-4">
+            <PhotoUpload folder="courses" label="Foto" aspect="wide" />
+          </div>
+          <div className="md:col-span-2">
             <Field label="Título">
               <Input required name="title" placeholder="Iniciación a salto" />
             </Field>
@@ -84,13 +82,7 @@ export default async function CoursesPage() {
             <Input name="price" type="text" placeholder="120" />
           </Field>
           <Field label="Cupo">
-            <Input
-              name="maxStudents"
-              type="number"
-              min={1}
-              max={200}
-              placeholder="12"
-            />
+            <Input name="maxStudents" type="number" min={1} max={200} placeholder="12" />
           </Field>
           <Field label="Inicio">
             <Input name="startDate" type="date" />
@@ -107,13 +99,11 @@ export default async function CoursesPage() {
               />
             </Field>
           </div>
-          <div className="md:col-span-6">
-            <Button type="submit">
-              <PlusIcon size={14} weight="bold" /> Publicar curso
-            </Button>
+          <div className="md:col-span-4">
+            <Button type="submit">Crear y abrir ficha</Button>
           </div>
         </form>
-      </section>
+      </CreatePanel>
 
       {courses.length === 0 ? (
         <EmptyState
@@ -124,65 +114,65 @@ export default async function CoursesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {courses.map((c) => (
-            <article
+            <Link
               key={c.id}
-              className="flex flex-col rounded-3xl border border-stone-200 bg-white p-5 shadow-card"
+              href={`/app/courses/${c.id}` as never}
+              className="group flex flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card transition hover:-translate-y-0.5 hover:border-brand-300"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
-                    {c.discipline}
-                  </p>
-                  <h3 className="mt-0.5 text-base font-bold text-stone-900">
-                    {c.title}
-                  </h3>
+              {c.photoUrl && (
+                <div className="relative aspect-[16/9] w-full bg-stone-100">
+                  <Image
+                    src={c.photoUrl}
+                    alt={c.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 </div>
-                <form action={updateCourseStatusAction}>
-                  <input type="hidden" name="id" value={c.id} />
-                  <AutoSubmitSelect name="status" defaultValue={c.status}>
-                    {COURSE_STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </AutoSubmitSelect>
-                </form>
-              </div>
-
-              {c.description && (
-                <p className="mt-2 text-sm font-medium leading-relaxed text-stone-600">
-                  {c.description}
-                </p>
               )}
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Badge tone="brand">{formatCents(c.priceCents)}</Badge>
-                {c.maxStudents && (
-                  <Badge tone="info">
-                    {c.enrollments}/{c.maxStudents} inscritos
-                  </Badge>
-                )}
-                {c.startDate && (
-                  <Badge tone="neutral">
-                    {formatDate(c.startDate)}
-                    {c.endDate ? ` → ${formatDate(c.endDate)}` : ''}
-                  </Badge>
-                )}
-              </div>
-
-              <div className="mt-auto flex items-center justify-end pt-4">
-                <form action={deleteCourseAction}>
-                  <input type="hidden" name="id" value={c.id} />
-                  <button
-                    type="submit"
-                    className="rounded-lg p-1.5 text-stone-400 transition hover:bg-red-50 hover:text-red-600"
-                    title="Eliminar"
+              <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
+                      {c.discipline}
+                    </p>
+                    <h3 className="mt-0.5 text-base font-bold text-stone-900">
+                      {c.title}
+                    </h3>
+                  </div>
+                  <Badge
+                    tone={
+                      c.status === 'publicado'
+                        ? 'success'
+                        : c.status === 'cerrado'
+                          ? 'warn'
+                          : 'neutral'
+                    }
                   >
-                    <TrashIcon size={16} weight="bold" />
-                  </button>
-                </form>
+                    {c.status}
+                  </Badge>
+                </div>
+                {c.description && (
+                  <p className="mt-2 line-clamp-2 text-sm font-medium leading-relaxed text-stone-600">
+                    {c.description}
+                  </p>
+                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Badge tone="brand">{formatCents(c.priceCents)}</Badge>
+                  {c.maxStudents && (
+                    <Badge tone="info">
+                      {c.enrollments}/{c.maxStudents}
+                    </Badge>
+                  )}
+                  {c.startDate && (
+                    <Badge tone="neutral">{formatDate(c.startDate)}</Badge>
+                  )}
+                </div>
+                <div className="mt-auto flex items-center justify-end pt-4 text-stone-300 group-hover:text-brand-600">
+                  <ArrowRightIcon size={16} weight="bold" />
+                </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       )}
