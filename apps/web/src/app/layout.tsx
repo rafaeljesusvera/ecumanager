@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     template: '%s · Equmanager',
   },
   description:
-    'Sistema de gestión integral para clubes ecuestres: caballos, jinetes, clases e insignias.',
-  icons: { icon: '/favicon.ico' },
+    'Plataforma todo-en-uno para hípicas, propietarios, mozos y alumnos. Clases, eventos, cuidados, bonos e IA en un mismo sitio.',
+  icons: { icon: '/favicon.png' },
 };
 
 export default function RootLayout({
@@ -18,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen bg-stone-50 font-sans text-stone-900">
+        {children}
+      </body>
     </html>
   );
 }

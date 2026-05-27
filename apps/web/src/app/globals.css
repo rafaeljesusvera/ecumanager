@@ -3,21 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --background: 250 249 246;
-  --foreground: 28 25 23;
-  --muted: 245 244 241;
-  --muted-foreground: 120 113 108;
-  --border: 231 229 228;
-  --ring: 251 191 36;
+  --background: 248 250 247;
+  --foreground: 22 54 30;
+  --muted: 240 244 240;
+  --muted-foreground: 71 85 73;
+  --border: 224 232 222;
+  --ring: 95 165 104;
 }
 
 @layer base {
   * {
     @apply border-stone-200;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   body {
-    @apply bg-stone-50 text-stone-900 antialiased;
+    @apply bg-stone-50 text-stone-900;
     font-feature-settings: 'cv11', 'ss01';
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-2xl border border-stone-200 bg-white shadow-card;
+  }
+  .surface-soft {
+    @apply rounded-2xl border border-stone-200/70 bg-white;
+  }
+  .label-eyebrow {
+    @apply text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500;
   }
 }
 
@@ -28,4 +44,44 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+}
+
+.prose-equmanager {
+  @apply text-base text-stone-700;
+}
+.prose-equmanager h1 {
+  @apply mt-8 text-2xl font-bold text-stone-900;
+}
+.prose-equmanager h2 {
+  @apply mt-8 text-xl font-bold text-stone-900;
+}
+.prose-equmanager h3 {
+  @apply mt-6 text-lg font-bold text-stone-900;
+}
+.prose-equmanager p {
+  @apply mt-4 leading-relaxed;
+}
+.prose-equmanager ul {
+  @apply mt-4 list-disc space-y-1 pl-6;
+}
+.prose-equmanager ol {
+  @apply mt-4 list-decimal space-y-1 pl-6;
+}
+.prose-equmanager li {
+  @apply leading-relaxed;
+}
+.prose-equmanager strong {
+  @apply font-bold text-stone-900;
+}
+.prose-equmanager a {
+  @apply font-bold text-brand-700 underline;
+}
+.prose-equmanager blockquote {
+  @apply mt-4 border-l-4 border-brand-300 bg-brand-50/60 px-4 py-2 italic text-stone-700;
+}
+.prose-equmanager code {
+  @apply rounded bg-stone-100 px-1 py-0.5 font-mono text-sm;
+}
+.prose-equmanager hr {
+  @apply my-8 border-stone-200;
 }

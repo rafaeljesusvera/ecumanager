@@ -7,8 +7,10 @@ const config: NextConfig = {
     '@equmanager/database',
     '@equmanager/domain',
   ],
+  // typedRoutes desactivado: con el nuevo refactor multi-rol los redirects
+  // y links dinámicos no encajan en el árbol estático y bloquean el build.
   experimental: {
-    typedRoutes: true,
+    typedRoutes: false,
   },
   images: {
     remotePatterns: [

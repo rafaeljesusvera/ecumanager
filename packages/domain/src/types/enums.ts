@@ -1,9 +1,6 @@
 /**
  * Constantes y enums del dominio de Equmanager.
- *
- * Extraído del prototipo original (legacy/equmanager.html) y normalizado.
- * Esta es la fuente única de verdad: cualquier lista de opciones de la UI
- * debe importar de aquí.
+ * Fuente única de verdad para opciones de UI.
  */
 
 export const HORSE_KINDS = ['caballo', 'pony', 'shetland'] as const;
@@ -41,18 +38,115 @@ export const RIDER_TIERS = ['iniciacion', 'avanzado', 'competicion'] as const;
 export type RiderTier = (typeof RIDER_TIERS)[number];
 
 /**
- * Roles dentro de un club. Definen permisos vía RLS.
- *
- * - owner: dueño del club, control total, no se puede eliminar mientras exista
- * - admin: gestiona caballos, jinetes, instructores, configuración
- * - instructor: imparte clases, gestiona sus propios eventos
- * - rider: jinete del club, solo lee sus propios datos
+ * Roles dentro de un club.
+ *  - owner: dueño de la hípica, control total
+ *  - admin: gestiona caballos, jinetes, instructores, configuración
+ *  - instructor: imparte clases y eventos
+ *  - groom: mozo de cuadra, ejecuta checklists de cuidado
+ *  - horse_owner: propietario de uno o más caballos del club
+ *  - rider: alumno/corredor, se apunta a clases y eventos
  */
-export const CLUB_ROLES = ['owner', 'admin', 'instructor', 'rider'] as const;
+export const CLUB_ROLES = [
+  'owner',
+  'admin',
+  'instructor',
+  'groom',
+  'horse_owner',
+  'rider',
+] as const;
 export type ClubRole = (typeof CLUB_ROLES)[number];
 
-/**
- * Planes de suscripción. Por ahora solo "free", preparado para crecer.
- */
 export const CLUB_PLANS = ['free', 'pro', 'enterprise'] as const;
 export type ClubPlan = (typeof CLUB_PLANS)[number];
+
+export const COURSE_STATUSES = [
+  'borrador',
+  'publicado',
+  'cerrado',
+  'archivado',
+] as const;
+export type CourseStatus = (typeof COURSE_STATUSES)[number];
+
+export const EVENT_KINDS = [
+  'competicion',
+  'concurso_social',
+  'salida',
+  'clinic',
+  'charla',
+  'otros',
+] as const;
+export type EventKind = (typeof EVENT_KINDS)[number];
+
+export const EVENT_STATUSES = [
+  'borrador',
+  'publicado',
+  'finalizado',
+  'cancelado',
+] as const;
+export type EventStatus = (typeof EVENT_STATUSES)[number];
+
+export const ENROLLMENT_TARGET_TYPES = [
+  'curso',
+  'clase',
+  'evento',
+] as const;
+export type EnrollmentTargetType = (typeof ENROLLMENT_TARGET_TYPES)[number];
+
+export const ENROLLMENT_STATUSES = [
+  'pendiente',
+  'confirmada',
+  'cancelada',
+  'lista_espera',
+] as const;
+export type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[number];
+
+export const PAYMENT_STATUSES = [
+  'pendiente',
+  'procesando',
+  'completado',
+  'fallido',
+  'reembolsado',
+] as const;
+export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
+export const PAYMENT_PROVIDERS = ['stripe_fake', 'stripe', 'efectivo'] as const;
+export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[number];
+
+export const CARE_ITEM_KINDS = [
+  'alimentacion',
+  'agua',
+  'limpieza_box',
+  'cepillado',
+  'cascos',
+  'salida_paddock',
+  'medicacion',
+  'observacion_general',
+  'otros',
+] as const;
+export type CareItemKind = (typeof CARE_ITEM_KINDS)[number];
+
+export const VOICE_NOTE_STATUSES = [
+  'subida',
+  'transcribiendo',
+  'analizando',
+  'lista_para_revision',
+  'confirmada',
+  'descartada',
+  'error',
+] as const;
+export type VoiceNoteStatus = (typeof VOICE_NOTE_STATUSES)[number];
+
+export const FEEDBACK_SOURCES = ['manual', 'ia', 'auto'] as const;
+export type FeedbackSource = (typeof FEEDBACK_SOURCES)[number];
+
+export const NOTIFICATION_KINDS = [
+  'sistema',
+  'inscripcion',
+  'pago',
+  'checklist',
+  'feedback',
+  'insignia',
+  'evento',
+  'noticia',
+] as const;
+export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
