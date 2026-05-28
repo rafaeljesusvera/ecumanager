@@ -307,7 +307,11 @@ export default async function AppHome() {
               {upcomingEvents.map((e) => (
                 <Link
                   key={e.id}
-                  href={`/app/events/${e.id}` as never}
+                  href={
+                    (isStaff
+                      ? `/app/events/${e.id}`
+                      : `/app/me/events/${e.id}`) as never
+                  }
                   className="group flex items-center gap-3 rounded-2xl border border-stone-200/70 bg-stone-50/70 p-3 transition hover:border-brand-300 hover:bg-white"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
@@ -334,7 +338,11 @@ export default async function AppHome() {
               {upcomingLessons.map((l) => (
                 <Link
                   key={l.id}
-                  href="/app/lessons"
+                  href={
+                    (isStaff
+                      ? '/app/lessons'
+                      : `/app/me/lessons/${l.id}`) as never
+                  }
                   className="group flex items-center gap-3 rounded-2xl border border-stone-200/70 bg-stone-50/70 p-3 transition hover:border-brand-300 hover:bg-white"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
