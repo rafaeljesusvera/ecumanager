@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { desc, eq } from 'drizzle-orm';
-import { MedalIcon } from '@phosphor-icons/react/dist/ssr';
+import { MedalIcon, LockKeyIcon } from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { ensureRiderForProfile } from '@/lib/db/rider';
 import { PageHeader } from '@/components/page/PageHeader';
@@ -23,64 +23,138 @@ export default async function MeBadgesPage() {
     session.profile?.email ?? null,
   );
 
-  const badges = await db
+  // Todas las insignias del club
+  const allBadges = await db
+    .select()
+    .from(schema.badges)
+    .where(eq(schema.badges.clubId, session.primary.clubId))
+    .orderBy(schema.badges.name);
+
+  // Las que ha conseguido el alumno
+  const awarded = await db
     .select({
-      id: schema.riderBadges.id,
+      awardId: schema.riderBadges.id,
+      badgeId: schema.riderBadges.badgeId,
       awardedAt: schema.riderBadges.awardedAt,
       notes: schema.riderBadges.notes,
-      name: schema.badges.name,
-      subtitle: schema.badges.subtitle,
-      categoryLabel: schema.badges.categoryLabel,
-      description: schema.badges.description,
-      iconUrl: schema.badges.iconUrl,
-      color: schema.badges.color,
     })
     .from(schema.riderBadges)
-    .innerJoin(schema.badges, eq(schema.badges.id, schema.riderBadges.badgeId))
     .where(eq(schema.riderBadges.riderId, rider!.id))
     .orderBy(desc(schema.riderBadges.awardedAt));
 
-  return (
-    <div className="p-6 md:p-10">
-      <PageHeader
-        eyebrow="Alumno"
-        title="Mis insignias"
-        description="Tus reconocimientos en formato carta. Tócalas para ver la fecha y la nota del instructor."
-      />
+  const awardedMap = new Map(awarded.map((a) => [a.badgeId, a]));
 
-      {badges.length === 0 ? (
-        <EmptyState
-          icon={<MedalIcon size={40} weight="duotone" />}
-          title="Aún no tienes insignias"
-          description="Tu instructor las otorga al cumplir hitos: primer galope, primer salto, primera competición..."
+  const unlockedCount = awarded.length;
+  const totalCount = allBadges.length;
+  const lockedCount = Math.max(0, totalCount - unlockedCount);
+
+  // Ordena: primero las desbloqueadas (más recientes arriba), luego bloqueadas
+  const sorted = [...allBadges].sort((a, b) => {
+    const aw = awardedMap.has(a.id) ? 1 : 0;
+    const bw = awardedMap.has(b.id) ? 1 : 0;
+    if (aw !== bw) return bw - aw;
+    return a.name.localeCompare(b.name);
+  });
+
+  return (
+    <div className="bg-mesh min-h-full">
+      <div className="stagger mx-auto max-w-6xl space-y-6 p-6 md:p-10">
+        <PageHeader
+          eyebrow="Alumno · Colección"
+          title="Tus insignias"
+          description="Tu progreso en la hípica. Las que ya tienes lucen a color; las que aún no, en blanco y negro: toca una bloqueada para ver qué hay que hacer."
         />
-      ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {badges.map((b) => (
-            <Link
-              key={b.id}
-              href={`/app/me/badges/${b.id}` as never}
-              className="group block transition hover:-translate-y-1"
-            >
-              <BadgeCard
-                clubName={session.primary.clubName}
-                recipientName={rider!.name}
-                badge={b}
-              />
-              <div className="mt-3 rounded-2xl border border-stone-200 bg-white p-3 text-xs">
-                <div className="font-bold text-stone-900">
-                  Entregada {formatDate(b.awardedAt)}
-                </div>
-                {b.notes && (
-                  <p className="mt-1 line-clamp-2 font-medium italic text-stone-600">
-                    «{b.notes}»
-                  </p>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+
+        <section className="grid grid-cols-3 gap-3">
+          <Stat
+            label="Conseguidas"
+            value={`${unlockedCount}`}
+            sublabel="de tu colección"
+          />
+          <Stat
+            label="Por desbloquear"
+            value={`${lockedCount}`}
+            sublabel="objetivos"
+          />
+          <Stat
+            label="Progreso"
+            value={`${totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0}%`}
+            sublabel={`${unlockedCount}/${totalCount}`}
+          />
+        </section>
+
+        {totalCount === 0 ? (
+          <EmptyState
+            icon={<MedalIcon size={40} weight="duotone" />}
+            title="Tu hípica aún no ha diseñado insignias"
+            description="Cuando publiquen alguna, podrás verlas aquí y trabajar para desbloquearlas."
+          />
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {sorted.map((b) => {
+              const got = awardedMap.get(b.id);
+              const href = got
+                ? `/app/me/badges/${got.awardId}`
+                : `/app/me/badges/locked/${b.id}`;
+              return (
+                <Link
+                  key={b.id}
+                  href={href as never}
+                  className="group block transition hover:-translate-y-1"
+                >
+                  <BadgeCard
+                    clubName={session.primary.clubName}
+                    recipientName={got ? rider!.name : null}
+                    badge={b}
+                    ratio="compact"
+                    locked={!got}
+                  />
+                  <div className="mt-2 rounded-2xl border border-stone-200/70 bg-white/80 p-2 text-center backdrop-blur">
+                    {got ? (
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-700">
+                        Conseguida · {formatDate(got.awardedAt)}
+                      </p>
+                    ) : (
+                      <p className="flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-stone-500">
+                        <LockKeyIcon size={10} weight="bold" /> Cómo desbloquear
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
+function Stat({
+  label,
+  value,
+  sublabel,
+}: {
+  label: string;
+  value: string;
+  sublabel: string;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-stone-200/80 bg-white p-4 shadow-card">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-50 to-amber-50 opacity-50"
+      />
+      <div className="relative">
+        <div className="label-eyebrow">{label}</div>
+        <div className="font-display text-4xl font-normal leading-none tracking-tightest text-stone-900 md:text-5xl">
+          {value}
+        </div>
+        <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-stone-500">
+          {sublabel}
+        </div>
+      </div>
+    </div>
+  );
+}
+

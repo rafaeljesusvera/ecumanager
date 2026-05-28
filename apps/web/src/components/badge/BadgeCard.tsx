@@ -1,5 +1,9 @@
 import Image from 'next/image';
-import { HorseIcon, MedalIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  HorseIcon,
+  MedalIcon,
+  LockKeyIcon,
+} from '@phosphor-icons/react/dist/ssr';
 
 export type BadgeCardData = {
   name: string;
@@ -23,14 +27,17 @@ export function BadgeCard({
   recipientName,
   recipientLabel = 'Alumno',
   ratio = 'card',
+  locked = false,
 }: {
   badge: BadgeCardData;
   clubName?: string;
   recipientName?: string | null;
   recipientLabel?: string;
   ratio?: 'card' | 'tall' | 'compact';
+  /** Si true: muestra la carta en blanco y negro con un candado encima. */
+  locked?: boolean;
 }) {
-  const color = badge.color ?? '#3f8649';
+  const color = locked ? '#3f3f3f' : (badge.color ?? '#3f8649');
   const aspect =
     ratio === 'tall'
       ? 'aspect-[5/8]'
@@ -40,7 +47,7 @@ export function BadgeCard({
 
   return (
     <article
-      className={`relative ${aspect} w-full overflow-hidden rounded-[28px] shadow-soft ring-1 ring-black/5`}
+      className={`relative ${aspect} w-full overflow-hidden rounded-[28px] shadow-soft ring-1 ring-black/5 transition ${locked ? 'saturate-[0.15]' : ''}`}
       style={{ backgroundColor: color }}
     >
       {/* Bandas diagonales decorativas */}
@@ -120,6 +127,17 @@ export function BadgeCard({
           Escuela de hípica · {clubName ?? 'Equmanager'}
         </div>
       </div>
+
+      {locked && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-stone-900/55 backdrop-blur-[2px]">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-stone-900 shadow-lift ring-4 ring-white/30">
+            <LockKeyIcon size={28} weight="bold" />
+          </div>
+          <p className="rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-stone-900 shadow">
+            Bloqueada
+          </p>
+        </div>
+      )}
     </article>
   );
 }

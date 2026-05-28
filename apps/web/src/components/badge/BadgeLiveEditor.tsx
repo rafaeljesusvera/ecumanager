@@ -75,14 +75,14 @@ export function BadgeLiveEditor({
         </div>
         {showDescription && (
           <Field
-            label="Descripción interna"
-            hint="Sólo para tu uso, no aparece en la carta."
+            label="Cómo desbloquearla"
+            hint="Lo verán los alumnos que aún no la tengan, como objetivo a conseguir."
           >
             <Textarea
               name="description"
-              rows={2}
+              rows={3}
               defaultValue={defaultValues.description ?? ''}
-              placeholder="Criterios para entregarla, contexto..."
+              placeholder='Ej.: "Completa 10 clases seguidas sin faltas y demuestra galope estable en pista cubierta."'
             />
           </Field>
         )}
