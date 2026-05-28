@@ -123,10 +123,10 @@
   @apply text-base text-stone-700;
 }
 .prose-equmanager h1 {
-  @apply mt-8 font-display text-3xl font-normal leading-tight text-stone-900 md:text-4xl;
+  @apply mt-8 text-3xl font-bold tracking-tight leading-tight text-stone-900 md:text-4xl;
 }
 .prose-equmanager h2 {
-  @apply mt-8 font-display text-2xl font-normal leading-tight text-stone-900 md:text-3xl;
+  @apply mt-8 text-2xl font-bold tracking-tight leading-tight text-stone-900 md:text-3xl;
 }
 .prose-equmanager h3 {
   @apply mt-6 text-lg font-bold text-stone-900;

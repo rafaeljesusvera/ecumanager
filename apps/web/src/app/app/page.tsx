@@ -109,9 +109,9 @@ export default async function AppHome() {
             <p className="label-eyebrow">
               {roleLabel(primary.role)} · {primary.clubName}
             </p>
-            <h1 className="mt-2 font-display text-5xl font-normal leading-[0.95] tracking-tightest text-stone-900 md:text-7xl">
+            <h1 className="mt-2 text-5xl font-bold tracking-tight text-stone-900 md:text-7xl">
               Hola,{' '}
-              <span className="italic text-brand-700">{firstName}</span>.
+              <span className="text-brand-700">{firstName}</span>.
             </h1>
             <p className="mt-3 text-sm font-medium text-stone-500 md:text-base">
               Lo que pasa hoy en{' '}
@@ -182,7 +182,7 @@ export default async function AppHome() {
               />
               <div className="relative">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+                  <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                     Atajos rápidos
                   </h2>
                   <p className="label-eyebrow">Hípica</p>
@@ -483,7 +483,7 @@ function BigKpi({
         <div className="min-w-0 flex-1">
           <div className="label-eyebrow">{label}</div>
           <div
-            className={`mt-0.5 font-display font-normal leading-none tracking-tightest text-stone-900 ${
+            className={`mt-0.5 font-bold tracking-tight font-normal leading-none tracking-tight text-stone-900 ${
               compact ? 'text-3xl' : 'text-5xl md:text-6xl'
             }`}
           >
@@ -511,7 +511,7 @@ function RolePanel({
   return (
     <div className="rounded-3xl border border-stone-200/80 bg-white p-6 shadow-card lg:col-span-3">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+        <h2 className="text-2xl font-bold tracking-tight text-stone-900">
           {title}
         </h2>
         <p className="label-eyebrow">{tag}</p>

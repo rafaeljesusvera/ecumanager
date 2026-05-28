@@ -27,7 +27,7 @@ export default async function SignupPage({
         </Link>
 
         <div className="surface-glass p-7">
-          <h1 className="font-display text-4xl font-normal leading-[1] tracking-tightest text-stone-900">
+          <h1 className="text-4xl font-bold tracking-tight text-stone-900">
             Crear cuenta
           </h1>
           <p className="mt-2 text-sm font-medium text-stone-500">

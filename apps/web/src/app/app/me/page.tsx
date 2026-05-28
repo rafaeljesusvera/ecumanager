@@ -143,9 +143,9 @@ export default async function MePage() {
               <p className="label-eyebrow">
                 Alumno · {rider!.category.replace('_', ' ')} · {rider!.tier}
               </p>
-              <h1 className="mt-1 font-display text-4xl font-normal leading-[0.95] tracking-tightest text-stone-900 md:text-6xl">
+              <h1 className="mt-1 text-4xl font-bold tracking-tight text-stone-900 md:text-6xl">
                 Hola,{' '}
-                <span className="italic text-brand-700">
+                <span className="text-brand-700">
                   {rider!.name.split(' ')[0]}
                 </span>
                 .
@@ -194,7 +194,7 @@ export default async function MePage() {
           {/* Próximas clases */}
           <div className="rounded-3xl border border-stone-200/80 bg-white p-6 shadow-card lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+              <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                 Tus próximas clases
               </h2>
               <Link
@@ -257,7 +257,7 @@ export default async function MePage() {
           {/* Insignias */}
           <div className="relative overflow-hidden rounded-3xl border border-stone-200/80 bg-gradient-to-br from-amber-50 to-rose-50 p-6 shadow-card lg:col-span-2">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+              <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                 Insignias
               </h2>
               <Link
@@ -304,7 +304,7 @@ export default async function MePage() {
         {/* Caballos favoritos */}
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+            <h2 className="text-2xl font-bold tracking-tight text-stone-900">
               Tus caballos favoritos
             </h2>
             <Link
@@ -352,7 +352,7 @@ export default async function MePage() {
                         </div>
                         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white">
                           <div>
-                            <div className="font-display text-2xl font-normal leading-tight">
+                            <div className="text-2xl font-bold tracking-tight leading-tight">
                               {h.horseName}
                             </div>
                             <div className="text-[10px] font-bold uppercase tracking-widest opacity-80">
@@ -396,7 +396,7 @@ export default async function MePage() {
         {lastFeedback.length > 0 && (
           <section className="rounded-3xl border border-stone-200/80 bg-white p-6 shadow-card">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+              <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                 Comentarios del instructor
               </h2>
               <ChatCircleTextIcon
@@ -460,7 +460,7 @@ function MiniKpi({
           <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
             {label}
           </div>
-          <div className="font-display text-3xl font-normal leading-none tracking-tightest text-stone-900">
+          <div className="text-3xl font-bold tracking-tight leading-none tracking-tight text-stone-900">
             {value}
           </div>
         </div>

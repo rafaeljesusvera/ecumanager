@@ -14,12 +14,14 @@ const config: Config = {
           'Roboto',
           'sans-serif',
         ],
+        // Mantenemos el alias 'display' por compatibilidad pero apunta a la
+        // misma sans para que cualquier .font-display residual no se rompa.
         display: [
-          'var(--font-display)',
-          'Instrument Serif',
-          'ui-serif',
-          'Georgia',
-          'serif',
+          'var(--font-sans)',
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
         ],
       },
       colors: {

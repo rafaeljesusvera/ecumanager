@@ -168,9 +168,9 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
               <p className="label-eyebrow">
                 Alumno · {rider!.category.replace('_', ' ')} · {rider!.tier}
               </p>
-              <h1 className="mt-1 font-display text-4xl font-normal leading-[0.95] tracking-tightest text-stone-900 md:text-6xl">
+              <h1 className="mt-1 text-4xl font-bold tracking-tight text-stone-900 md:text-6xl">
                 Hola,{' '}
-                <span className="italic text-brand-700">
+                <span className="text-brand-700">
                   {rider!.name.split(' ')[0]}
                 </span>
                 .
@@ -201,9 +201,9 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                 <p className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">
                   <SparkleIcon size={11} weight="fill" /> Tu colección
                 </p>
-                <h2 className="mt-2 font-display text-3xl font-normal leading-[1] tracking-tightest text-stone-900 md:text-5xl">
+                <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-900 md:text-5xl">
                   Insignias{' '}
-                  <span className="italic text-brand-700">por conquistar</span>
+                  <span className="text-brand-700">por conquistar</span>
                 </h2>
                 <p className="mt-2 text-sm font-medium text-stone-600">
                   Llevas{' '}
@@ -327,7 +327,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
           <div className="rounded-3xl border border-stone-200/80 bg-white p-6 shadow-card lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+                <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                   Tus próximas clases
                 </h2>
                 <p className="mt-0.5 text-[11px] font-medium text-stone-500">
@@ -405,7 +405,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
               </p>
             ) : (
               <div>
-                <p className="font-display text-xl font-normal italic leading-snug text-stone-800 md:text-2xl">
+                <p className="font-bold tracking-tight text-xl font-normal italic leading-snug text-stone-800 md:text-2xl">
                   «{lastFeedback[0]!.body}»
                 </p>
                 <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">
@@ -425,7 +425,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
         <section>
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="font-display text-3xl font-normal tracking-tightest text-stone-900 md:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-stone-900 md:text-4xl">
                 Tus caballos
               </h2>
               <p className="mt-0.5 text-[11px] font-medium text-stone-500">
@@ -477,7 +477,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                         </div>
                         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white">
                           <div className="min-w-0">
-                            <div className="truncate font-display text-2xl font-normal leading-tight">
+                            <div className="truncate text-2xl font-bold tracking-tight leading-tight">
                               {h.horseName}
                             </div>
                             <div className="text-[10px] font-bold uppercase tracking-widest opacity-90">
@@ -521,7 +521,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
           {/* Bonos */}
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+              <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                 Tus bonos
               </h2>
               <Link
@@ -585,7 +585,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                                 {formatDate(b.expiresAt)}
                               </div>
                             </div>
-                            <span className="shrink-0 font-display text-2xl font-normal tracking-tightest text-brand-700">
+                            <span className="shrink-0 text-2xl font-bold tracking-tight text-brand-700">
                               {b.classesLeft}
                               <span className="text-sm text-brand-400">
                                 /{b.totalClasses}
@@ -610,7 +610,7 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
           {/* Eventos */}
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-normal tracking-tightest text-stone-900">
+              <h2 className="text-2xl font-bold tracking-tight text-stone-900">
                 Eventos abiertos
               </h2>
               <Link

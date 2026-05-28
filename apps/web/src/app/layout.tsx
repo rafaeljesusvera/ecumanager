@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Inter, Instrument_Serif } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { ToastHost } from '@/components/ui/Toast';
 import { NavProgress } from '@/components/shell/NavProgress';
@@ -8,14 +8,6 @@ import { NavProgress } from '@/components/shell/NavProgress';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
-  display: 'swap',
-});
-
-const display = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  variable: '--font-display',
   display: 'swap',
 });
 
@@ -35,11 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="es"
-      suppressHydrationWarning
-      className={`${inter.variable} ${display.variable}`}
-    >
+    <html lang="es" suppressHydrationWarning className={inter.variable}>
       <body className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased">
         <Suspense fallback={null}>
           <NavProgress />

@@ -13,7 +13,7 @@ export function PageHeader({
     <header className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-10">
       <div className="min-w-0">
         <p className="label-eyebrow">{eyebrow}</p>
-        <h1 className="mt-2 font-display text-4xl font-normal leading-[1] tracking-tightest text-stone-900 md:text-6xl">
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-stone-900 md:text-6xl">
           {title}
         </h1>
         {description && (

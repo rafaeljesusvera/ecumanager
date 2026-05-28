@@ -83,7 +83,7 @@ export default async function ProfilePage({
           />
           <div className="min-w-0">
             <p className="label-eyebrow">Sesión activa</p>
-            <h2 className="font-display text-3xl font-normal leading-tight tracking-tightest text-stone-900">
+            <h2 className="text-3xl font-bold tracking-tight leading-tight tracking-tight text-stone-900">
               {profile.fullName ?? profile.email.split('@')[0]}
             </h2>
             <p className="mt-1 truncate text-sm font-medium text-stone-500">

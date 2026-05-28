@@ -49,9 +49,9 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/70 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-800 backdrop-blur">
               <SparkleIcon size={12} weight="fill" /> Beta · con IA
             </div>
-            <h1 className="mt-5 font-display text-5xl font-normal leading-[0.92] tracking-tightest text-stone-900 md:text-7xl">
+            <h1 className="mt-5 text-5xl font-bold tracking-tight text-stone-900 md:text-7xl">
               La hípica que se{' '}
-              <span className="italic text-brand-700">gestiona sola</span>.
+              <span className="text-brand-700">gestiona sola</span>.
             </h1>
             <p className="mt-6 max-w-lg text-base font-medium leading-relaxed text-stone-600 md:text-lg">
               Un solo espacio para clases, eventos, cuidados y comunicación. La
@@ -131,9 +131,9 @@ export default function HomePage() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="label-eyebrow">Un espacio · Cuatro perfiles</p>
-            <h2 className="mt-2 font-display text-4xl font-normal leading-[1] tracking-tightest text-stone-900 md:text-5xl">
+            <h2 className="mt-2 text-4xl font-bold tracking-tight text-stone-900 md:text-5xl">
               Todo el mundo en la hípica,{' '}
-              <span className="italic text-brand-700">conectado</span>.
+              <span className="text-brand-700">conectado</span>.
             </h2>
           </div>
           <p className="max-w-xs text-sm font-medium text-stone-500">
@@ -295,7 +295,7 @@ function FeatureCard({
           {icon}
         </div>
         <h3
-          className={`mt-5 font-bold text-stone-900 ${big ? 'font-display text-2xl font-normal md:text-3xl' : 'text-lg'}`}
+          className={`mt-5 font-bold text-stone-900 ${big ? 'text-2xl font-bold tracking-tight md:text-3xl' : 'text-lg'}`}
         >
           {title}
         </h3>

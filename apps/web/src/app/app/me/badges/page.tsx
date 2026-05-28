@@ -147,7 +147,7 @@ function Stat({
       />
       <div className="relative">
         <div className="label-eyebrow">{label}</div>
-        <div className="font-display text-4xl font-normal leading-none tracking-tightest text-stone-900 md:text-5xl">
+        <div className="text-4xl font-bold tracking-tight leading-none tracking-tight text-stone-900 md:text-5xl">
           {value}
         </div>
         <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-stone-500">
