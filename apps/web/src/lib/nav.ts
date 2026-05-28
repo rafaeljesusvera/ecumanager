@@ -25,6 +25,7 @@ export function buildNav(roles: ClubRole[]): NavSection[] {
     title: 'Mi día',
     items: [
       { href: '/app', label: 'Inicio', icon: 'House', roles: [...CLUB_ROLES_ALL] },
+      { href: '/app/profile', label: 'Mi perfil', icon: 'User', roles: [...CLUB_ROLES_ALL] },
     ],
   });
 

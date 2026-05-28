@@ -29,6 +29,7 @@ const STATIC_TITLES: Record<string, string> = {
   '/app/horse-owner': 'Mis caballos',
   '/app/groom': 'Mi día',
   '/app/notifications': 'Notificaciones',
+  '/app/profile': 'Mi perfil',
 };
 
 const PATTERN_TITLES: Array<[RegExp, string]> = [

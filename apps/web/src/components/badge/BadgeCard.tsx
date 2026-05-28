@@ -34,10 +34,10 @@ export function BadgeCard({
   recipientName?: string | null;
   recipientLabel?: string;
   ratio?: 'card' | 'tall' | 'compact';
-  /** Si true: muestra la carta en blanco y negro con un candado encima. */
+  /** Si true: muestra la carta como "reto": título visible + candado dorado. */
   locked?: boolean;
 }) {
-  const color = locked ? '#3f3f3f' : (badge.color ?? '#3f8649');
+  const baseColor = badge.color ?? '#3f8649';
   const aspect =
     ratio === 'tall'
       ? 'aspect-[5/8]'
@@ -45,10 +45,16 @@ export function BadgeCard({
         ? 'aspect-[3/4]'
         : 'aspect-[3/4.4]';
 
+  if (locked) {
+    return (
+      <LockedCard badge={badge} aspect={aspect} clubName={clubName} accent={baseColor} />
+    );
+  }
+
   return (
     <article
-      className={`relative ${aspect} w-full overflow-hidden rounded-[28px] shadow-soft ring-1 ring-black/5 transition ${locked ? 'saturate-[0.15]' : ''}`}
-      style={{ backgroundColor: color }}
+      className={`relative ${aspect} w-full overflow-hidden rounded-[28px] shadow-soft ring-1 ring-black/5 transition`}
+      style={{ backgroundColor: baseColor }}
     >
       {/* Bandas diagonales decorativas */}
       <div
@@ -127,18 +133,104 @@ export function BadgeCard({
           Escuela de hípica · {clubName ?? 'Equmanager'}
         </div>
       </div>
-
-      {locked && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-stone-900/55 backdrop-blur-[2px]">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-stone-900 shadow-lift ring-4 ring-white/30">
-            <LockKeyIcon size={28} weight="bold" />
-          </div>
-          <p className="rounded-full bg-white/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-stone-900 shadow">
-            Bloqueada
-          </p>
-        </div>
-      )}
     </article>
+  );
+}
+
+/**
+ * Variante "bloqueada": mantiene la información visible (título, subtítulo,
+ * reto, categoría) en lugar de cubrirlo todo con un overlay opaco.
+ * El alumno entiende de un vistazo qué insignia es y qué hay que hacer.
+ */
+function LockedCard({
+  badge,
+  aspect,
+  clubName,
+  accent,
+}: {
+  badge: BadgeCardData;
+  aspect: string;
+  clubName?: string;
+  accent: string;
+}) {
+  const teaser = (badge.description ?? '').trim();
+  const teaserShort =
+    teaser.length > 120 ? teaser.slice(0, 120).trim() + '…' : teaser;
+  return (
+    <article
+      className={`relative ${aspect} w-full overflow-hidden rounded-[28px] shadow-soft ring-1 ring-black/5`}
+      style={{
+        backgroundColor: '#1c1917',
+        backgroundImage: `radial-gradient(at 50% -10%, ${accent}55 0px, transparent 60%), radial-gradient(at 100% 110%, ${accent}25 0px, transparent 60%)`,
+      }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 35%),
+            linear-gradient(115deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.30) 78%, rgba(0,0,0,0) 95%)
+          `,
+        }}
+      />
+
+      <div className="relative flex h-full flex-col items-center px-4 py-5 text-white">
+        <p className="text-[9px] font-black uppercase tracking-[0.32em] text-amber-200/90">
+          Reto · {clubName ?? 'Hípica'}
+        </p>
+
+        <div className="mt-3 flex items-center justify-center">
+          <LockedMedallion />
+        </div>
+
+        <h3 className="mt-3 line-clamp-2 px-1 text-center text-base font-black uppercase tracking-tight text-white drop-shadow-sm md:text-lg">
+          {badge.name}
+        </h3>
+
+        {badge.subtitle && (
+          <span className="mt-2 inline-flex items-center rounded-full bg-amber-200/95 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-stone-900 ring-1 ring-amber-300">
+            {badge.subtitle}
+          </span>
+        )}
+
+        {teaserShort && (
+          <p className="mt-2 line-clamp-3 px-1 text-center text-[10px] font-medium leading-snug text-white/80">
+            {teaserShort}
+          </p>
+        )}
+
+        {badge.categoryLabel && (
+          <p className="mt-auto pt-3 text-center text-[10px] font-black uppercase tracking-[0.22em] text-white/70">
+            {badge.categoryLabel}
+          </p>
+        )}
+
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-200/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-stone-900 shadow-lift">
+          <LockKeyIcon size={12} weight="fill" /> Bloqueada
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function LockedMedallion() {
+  return (
+    <div className="relative h-20 w-20 md:h-24 md:w-24">
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background:
+            'conic-gradient(from 220deg, #f7e08a, #b48721, #f4c757, #8a5e10, #f7e08a)',
+          padding: 3,
+        }}
+      >
+        <div className="h-full w-full rounded-full bg-stone-900" />
+      </div>
+      <div className="absolute inset-2 flex items-center justify-center rounded-full bg-gradient-to-br from-stone-800 to-stone-950 ring-2 ring-white/10">
+        <LockKeyIcon size={32} weight="bold" className="text-amber-200" />
+      </div>
+    </div>
   );
 }
 
