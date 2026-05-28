@@ -13,9 +13,9 @@ import { LogoFull, LogoMark } from '@/components/brand/Logo';
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-brand-50 via-stone-50 to-stone-50">
-      <header className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-5 md:px-6 md:py-6">
-        <Link href="/" className="flex items-center gap-2" aria-label="Equmanager">
-          <LogoMark size={40} className="md:hidden" />
+      <header className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 md:px-6 md:py-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Equmanager">
+          <LogoMark size={52} className="md:hidden" />
           <LogoFull className="hidden h-12 w-auto md:block" />
         </Link>
         <nav className="flex items-center gap-2 md:gap-3">
@@ -27,13 +27,13 @@ export default function HomePage() {
           </Link>
           <Link
             href="/login"
-            className="whitespace-nowrap rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-stone-800 transition hover:border-brand-400 hover:text-brand-700 md:px-4 md:text-xs md:tracking-[0.18em]"
+            className="whitespace-nowrap rounded-xl border border-stone-300 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-stone-800 transition hover:border-brand-400 hover:text-brand-700 md:px-4 md:py-2.5 md:text-xs md:tracking-[0.18em]"
           >
             Entrar
           </Link>
           <Link
             href="/signup"
-            className="whitespace-nowrap rounded-xl bg-brand-700 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white shadow-card transition hover:bg-brand-600 md:px-4 md:text-xs md:tracking-[0.18em]"
+            className="whitespace-nowrap rounded-xl bg-brand-700 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white shadow-card transition hover:bg-brand-600 md:px-4 md:py-2.5 md:text-xs md:tracking-[0.18em]"
           >
             Crear cuenta
           </Link>
