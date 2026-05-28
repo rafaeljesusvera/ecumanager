@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { desc, eq } from 'drizzle-orm';
 import { MedalIcon } from '@phosphor-icons/react/dist/ssr';
@@ -56,7 +57,11 @@ export default async function MeBadgesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {badges.map((b) => (
-            <div key={b.id}>
+            <Link
+              key={b.id}
+              href={`/app/me/badges/${b.id}` as never}
+              className="group block transition hover:-translate-y-1"
+            >
               <BadgeCard
                 clubName={session.primary.clubName}
                 recipientName={rider!.name}
@@ -67,17 +72,12 @@ export default async function MeBadgesPage() {
                   Entregada {formatDate(b.awardedAt)}
                 </div>
                 {b.notes && (
-                  <p className="mt-1 font-medium italic text-stone-600">
+                  <p className="mt-1 line-clamp-2 font-medium italic text-stone-600">
                     «{b.notes}»
                   </p>
                 )}
-                {b.description && !b.notes && (
-                  <p className="mt-1 font-medium text-stone-500">
-                    {b.description}
-                  </p>
-                )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

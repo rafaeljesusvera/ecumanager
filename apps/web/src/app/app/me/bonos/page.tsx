@@ -1,6 +1,11 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { and, desc, eq } from 'drizzle-orm';
-import { TicketIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  TicketIcon,
+  ArrowRightIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { ensureRiderForProfile } from '@/lib/db/rider';
 import { PageHeader } from '@/components/page/PageHeader';
@@ -41,6 +46,7 @@ export default async function MeBonosPage() {
         expiresAt: schema.bonoPurchases.expiresAt,
         name: schema.bonos.name,
         totalClasses: schema.bonos.totalClasses,
+        photoUrl: schema.bonos.photoUrl,
       })
       .from(schema.bonoPurchases)
       .innerJoin(schema.bonos, eq(schema.bonos.id, schema.bonoPurchases.bonoId))
@@ -69,21 +75,43 @@ export default async function MeBonosPage() {
         ) : (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {mine.map((b) => (
-              <article
+              <Link
                 key={b.id}
-                className="rounded-3xl border border-stone-200 bg-white p-5 shadow-card"
+                href={`/app/me/bonos/${b.id}` as never}
+                className="group flex flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card transition hover:-translate-y-0.5 hover:border-brand-300"
               >
-                <h3 className="text-base font-bold text-stone-900">{b.name}</h3>
-                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500">
-                  Comprado el {formatDate(b.purchasedAt)}
-                </p>
-                <div className="mt-3 text-2xl font-bold text-brand-700">
-                  {b.classesLeft} / {b.totalClasses}
+                {b.photoUrl && (
+                  <div className="relative aspect-[16/9] w-full bg-stone-100">
+                    <Image
+                      src={b.photoUrl}
+                      alt={b.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-base font-bold text-stone-900">
+                      {b.name}
+                    </h3>
+                    <ArrowRightIcon
+                      size={16}
+                      className="shrink-0 text-stone-300 group-hover:text-brand-600"
+                    />
+                  </div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500">
+                    Comprado el {formatDate(b.purchasedAt)}
+                  </p>
+                  <div className="mt-3 text-2xl font-bold text-brand-700">
+                    {b.classesLeft} / {b.totalClasses}
+                  </div>
+                  <p className="mt-1 text-[11px] font-medium text-stone-500">
+                    Caduca el {formatDate(b.expiresAt)}
+                  </p>
                 </div>
-                <p className="mt-1 text-[11px] font-medium text-stone-500">
-                  Caduca el {formatDate(b.expiresAt)}
-                </p>
-              </article>
+              </Link>
             ))}
           </div>
         )}

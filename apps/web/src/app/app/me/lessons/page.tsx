@@ -1,6 +1,10 @@
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { desc, eq } from 'drizzle-orm';
-import { CalendarBlankIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  CalendarBlankIcon,
+  ArrowRightIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { ensureRiderForProfile } from '@/lib/db/rider';
 import { PageHeader } from '@/components/page/PageHeader';
@@ -55,11 +59,12 @@ export default async function MeLessonsPage() {
       ) : (
         <div className="space-y-2">
           {lessons.map((l) => (
-            <div
+            <Link
               key={l.attendeeId}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-stone-200 bg-white p-4 shadow-card"
+              href={`/app/me/lessons/${l.lessonId}` as never}
+              className="group flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-stone-200 bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:border-brand-300"
             >
-              <div>
+              <div className="min-w-0">
                 <div className="text-sm font-bold text-stone-900">
                   {formatDateTime(l.date, {
                     weekday: 'short',
@@ -86,8 +91,12 @@ export default async function MeLessonsPage() {
                 >
                   {l.status}
                 </Badge>
+                <ArrowRightIcon
+                  size={14}
+                  className="text-stone-300 group-hover:text-brand-600"
+                />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

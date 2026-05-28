@@ -1,12 +1,18 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { db, schema } from '@equmanager/database';
 import { and, desc, eq, gte } from 'drizzle-orm';
-import { TrophyIcon, MapPinIcon, CheckCircleIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  TrophyIcon,
+  MapPinIcon,
+  CheckCircleIcon,
+  ArrowRightIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { ensureSession, assertRole } from '@/lib/db';
 import { ensureRiderForProfile } from '@/lib/db/rider';
 import { PageHeader } from '@/components/page/PageHeader';
-import { Badge, Button, EmptyState } from '@/components/ui';
+import { Badge, EmptyState } from '@/components/ui';
 import { formatCents, formatDateTime } from '@/lib/format';
-import { enrollInEventAction } from './actions';
 
 export const metadata = { title: 'Eventos' };
 export const dynamic = 'force-dynamic';
@@ -15,7 +21,6 @@ export default async function MeEventsPage() {
   const session = await ensureSession();
   assertRole(session, ['rider', 'owner', 'admin', 'instructor']);
 
-  // Garantiza la existencia del rider del profile actual
   await ensureRiderForProfile(
     session.user.id,
     session.primary.clubId,
@@ -52,69 +57,71 @@ export default async function MeEventsPage() {
       <PageHeader
         eyebrow="Alumno"
         title="Eventos abiertos"
-        description="Competiciones, salidas y clinics organizados por tu hípica."
+        description="Competiciones, salidas y clinics organizados por tu hípica. Toca un evento para ver el detalle y apuntarte."
       />
 
       {events.length === 0 ? (
         <EmptyState
           icon={<TrophyIcon size={40} weight="duotone" />}
           title="No hay eventos publicados"
-          description="Cuando tu hípica publique uno, lo verás aquí y podrás inscribirte."
+          description="Cuando tu hípica publique uno, lo verás aquí."
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {events.map((e) => {
             const enrolled = enrolledIds.has(e.id);
             return (
-              <article
+              <Link
                 key={e.id}
-                className="flex flex-col rounded-3xl border border-stone-200 bg-white p-5 shadow-card"
+                href={`/app/me/events/${e.id}` as never}
+                className="group flex flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card transition hover:-translate-y-0.5 hover:border-brand-300"
               >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
-                      {e.kind.replace('_', ' ')}
-                    </p>
-                    <h3 className="text-base font-bold text-stone-900">{e.title}</h3>
+                {e.photoUrl && (
+                  <div className="relative aspect-[16/9] w-full bg-stone-100">
+                    <Image
+                      src={e.photoUrl}
+                      alt={e.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
                   </div>
-                  <Badge tone="brand">{formatDateTime(e.startsAt)}</Badge>
-                </div>
-                {e.description && (
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-stone-600">
-                    {e.description}
-                  </p>
                 )}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {e.location && (
-                    <Badge tone="neutral">
-                      <MapPinIcon size={10} weight="bold" /> {e.location}
-                    </Badge>
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
+                        {e.kind.replace('_', ' ')}
+                      </p>
+                      <h3 className="text-base font-bold text-stone-900">
+                        {e.title}
+                      </h3>
+                    </div>
+                    {enrolled && (
+                      <Badge tone="success">
+                        <CheckCircleIcon size={11} weight="bold" /> Apuntado
+                      </Badge>
+                    )}
+                  </div>
+                  {e.description && (
+                    <p className="mt-2 line-clamp-2 text-sm font-medium leading-relaxed text-stone-600">
+                      {e.description}
+                    </p>
                   )}
-                  <Badge tone="info">{formatCents(e.priceCents)}</Badge>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Badge tone="brand">{formatDateTime(e.startsAt)}</Badge>
+                    {e.location && (
+                      <Badge tone="neutral">
+                        <MapPinIcon size={10} weight="bold" /> {e.location}
+                      </Badge>
+                    )}
+                    <Badge tone="info">{formatCents(e.priceCents)}</Badge>
+                  </div>
+                  <div className="mt-auto flex items-center justify-end pt-4 text-stone-300 group-hover:text-brand-600">
+                    <ArrowRightIcon size={16} weight="bold" />
+                  </div>
                 </div>
-
-                <div className="mt-auto pt-4">
-                  {enrolled ? (
-                    <Badge tone="success">
-                      <CheckCircleIcon size={11} weight="bold" /> Ya te has apuntado
-                    </Badge>
-                  ) : (
-                    <form action={enrollInEventAction}>
-                      <input type="hidden" name="eventId" value={e.id} />
-                      <input
-                        type="hidden"
-                        name="priceCents"
-                        value={e.priceCents}
-                      />
-                      <Button type="submit" className="w-full">
-                        {e.priceCents > 0
-                          ? `Apuntarme · ${formatCents(e.priceCents)}`
-                          : 'Apuntarme gratis'}
-                      </Button>
-                    </form>
-                  )}
-                </div>
-              </article>
+              </Link>
             );
           })}
         </div>
