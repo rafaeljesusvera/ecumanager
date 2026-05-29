@@ -176,17 +176,18 @@ export function UsersExplorer({
               <th className="w-12 px-4 py-3"></th>
               <th className="px-4 py-3 text-left">Usuario</th>
               <th className="px-4 py-3 text-left">Email</th>
-              <th className="px-4 py-3 text-left">Perfiles</th>
+              <th className="px-4 py-3 text-left">Perfil</th>
+              <th className="px-4 py-3 text-left">Hípica</th>
               <th className="px-4 py-3 text-left">Alta</th>
               <th className="px-4 py-3 text-left">Sistema</th>
-              <th className="px-4 py-3 text-right">Acciones</th>
+              <th className="w-12 px-4 py-3 text-right"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-10 text-center text-sm font-medium text-stone-500"
                 >
                   Sin resultados con esos filtros.
@@ -210,18 +211,29 @@ export function UsersExplorer({
                     {u.memberships.length === 0 ? (
                       <span className="text-stone-400">—</span>
                     ) : (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-col gap-1">
                         {u.memberships.map((m, i) => (
                           <span
                             key={i}
-                            className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-bold text-stone-700"
-                            title={`${roleLabel(m.role)} en ${m.clubName}`}
+                            className="inline-flex w-fit items-center rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-800"
                           >
-                            <span className="font-bold text-brand-700">
-                              {roleLabel(m.role)}
-                            </span>
-                            <span className="text-stone-500">·</span>
-                            <span className="text-stone-600">{m.clubName}</span>
+                            {roleLabel(m.role)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {u.memberships.length === 0 ? (
+                      <span className="text-stone-400">—</span>
+                    ) : (
+                      <div className="flex flex-col gap-1">
+                        {u.memberships.map((m, i) => (
+                          <span
+                            key={i}
+                            className="text-xs font-medium text-stone-700"
+                          >
+                            {m.clubName}
                           </span>
                         ))}
                       </div>
@@ -238,11 +250,7 @@ export function UsersExplorer({
                     {u.isSuperadmin && <Badge tone="brand">Superadmin</Badge>}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {u.id === currentUserId ? (
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-stone-300">
-                        Tú
-                      </span>
-                    ) : (
+                    {u.id !== currentUserId && (
                       <form action={impersonateUserAction}>
                         <input
                           type="hidden"
@@ -251,11 +259,11 @@ export function UsersExplorer({
                         />
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-stone-200 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-700 transition hover:border-brand-300 hover:text-brand-700"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-stone-200 text-stone-600 transition hover:border-brand-300 hover:text-brand-700"
                           title={`Ver Equmanager como ${u.fullName ?? u.email}`}
+                          aria-label={`Ver como ${u.fullName ?? u.email}`}
                         >
-                          <EyeIcon size={12} weight="bold" />
-                          Ver como
+                          <EyeIcon size={14} weight="bold" />
                         </button>
                       </form>
                     )}
