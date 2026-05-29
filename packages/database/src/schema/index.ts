@@ -18,3 +18,6 @@ export * from './help';
 export * from './profile_links';
 export * from './directory';
 export * from './join_requests';
+export * from './providers';
+export * from './messages';
+export * from './social';

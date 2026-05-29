@@ -15,9 +15,11 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 import { Avatar, Badge, EmptyState } from '@/components/ui';
 import { BadgeCard } from '@/components/badge/BadgeCard';
+import { SeasonDashboard } from '@/components/rider/SeasonDashboard';
 import { formatCents, formatDate, formatDateTime } from '@/lib/format';
 import type { CurrentSession } from '@/lib/db/profile';
 import { ensureRiderForProfile } from '@/lib/db/rider';
+import { getCompetitionData } from '@/lib/competition-data';
 
 /**
  * Home visual para alumnos: hero + insignias destacadas + próximas clases,
@@ -185,6 +187,12 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
             </div>
           </div>
         </header>
+
+        {(() => {
+          const stats = getCompetitionData(session.user.email);
+          if (!stats) return null;
+          return <SeasonDashboard stats={stats} riderName={rider!.name} />;
+        })()}
 
         {/* ░░░░ INSIGNIAS — primera sección pero discreta ░░░░ */}
         <section

@@ -77,6 +77,24 @@ export function buildNav(roles: ClubRole[]): NavSection[] {
     });
   }
 
+  if (hasAny(['provider'])) {
+    sections.push({
+      title: 'Proveedor',
+      items: [
+        { href: '/app/provider', label: 'Mi agenda', icon: 'Stethoscope', roles: ['provider'] },
+      ],
+    });
+  }
+
+  // Mensajería y red social: para todos los roles autenticados
+  sections.push({
+    title: 'Comunidad',
+    items: [
+      { href: '/app/messages', label: 'Mensajes', icon: 'ChatCircle', roles: [...CLUB_ROLES_ALL] },
+      { href: '/app/feed', label: 'Feed', icon: 'Sparkle', roles: [...CLUB_ROLES_ALL] },
+    ],
+  });
+
   if (hasAny(['horse_owner'])) {
     sections.push({
       title: 'Mis caballos',
@@ -106,6 +124,7 @@ export function buildNav(roles: ClubRole[]): NavSection[] {
 }
 
 const CLUB_ROLES_ALL: ClubRole[] = [
+  'provider',
   'owner',
   'admin',
   'instructor',

@@ -53,8 +53,21 @@ export const CLUB_ROLES = [
   'groom',
   'horse_owner',
   'rider',
+  'provider',
 ] as const;
 export type ClubRole = (typeof CLUB_ROLES)[number];
+
+export const PROVIDER_SPECIALTIES = [
+  'veterinario',
+  'herrador',
+  'dentista',
+  'fisio',
+  'nutricion',
+  'transporte',
+  'seguros',
+  'otros',
+] as const;
+export type ProviderSpecialty = (typeof PROVIDER_SPECIALTIES)[number];
 
 export const CLUB_PLANS = ['free', 'pro', 'enterprise'] as const;
 export type ClubPlan = (typeof CLUB_PLANS)[number];

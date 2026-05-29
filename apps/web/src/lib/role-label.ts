@@ -8,9 +8,10 @@ export function roleLabel(role: ClubRole): string {
   return {
     owner: 'Propietario hípica',
     admin: 'Administrador',
-    instructor: 'Instructor',
+    instructor: 'Monitor',
     groom: 'Mozo',
     horse_owner: 'Propietario caballo',
     rider: 'Alumno',
+    provider: 'Proveedor',
   }[role];
 }

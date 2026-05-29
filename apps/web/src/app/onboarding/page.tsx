@@ -6,6 +6,7 @@ import {
   GraduationCapIcon,
   ClipboardTextIcon,
   MicrophoneStageIcon,
+  StethoscopeIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { getSessionOrRedirect } from '@/lib/db';
 import { LogoMark } from '@/components/brand/Logo';
@@ -50,7 +51,8 @@ export default async function OnboardingPage({
         {(choice === 'horse_owner' ||
           choice === 'rider' ||
           choice === 'groom' ||
-          choice === 'instructor') && <JoinForm preset={choice} />}
+          choice === 'instructor' ||
+          choice === 'provider') && <JoinForm preset={choice} />}
       </section>
     </main>
   );
@@ -97,6 +99,12 @@ function RoleChooser() {
           icon={<ClipboardTextIcon size={28} weight="duotone" />}
           title="Soy mozo de cuadra"
           text="Trabajo en uno o varios centros y llevo sus checklists."
+        />
+        <RoleChip
+          href="/onboarding?as=provider"
+          icon={<StethoscopeIcon size={28} weight="duotone" />}
+          title="Soy proveedor"
+          text="Veterinario, herrador, dentista, fisio... visito uno o varios centros."
         />
       </div>
 
@@ -177,7 +185,7 @@ function OwnerForm() {
 function JoinForm({
   preset,
 }: {
-  preset: 'horse_owner' | 'rider' | 'groom' | 'instructor';
+  preset: 'horse_owner' | 'rider' | 'groom' | 'instructor' | 'provider';
 }) {
   const presetLabels: Record<
     typeof preset,
@@ -205,6 +213,12 @@ function JoinForm({
       title: 'Centros donde impartes clase',
       subtitle:
         'Selecciona uno o varios centros. Tendrás un calendario y bandeja IA unificados.',
+      multi: true,
+    },
+    provider: {
+      title: 'Centros a los que visitas',
+      subtitle:
+        'Veterinario, herrador, dentista, fisio… selecciona todos los centros con los que trabajas.',
       multi: true,
     },
   };

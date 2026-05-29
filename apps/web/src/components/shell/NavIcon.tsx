@@ -15,6 +15,9 @@ import {
   ClipboardTextIcon,
   QuestionIcon,
   GearIcon,
+  StethoscopeIcon,
+  ChatCircleIcon,
+  SparkleIcon,
   CircleIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
@@ -34,6 +37,9 @@ const map: Record<string, Icon> = {
   ClipboardText: ClipboardTextIcon,
   Question: QuestionIcon,
   Gear: GearIcon,
+  Stethoscope: StethoscopeIcon,
+  ChatCircle: ChatCircleIcon,
+  Sparkle: SparkleIcon,
 };
 
 export function NavIcon({
