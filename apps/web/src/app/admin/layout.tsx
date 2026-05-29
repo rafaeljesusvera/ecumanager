@@ -12,6 +12,7 @@ import { db, schema } from '@equmanager/database';
 import { eq } from 'drizzle-orm';
 import { getCurrentUser } from '@equmanager/auth';
 import { LogoMark } from '@/components/brand/Logo';
+import { AdminMobileNav } from '@/components/admin/AdminMobileNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,7 +70,29 @@ export default async function AdminLayout({
           </Link>
         </div>
       </aside>
-      <main className="flex-1 overflow-x-hidden">{children}</main>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-stone-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+          <AdminMobileNav />
+          <div className="flex items-center gap-2">
+            <LogoMark size={24} />
+            <div>
+              <div className="text-xs font-bold leading-tight text-stone-900">
+                Equmanager
+              </div>
+              <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-amber-700">
+                Superadmin
+              </div>
+            </div>
+          </div>
+          <Link
+            href="/app"
+            className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500 hover:text-brand-700"
+          >
+            Volver
+          </Link>
+        </header>
+        <main className="flex-1 overflow-x-hidden">{children}</main>
+      </div>
     </div>
   );
 }
