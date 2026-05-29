@@ -67,3 +67,4 @@ playwright-report/
 playwright/.cache/
 blob-report/
 .claude/
+*.env.bak
