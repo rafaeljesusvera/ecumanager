@@ -3,9 +3,30 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db, schema } from '@equmanager/database';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, ne, sql } from 'drizzle-orm';
 
+import type { ClubRole } from '@equmanager/domain';
 import { ensureSession } from '@/lib/db';
+
+type BroadcastAudience = 'riders' | 'horse_owners' | 'all';
+
+const AUDIENCE_ROLES: Record<BroadcastAudience, ClubRole[] | null> = {
+  riders: ['rider'],
+  horse_owners: ['horse_owner'],
+  all: null,
+};
+
+const AUDIENCE_LABEL: Record<BroadcastAudience, string> = {
+  riders: 'Alumnos del centro',
+  horse_owners: 'Propietarios',
+  all: 'Todos los miembros',
+};
+
+function canSendBroadcast(senderRole: string, audience: BroadcastAudience) {
+  if (senderRole === 'owner' || senderRole === 'admin') return true;
+  if (senderRole === 'instructor' && audience === 'riders') return true;
+  return false;
+}
 
 /**
  * Empieza (o reutiliza) un hilo directo con otro usuario y envía un mensaje.
@@ -113,4 +134,84 @@ export async function sendMessageAction(formData: FormData) {
   }
 
   revalidatePath(`/app/messages/${threadId}`);
+}
+
+/**
+ * Crea un anuncio (broadcast) dirigido a un segmento del club primario del
+ * remitente. Solo se permite si el remitente tiene un rol con permiso para
+ * enviar a esa audiencia.
+ */
+export async function createBroadcastAction(formData: FormData) {
+  const session = await ensureSession();
+  const audience = String(formData.get('audience') ?? '').trim() as BroadcastAudience;
+  const title = String(formData.get('title') ?? '').trim();
+  const body = String(formData.get('body') ?? '').trim();
+
+  if (!body) return;
+  if (!['riders', 'horse_owners', 'all'].includes(audience)) return;
+  if (!canSendBroadcast(session.primary.role, audience)) return;
+
+  const clubId = session.primary.clubId;
+  const allowedRoles = AUDIENCE_ROLES[audience];
+
+  const recipientRows = await db
+    .select({ profileId: schema.clubMembers.profileId })
+    .from(schema.clubMembers)
+    .where(
+      allowedRoles
+        ? and(
+            eq(schema.clubMembers.clubId, clubId),
+            inArray(schema.clubMembers.role, allowedRoles),
+            ne(schema.clubMembers.profileId, session.user.id),
+          )
+        : and(
+            eq(schema.clubMembers.clubId, clubId),
+            ne(schema.clubMembers.profileId, session.user.id),
+          ),
+    );
+
+  const recipientIds = Array.from(
+    new Set(recipientRows.map((r) => r.profileId)),
+  );
+  if (recipientIds.length === 0) return;
+
+  const threadTitle =
+    title || `Anuncio · ${AUDIENCE_LABEL[audience]}`;
+
+  const [thread] = await db
+    .insert(schema.messageThreads)
+    .values({
+      clubId,
+      kind: 'broadcast',
+      title: threadTitle,
+      createdBy: session.user.id,
+      lastMessageAt: new Date(),
+    })
+    .returning();
+  const threadId = thread!.id;
+
+  await db.insert(schema.threadParticipants).values([
+    { threadId, profileId: session.user.id },
+    ...recipientIds.map((profileId) => ({ threadId, profileId })),
+  ]);
+
+  await db.insert(schema.messages).values({
+    threadId,
+    senderId: session.user.id,
+    body,
+  });
+
+  await db.insert(schema.notifications).values(
+    recipientIds.map((profileId) => ({
+      profileId,
+      clubId,
+      kind: 'sistema' as const,
+      title: `Anuncio: ${threadTitle}`,
+      body: body.slice(0, 140),
+      link: `/app/messages/${threadId}`,
+    })),
+  );
+
+  revalidatePath('/app/messages');
+  redirect(`/app/messages/${threadId}`);
 }

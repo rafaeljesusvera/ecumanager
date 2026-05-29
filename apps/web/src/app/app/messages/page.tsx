@@ -134,6 +134,37 @@ export default async function MessagesPage() {
     new Map(peers.map((p) => [p.id, p])).values(),
   );
 
+  // Opciones de anuncio (broadcast) según el rol primario en su club
+  const primaryRole = session.primary.role;
+  const broadcastOptions: Array<{
+    value: 'riders' | 'horse_owners' | 'all';
+    label: string;
+    hint: string;
+  }> = [];
+  if (
+    primaryRole === 'owner' ||
+    primaryRole === 'admin' ||
+    primaryRole === 'instructor'
+  ) {
+    broadcastOptions.push({
+      value: 'riders',
+      label: 'Alumnos del centro',
+      hint: 'Todos los jinetes registrados en tu club.',
+    });
+  }
+  if (primaryRole === 'owner' || primaryRole === 'admin') {
+    broadcastOptions.push({
+      value: 'horse_owners',
+      label: 'Propietarios',
+      hint: 'Propietarios de caballos del club.',
+    });
+    broadcastOptions.push({
+      value: 'all',
+      label: 'Todos los miembros',
+      hint: 'Cualquier persona vinculada al club.',
+    });
+  }
+
   return (
     <div className="p-6 md:p-10">
       <PageHeader
@@ -146,7 +177,11 @@ export default async function MessagesPage() {
         <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500">
           {threads.length} conversaciones
         </span>
-        <NewThreadDialog peers={uniquePeers} />
+        <NewThreadDialog
+          peers={uniquePeers}
+          broadcastOptions={broadcastOptions}
+          primaryClubName={session.primary.clubName}
+        />
       </div>
 
       {threads.length === 0 ? (
