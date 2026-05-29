@@ -57,6 +57,12 @@ export const clubs = pgTable(
     slug: text('slug').notNull(),
     name: text('name').notNull(),
     plan: clubPlanEnum('plan').notNull().default('free'),
+    /**
+     * Vínculo opcional con el directorio público (RFHE / autonómicas).
+     * Se rellena al crear el club si el owner lo encuentra en el
+     * autocomplete, o más tarde desde /app/club-settings.
+     */
+    directoryClubId: uuid('directory_club_id'),
     settings: jsonb('settings').notNull().default(sql`'{}'::jsonb`),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()

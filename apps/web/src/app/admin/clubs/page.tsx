@@ -6,6 +6,29 @@ import { Badge } from '@/components/ui';
 export const metadata = { title: 'Superadmin · Clubes' };
 export const dynamic = 'force-dynamic';
 
+const FEDERATION_LABEL: Record<string, string> = {
+  rfhe: 'RFHE',
+  andalucia: 'Andalucía',
+  aragon: 'Aragón',
+  asturias: 'Asturias',
+  baleares: 'Baleares',
+  canarias: 'Canarias',
+  cantabria: 'Cantabria',
+  castilla_leon: 'Castilla y León',
+  castilla_la_mancha: 'Castilla-La Mancha',
+  cataluna: 'Cataluña',
+  ceuta: 'Ceuta',
+  extremadura: 'Extremadura',
+  galicia: 'Galicia',
+  madrid: 'Madrid',
+  melilla: 'Melilla',
+  murcia: 'Murcia',
+  navarra: 'Navarra',
+  pais_vasco: 'País Vasco',
+  la_rioja: 'La Rioja',
+  valencia: 'Valencia',
+};
+
 export default async function AdminClubsPage() {
   const clubs = await db
     .select({
@@ -14,6 +37,8 @@ export default async function AdminClubsPage() {
       slug: schema.clubs.slug,
       plan: schema.clubs.plan,
       createdAt: schema.clubs.createdAt,
+      directoryFederation: schema.directoryClubs.federation,
+      directoryName: schema.directoryClubs.name,
       members: sql<number>`(
         select count(*)::int from club_members cm
         where cm.club_id = ${schema.clubs.id}
@@ -28,6 +53,10 @@ export default async function AdminClubsPage() {
       )`,
     })
     .from(schema.clubs)
+    .leftJoin(
+      schema.directoryClubs,
+      eq(schema.directoryClubs.id, schema.clubs.directoryClubId),
+    )
     .orderBy(schema.clubs.name);
 
   return (
@@ -45,6 +74,7 @@ export default async function AdminClubsPage() {
               <th className="px-4 py-3 text-left">Club</th>
               <th className="px-4 py-3 text-left">Slug</th>
               <th className="px-4 py-3 text-left">Plan</th>
+              <th className="px-4 py-3 text-left">Federación</th>
               <th className="px-4 py-3 text-right">Miembros</th>
               <th className="px-4 py-3 text-right">Caballos</th>
               <th className="px-4 py-3 text-right">Jinetes</th>
@@ -59,6 +89,19 @@ export default async function AdminClubsPage() {
                   <Badge tone={c.plan === 'enterprise' ? 'brand' : 'neutral'}>
                     {c.plan}
                   </Badge>
+                </td>
+                <td className="px-4 py-3">
+                  {c.directoryFederation ? (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-800"
+                      title={c.directoryName ?? ''}
+                    >
+                      {FEDERATION_LABEL[c.directoryFederation] ??
+                        c.directoryFederation}
+                    </span>
+                  ) : (
+                    <span className="text-stone-300">—</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-right">{c.members}</td>
                 <td className="px-4 py-3 text-right">{c.horses}</td>

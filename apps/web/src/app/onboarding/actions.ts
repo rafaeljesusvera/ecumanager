@@ -33,6 +33,9 @@ async function ensureProfile(user: { id: string; email: string }) {
 
 /**
  * Crea un club nuevo y al usuario como owner.
+ * Si el owner ha elegido una entrada del directorio público en el
+ * autocomplete, vinculamos el club y pre-rellenamos `settings` con los
+ * datos públicos (web, teléfono, dirección).
  */
 export async function createClubAction(formData: FormData) {
   const user = await getCurrentUser();
@@ -40,8 +43,41 @@ export async function createClubAction(formData: FormData) {
   await ensureProfile({ id: user.id, email: user.email });
 
   const rawName = String(formData.get('name') ?? '').trim();
+  const directoryClubId =
+    String(formData.get('directoryClubId') ?? '').trim() || null;
   if (rawName.length < 2) {
     redirect('/onboarding?error=' + encodeURIComponent('El nombre es muy corto'));
+  }
+
+  // Si el directorio ya está reclamado, anulamos el vínculo (pero el
+  // club se sigue creando). El owner podrá vincularlo luego o pedir
+  // transferencia desde club-settings.
+  let validDirectoryId: string | null = null;
+  let directoryPrefill: Record<string, string | null> = {};
+  if (directoryClubId) {
+    const [dir] = await db
+      .select()
+      .from(schema.directoryClubs)
+      .where(eq(schema.directoryClubs.id, directoryClubId))
+      .limit(1);
+    if (dir) {
+      const [reclaimed] = await db
+        .select({ id: schema.clubs.id })
+        .from(schema.clubs)
+        .where(eq(schema.clubs.directoryClubId, dir.id))
+        .limit(1);
+      if (!reclaimed) {
+        validDirectoryId = dir.id;
+        directoryPrefill = {
+          phone: dir.phone,
+          email: dir.email,
+          website: dir.website,
+          address: [dir.address, dir.city, dir.postalCode]
+            .filter(Boolean)
+            .join(', ') || null,
+        };
+      }
+    }
   }
 
   const baseSlug = slugify(rawName) || `hipica-${Date.now().toString(36)}`;
@@ -60,7 +96,14 @@ export async function createClubAction(formData: FormData) {
 
   const [club] = await db
     .insert(schema.clubs)
-    .values({ name: rawName, slug })
+    .values({
+      name: rawName,
+      slug,
+      directoryClubId: validDirectoryId,
+      settings: Object.fromEntries(
+        Object.entries(directoryPrefill).filter(([, v]) => v !== null),
+      ),
+    })
     .returning();
 
   if (!club) {

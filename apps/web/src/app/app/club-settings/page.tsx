@@ -7,6 +7,7 @@ import { Field, Input, Select, Textarea } from '@/components/ui';
 import { AutoSaveForm } from '@/components/ui/AutoSaveForm';
 import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { updateClubSettingsAction } from './actions';
+import { DirectoryLink } from './DirectoryLink';
 
 export const metadata = { title: 'Ajustes del centro' };
 export const dynamic = 'force-dynamic';
@@ -15,13 +16,43 @@ export default async function ClubSettingsPage() {
   const session = await ensureSession();
   assertRole(session, ['owner', 'admin']);
 
+  // Defensivo: directory_club_id puede no existir aún en BD (migración 0008).
   const [club] = await db
-    .select()
+    .select({
+      id: schema.clubs.id,
+      slug: schema.clubs.slug,
+      name: schema.clubs.name,
+      plan: schema.clubs.plan,
+      settings: schema.clubs.settings,
+      createdAt: schema.clubs.createdAt,
+      updatedAt: schema.clubs.updatedAt,
+    })
     .from(schema.clubs)
     .where(eq(schema.clubs.id, session.primary.clubId))
     .limit(1);
 
   if (!club) return null;
+
+  let directoryClubId: string | null = null;
+  let directoryEntry: typeof schema.directoryClubs.$inferSelect | null = null;
+  try {
+    const [dirIdRow] = await db
+      .select({ directoryClubId: schema.clubs.directoryClubId })
+      .from(schema.clubs)
+      .where(eq(schema.clubs.id, club.id))
+      .limit(1);
+    directoryClubId = dirIdRow?.directoryClubId ?? null;
+    if (directoryClubId) {
+      const [dir] = await db
+        .select()
+        .from(schema.directoryClubs)
+        .where(eq(schema.directoryClubs.id, directoryClubId))
+        .limit(1);
+      directoryEntry = dir ?? null;
+    }
+  } catch {
+    // migración 0008 pendiente
+  }
 
   const settings = (club.settings as Record<string, unknown>) ?? {};
   const logoUrl = typeof settings.logoUrl === 'string' ? settings.logoUrl : null;
@@ -37,6 +68,11 @@ export default async function ClubSettingsPage() {
         eyebrow="Propietario"
         title="Ajustes del centro"
         description="Información pública de tu hípica. Se guarda solo al salir de cada campo."
+      />
+
+      <DirectoryLink
+        clubName={club.name}
+        directoryEntry={directoryEntry}
       />
 
       <AutoSaveForm

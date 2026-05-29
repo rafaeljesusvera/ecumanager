@@ -95,6 +95,28 @@ export default async function AdminHome() {
     monthlyCumulative(schema.profiles, sql`created_at`),
   ]);
 
+  let federationStats: { claimed: number; total: number } | null = null;
+  try {
+    const result = (await db.execute(sql`
+      select
+        (select count(*)::int from clubs where directory_club_id is not null) as claimed,
+        (select count(*)::int from directory_clubs) as total
+    `)) as unknown as
+      | { rows?: Array<{ claimed: number; total: number }> }
+      | Array<{ claimed: number; total: number }>;
+    const row = Array.isArray(result)
+      ? result[0]
+      : (result.rows ?? [])[0];
+    if (row) {
+      federationStats = {
+        claimed: Number(row.claimed),
+        total: Number(row.total),
+      };
+    }
+  } catch {
+    // migración 0008 pendiente
+  }
+
   return (
     <div className="p-6 md:p-10">
       <PageHeader
@@ -133,6 +155,39 @@ export default async function AdminHome() {
           accent="#be123c"
         />
       </div>
+
+      {federationStats && (
+        <div className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50/60 p-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-700">
+                Clubes federados activos
+              </div>
+              <div className="mt-1 text-3xl font-bold tracking-tight text-stone-900">
+                {federationStats.claimed}
+                <span className="ml-2 text-lg font-bold text-emerald-700">
+                  / {federationStats.total}
+                </span>
+              </div>
+              <p className="mt-1 text-xs font-medium text-stone-600">
+                Hípicas con cuenta operativa que han reclamado su entrada
+                en el padrón oficial (RFHE o autonómicas).
+              </p>
+            </div>
+            <div className="hidden h-2 w-full max-w-md overflow-hidden rounded-full bg-white/80 md:block">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-700 transition-all"
+                style={{
+                  width:
+                    federationStats.total > 0
+                      ? `${(federationStats.claimed / federationStats.total) * 100}%`
+                      : '0%',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <Legend />
     </div>

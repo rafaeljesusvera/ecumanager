@@ -1,4 +1,5 @@
 import { db, schema } from '@equmanager/database';
+import { eq, sql } from 'drizzle-orm';
 import { PageHeader } from '@/components/page/PageHeader';
 import {
   DirectoryExplorer,
@@ -17,8 +18,13 @@ export default async function AdminDirectoryPage() {
       province: schema.directoryClubs.province,
       city: schema.directoryClubs.city,
       website: schema.directoryClubs.website,
+      claimedClubName: schema.clubs.name,
     })
     .from(schema.directoryClubs)
+    .leftJoin(
+      schema.clubs,
+      eq(schema.clubs.directoryClubId, schema.directoryClubs.id),
+    )
     .orderBy(schema.directoryClubs.name);
 
   const rows: DirectoryRow[] = data.map((r) => ({
@@ -28,6 +34,7 @@ export default async function AdminDirectoryPage() {
     province: r.province,
     city: r.city,
     website: r.website,
+    claimedClubName: r.claimedClubName,
   }));
 
   return (

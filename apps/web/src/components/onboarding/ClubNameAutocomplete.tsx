@@ -19,9 +19,11 @@ type Suggestion = {
  */
 export function ClubNameAutocomplete({
   name = 'name',
+  directoryIdName = 'directoryClubId',
   defaultValue = '',
 }: {
   name?: string;
+  directoryIdName?: string;
   defaultValue?: string;
 }) {
   const [value, setValue] = useState(defaultValue);
@@ -77,6 +79,11 @@ export function ClubNameAutocomplete({
 
   return (
     <div className="relative" ref={wrapRef}>
+      <input
+        type="hidden"
+        name={directoryIdName}
+        value={pinned?.id ?? ''}
+      />
       <Input
         required
         name={name}

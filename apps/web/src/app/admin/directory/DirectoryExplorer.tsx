@@ -37,6 +37,7 @@ export type DirectoryRow = {
   province: string | null;
   city: string | null;
   website: string | null;
+  claimedClubName: string | null;
 };
 
 export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
@@ -44,6 +45,7 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
   const [federation, setFederation] = useState('');
   const [province, setProvince] = useState('');
   const [onlyWithWeb, setOnlyWithWeb] = useState(false);
+  const [onlyClaimed, setOnlyClaimed] = useState(false);
 
   const federations = useMemo(() => {
     const set = new Set(rows.map((r) => r.federation));
@@ -62,23 +64,31 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
       if (federation && r.federation !== federation) return false;
       if (province && r.province !== province) return false;
       if (onlyWithWeb && !r.website) return false;
+      if (onlyClaimed && !r.claimedClubName) return false;
       if (needle) {
         const hay = `${r.name} ${r.province ?? ''} ${r.city ?? ''}`.toLowerCase();
         if (!hay.includes(needle)) return false;
       }
       return true;
     });
-  }, [rows, q, federation, province, onlyWithWeb]);
+  }, [rows, q, federation, province, onlyWithWeb, onlyClaimed]);
 
   const hasFilter =
-    q.trim().length > 0 || federation || province || onlyWithWeb;
+    q.trim().length > 0 ||
+    federation ||
+    province ||
+    onlyWithWeb ||
+    onlyClaimed;
 
   function clearAll() {
     setQ('');
     setFederation('');
     setProvince('');
     setOnlyWithWeb(false);
+    setOnlyClaimed(false);
   }
+
+  const claimedCount = rows.filter((r) => r.claimedClubName).length;
 
   return (
     <>
@@ -151,6 +161,17 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
           >
             Con web
           </button>
+          <button
+            type="button"
+            onClick={() => setOnlyClaimed((v) => !v)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] transition ${
+              onlyClaimed
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
+                : 'border-stone-200 bg-white text-stone-600 hover:border-emerald-300 hover:text-emerald-700'
+            }`}
+          >
+            Activo en Equmanager ({claimedCount})
+          </button>
           <div className="ml-auto text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500">
             {filtered.length} de {rows.length}
           </div>
@@ -164,6 +185,7 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
               <th className="px-4 py-3 text-left">Club</th>
               <th className="px-4 py-3 text-left">Federación</th>
               <th className="px-4 py-3 text-left">Provincia</th>
+              <th className="px-4 py-3 text-left">Estado</th>
               <th className="px-4 py-3 text-left">Web</th>
             </tr>
           </thead>
@@ -171,7 +193,7 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-4 py-10 text-center text-sm font-medium text-stone-500"
                 >
                   Sin resultados con esos filtros.
@@ -190,6 +212,20 @@ export function DirectoryExplorer({ rows }: { rows: DirectoryRow[] }) {
                   </td>
                   <td className="px-4 py-3 text-stone-600">
                     {r.province ?? '—'}
+                  </td>
+                  <td className="px-4 py-3">
+                    {r.claimedClubName ? (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-800"
+                        title={`Reclamado por ${r.claimedClubName}`}
+                      >
+                        Activo
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-stone-300">
+                        No reclamado
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-stone-600">
                     {r.website ? (
