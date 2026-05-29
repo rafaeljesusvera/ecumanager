@@ -68,3 +68,4 @@ playwright/.cache/
 blob-report/
 .claude/
 *.env.bak
+packages/database/src/test-*.ts
