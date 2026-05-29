@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { SignOutIcon, CaretDownIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  SignOutIcon,
+  CaretDownIcon,
+  ShieldStarIcon,
+  ArrowRightIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { signOut } from '@/app/auth/actions';
 import { LogoMark } from '@/components/brand/Logo';
 import { NavIcon } from './NavIcon';
@@ -11,6 +16,7 @@ export function Sidebar({ session }: { session: CurrentSession }) {
   const roles = Array.from(new Set(session.memberships.map((m) => m.role)));
   const sections = buildNav(roles);
   const primary = session.primary!;
+  const isSuperadmin = session.profile?.isSuperadmin === true;
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
@@ -41,6 +47,34 @@ export function Sidebar({ session }: { session: CurrentSession }) {
             {roleLabel(primary.role)}
           </div>
         </div>
+
+        {isSuperadmin && (
+          <Link
+            href="/admin"
+            className="group mt-3 flex items-center justify-between gap-2 rounded-2xl border border-amber-300 bg-gradient-to-br from-amber-50 to-amber-100 px-3 py-2.5 transition hover:from-amber-100 hover:to-amber-200"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <ShieldStarIcon
+                size={18}
+                weight="fill"
+                className="shrink-0 text-amber-700"
+              />
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700">
+                  Superadmin
+                </div>
+                <div className="truncate text-xs font-bold text-stone-900">
+                  Panel del sistema
+                </div>
+              </div>
+            </div>
+            <ArrowRightIcon
+              size={12}
+              weight="bold"
+              className="shrink-0 text-amber-700 transition group-hover:translate-x-0.5"
+            />
+          </Link>
+        )}
       </div>
 
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-6">

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import {
   BuildingsIcon,
   HorseIcon,
-  GraduationCapIcon,
+  UsersIcon,
   MagnifyingGlassIcon,
   ChartBarIcon,
   ArrowLeftIcon,
@@ -53,8 +53,8 @@ export default async function AdminLayout({
           <AdminLink href="/admin/horses" icon={<HorseIcon size={18} weight="duotone" />}>
             Caballos
           </AdminLink>
-          <AdminLink href="/admin/riders" icon={<GraduationCapIcon size={18} weight="duotone" />}>
-            Jinetes
+          <AdminLink href="/admin/users" icon={<UsersIcon size={18} weight="duotone" />}>
+            Usuarios
           </AdminLink>
           <AdminLink href="/admin/directory" icon={<MagnifyingGlassIcon size={18} weight="duotone" />}>
             Directorio público

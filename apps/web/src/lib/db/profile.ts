@@ -42,9 +42,8 @@ export async function loadSession(user: {
   email: string;
   user_metadata?: Record<string, unknown> | null;
 }): Promise<CurrentSession> {
-  // Defensivo: seleccionamos columnas explícitas (sin is_superadmin) para
-  // que el endpoint funcione aunque la migración 0007 todavía no se haya
-  // aplicado en producción.
+  // Seleccionamos columnas explícitas. is_superadmin se intenta leer aparte
+  // por si una BD pre-0007 todavía no lo tiene.
   const existing = await db
     .select({
       id: schema.profiles.id,
@@ -58,8 +57,20 @@ export async function loadSession(user: {
     .where(eq(schema.profiles.id, user.id))
     .limit(1);
 
+  let isSuperadmin = false;
+  try {
+    const [sa] = await db
+      .select({ isSuperadmin: schema.profiles.isSuperadmin })
+      .from(schema.profiles)
+      .where(eq(schema.profiles.id, user.id))
+      .limit(1);
+    isSuperadmin = sa?.isSuperadmin ?? false;
+  } catch {
+    // migración 0007 todavía no aplicada
+  }
+
   let profile: typeof schema.profiles.$inferSelect | null = existing[0]
-    ? { ...existing[0], isSuperadmin: false }
+    ? { ...existing[0], isSuperadmin }
     : null;
 
   if (!profile) {

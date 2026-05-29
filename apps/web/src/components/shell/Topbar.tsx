@@ -49,6 +49,7 @@ export async function Topbar({
         clubName={clubName}
         roleLabel={roleLabel}
         email={email}
+        isSuperadmin={session.profile?.isSuperadmin === true}
       />
 
       <div className="flex items-center gap-2">

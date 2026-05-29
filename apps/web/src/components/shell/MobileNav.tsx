@@ -7,6 +7,8 @@ import {
   ListIcon,
   XIcon,
   SignOutIcon,
+  ShieldStarIcon,
+  ArrowRightIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { signOut } from '@/app/auth/actions';
 import { LogoMark } from '@/components/brand/Logo';
@@ -18,11 +20,13 @@ export function MobileNav({
   clubName,
   roleLabel,
   email,
+  isSuperadmin = false,
 }: {
   sections: NavSection[];
   clubName: string;
   roleLabel: string;
   email: string;
+  isSuperadmin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -100,6 +104,35 @@ export function MobileNav({
                       {roleLabel}
                     </div>
                   </div>
+
+                  {isSuperadmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className="mt-3 flex items-center justify-between gap-2 rounded-2xl border border-amber-300 bg-gradient-to-br from-amber-50 to-amber-100 px-3 py-2.5"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ShieldStarIcon
+                          size={18}
+                          weight="fill"
+                          className="shrink-0 text-amber-700"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700">
+                            Superadmin
+                          </div>
+                          <div className="truncate text-xs font-bold text-stone-900">
+                            Panel del sistema
+                          </div>
+                        </div>
+                      </div>
+                      <ArrowRightIcon
+                        size={12}
+                        weight="bold"
+                        className="shrink-0 text-amber-700"
+                      />
+                    </Link>
+                  )}
                 </div>
 
                 <nav

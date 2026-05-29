@@ -71,11 +71,13 @@ export function MobileHeader({
   clubName,
   roleLabel,
   email,
+  isSuperadmin = false,
 }: {
   sections: NavSection[];
   clubName: string;
   roleLabel: string;
   email: string;
+  isSuperadmin?: boolean;
 }) {
   const pathname = usePathname() ?? '/app';
   const router = useRouter();
@@ -90,6 +92,7 @@ export function MobileHeader({
           clubName={clubName}
           roleLabel={roleLabel}
           email={email}
+          isSuperadmin={isSuperadmin}
         />
         <Link href="/app" className="flex items-center gap-2">
           <LogoMark size={26} />
