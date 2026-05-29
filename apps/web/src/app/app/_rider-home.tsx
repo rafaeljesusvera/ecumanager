@@ -19,7 +19,7 @@ import { SeasonDashboard } from '@/components/rider/SeasonDashboard';
 import { formatCents, formatDate, formatDateTime } from '@/lib/format';
 import type { CurrentSession } from '@/lib/db/profile';
 import { ensureRiderForProfile } from '@/lib/db/rider';
-import { getCompetitionData } from '@/lib/competition-data';
+import { findCompetitionData } from '@/lib/competition-data';
 
 /**
  * Home visual para alumnos: hero + insignias destacadas + próximas clases,
@@ -189,7 +189,10 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
         </header>
 
         {(() => {
-          const stats = getCompetitionData(session.user.email);
+          const stats = findCompetitionData({
+            email: session.user.email,
+            fullName: session.profile?.fullName ?? rider?.name,
+          });
           if (!stats) return null;
           return <SeasonDashboard stats={stats} riderName={rider!.name} />;
         })()}
