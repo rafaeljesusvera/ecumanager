@@ -105,6 +105,15 @@ export default async function HorseDetailPage({
     .orderBy(desc(schema.horseCareLogs.forDate))
     .limit(10);
 
+  const careTemplates = await db
+    .select({
+      id: schema.horseCareTemplates.id,
+      name: schema.horseCareTemplates.name,
+    })
+    .from(schema.horseCareTemplates)
+    .where(eq(schema.horseCareTemplates.clubId, session.primary.clubId))
+    .orderBy(schema.horseCareTemplates.name);
+
   const reviews = await db
     .select({
       id: schema.horseReviews.id,
@@ -188,6 +197,24 @@ export default async function HorseDetailPage({
           <Field label="Color">
             <Input name="color" defaultValue={horse.color ?? ''} />
           </Field>
+          <div className="md:col-span-2">
+            <Field
+              label="Plantilla de cuidados"
+              hint="La que verá el mozo en su checklist diaria."
+            >
+              <Select
+                name="careTemplateId"
+                defaultValue={horse.careTemplateId ?? ''}
+              >
+                <option value="">Sin plantilla específica</option>
+                {careTemplates.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          </div>
           <div className="md:col-span-4">
             <Field label="Notas internas">
               <Textarea

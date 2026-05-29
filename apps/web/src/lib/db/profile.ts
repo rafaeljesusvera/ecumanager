@@ -2,6 +2,8 @@ import { db, schema } from '@equmanager/database';
 import { and, desc, eq } from 'drizzle-orm';
 
 import type { ClubRole } from '@equmanager/domain';
+import { getActiveProfile } from '@/lib/active-profile';
+import { getLinkedAccounts, type LinkedAccount } from './linked-profiles';
 
 export type CurrentSession = {
   user: { id: string; email: string };
@@ -20,6 +22,15 @@ export type CurrentSession = {
     clubName: string;
     clubSlug: string;
   } | null;
+  linkedAccounts: LinkedAccount[];
+  /**
+   * Cuenta actualmente asumida desde el switcher. `self` cuando es el
+   * propio usuario logueado. Si es un `LinkedAccount`, las queries deben
+   * filtrarse por ese profile o rider.
+   */
+  activeAccount:
+    | { kind: 'self' }
+    | { kind: 'linked'; link: LinkedAccount };
 };
 
 /**
@@ -78,12 +89,37 @@ export async function loadSession(user: {
       }
     : null;
 
+  const linkedAccounts = await getLinkedAccounts(user.id);
+  const activeSelection = await getActiveProfile();
+  const activeAccount = resolveActiveAccount(activeSelection, linkedAccounts);
+
   return {
     user: { id: user.id, email: user.email },
     profile,
     memberships,
     primary,
+    linkedAccounts,
+    activeAccount,
   };
+}
+
+function resolveActiveAccount(
+  selection: Awaited<ReturnType<typeof getActiveProfile>>,
+  linkedAccounts: LinkedAccount[],
+): CurrentSession['activeAccount'] {
+  if (selection.kind === 'self') return { kind: 'self' };
+
+  const match = linkedAccounts.find((a) => {
+    if (selection.kind === 'profile' && a.target.kind === 'profile') {
+      return a.target.profileId === selection.profileId;
+    }
+    if (selection.kind === 'rider' && a.target.kind === 'rider') {
+      return a.target.riderId === selection.riderId;
+    }
+    return false;
+  });
+
+  return match ? { kind: 'linked', link: match } : { kind: 'self' };
 }
 
 /**

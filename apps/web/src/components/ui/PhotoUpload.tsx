@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   CameraIcon,
   XIcon,
@@ -28,9 +28,25 @@ export function PhotoUpload({
 }) {
   const inputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
+  const hiddenRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState<string | null>(defaultValue ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const firstRender = useRef(true);
+
+  // Cuando la URL cambia (por subida o por "quitar"), avisamos al form padre
+  // disparando eventos nativos que AutoSaveForm captura para autoguardar.
+  // Saltamos el primer render (defaultValue) para no guardar sin cambio real.
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const el = hiddenRef.current;
+    if (!el) return;
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }, [url]);
 
   async function handleFile(file: File) {
     setBusy(true);
@@ -62,7 +78,12 @@ export function PhotoUpload({
 
   return (
     <div>
-      <input type="hidden" name={name} value={url ?? ''} />
+      <input
+        ref={hiddenRef}
+        type="hidden"
+        name={name}
+        value={url ?? ''}
+      />
       <div className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-stone-600">
         {label}
       </div>

@@ -59,6 +59,8 @@ export async function updateHorseAction(formData: FormData) {
   const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
   const notes = String(formData.get('notes') ?? '').trim() || null;
   const status = (formData.get('status') ?? 'activo') as HorseStatus;
+  const careTemplateId =
+    String(formData.get('careTemplateId') ?? '').trim() || null;
 
   if (!name || !HORSE_KINDS.includes(kind) || !HORSE_STATUSES.includes(status))
     return;
@@ -74,6 +76,7 @@ export async function updateHorseAction(formData: FormData) {
       photoUrl,
       notes,
       status,
+      careTemplateId,
       updatedAt: new Date(),
     })
     .where(

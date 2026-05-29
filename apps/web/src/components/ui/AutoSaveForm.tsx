@@ -116,11 +116,22 @@ export function AutoSaveForm({
     }
   }
 
+  // Disparado por componentes como PhotoUpload que modifican un input hidden
+  // por React state: el blur no salta porque hidden no recibe foco. Aquí
+  // capturamos el `change` que el componente sintetiza tras subir/quitar.
+  function handleChange(e: React.ChangeEvent<HTMLFormElement>) {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'SELECT') {
+      scheduleSave();
+    }
+  }
+
   return (
     <form
       ref={formRef}
       onSubmit={handleSubmit}
       onBlur={handleBlur}
+      onChange={handleChange}
       className={className}
     >
       {children}

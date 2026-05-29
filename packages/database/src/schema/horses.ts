@@ -42,6 +42,7 @@ export const horses = pgTable(
     status: horseStatusEnum('status').notNull().default('activo'),
     photoUrl: text('photo_url'),
     notes: text('notes'),
+    careTemplateId: uuid('care_template_id'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .default(sql`now()`),

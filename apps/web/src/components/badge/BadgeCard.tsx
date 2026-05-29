@@ -44,10 +44,18 @@ export function BadgeCard({
       : ratio === 'compact'
         ? 'aspect-[3/4]'
         : 'aspect-[3/4.4]';
+  const isCompact = ratio === 'compact';
+  const isTall = ratio === 'tall';
 
   if (locked) {
     return (
-      <LockedCard badge={badge} aspect={aspect} clubName={clubName} accent={baseColor} />
+      <LockedCard
+        badge={badge}
+        aspect={aspect}
+        clubName={clubName}
+        accent={baseColor}
+        compact={isCompact}
+      />
     );
   }
 
@@ -89,8 +97,14 @@ export function BadgeCard({
           <Medallion src={badge.iconUrl ?? null} alt={badge.name} />
         </div>
 
-        {/* Title */}
-        <h3 className="mt-3 line-clamp-2 px-2 text-center text-xl font-black uppercase tracking-tight text-white drop-shadow-sm md:text-2xl">
+        {/* Title — sized down en tall para que no parta */}
+        <h3
+          className={`mt-3 line-clamp-2 px-1 text-center font-black uppercase tracking-tight text-white drop-shadow-sm text-balance ${
+            isTall
+              ? 'text-base leading-tight md:text-lg'
+              : 'text-xl md:text-2xl'
+          }`}
+        >
           {badge.name}
         </h3>
 
@@ -147,11 +161,13 @@ function LockedCard({
   aspect,
   clubName,
   accent,
+  compact = false,
 }: {
   badge: BadgeCardData;
   aspect: string;
   clubName?: string;
   accent: string;
+  compact?: boolean;
 }) {
   const teaser = (badge.description ?? '').trim();
   const teaserShort =
@@ -175,60 +191,86 @@ function LockedCard({
         }}
       />
 
-      <div className="relative flex h-full flex-col items-center px-4 py-5 text-white">
-        <p className="text-[9px] font-black uppercase tracking-[0.32em] text-amber-200/90">
+      <div
+        className={`relative flex h-full flex-col items-center text-white ${
+          compact ? 'px-2.5 py-3' : 'px-4 py-5'
+        }`}
+      >
+        <p
+          className={`font-black uppercase tracking-[0.28em] text-amber-200/90 ${
+            compact ? 'text-[8px]' : 'text-[9px] tracking-[0.32em]'
+          }`}
+        >
           Reto · {clubName ?? 'Hípica'}
         </p>
 
-        <div className="mt-3 flex items-center justify-center">
-          <LockedMedallion />
+        <div className={compact ? 'mt-2' : 'mt-3'}>
+          <LockedMedallion compact={compact} />
         </div>
 
-        <h3 className="mt-3 line-clamp-2 px-1 text-center text-base font-black uppercase tracking-tight text-white drop-shadow-sm md:text-lg">
+        {/* Title — siempre visible, prioritario sobre el resto */}
+        <h3
+          className={`line-clamp-2 px-1 text-center font-black uppercase tracking-tight text-white drop-shadow-sm text-balance ${
+            compact
+              ? 'mt-2 text-[11px] leading-tight'
+              : 'mt-3 text-base md:text-lg'
+          }`}
+        >
           {badge.name}
         </h3>
 
-        {badge.subtitle && (
+        {!compact && badge.subtitle && (
           <span className="mt-2 inline-flex items-center rounded-full bg-amber-200/95 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-stone-900 ring-1 ring-amber-300">
             {badge.subtitle}
           </span>
         )}
 
-        {teaserShort && (
+        {!compact && teaserShort && (
           <p className="mt-2 line-clamp-3 px-1 text-center text-[10px] font-medium leading-snug text-white/80">
             {teaserShort}
           </p>
         )}
 
-        {badge.categoryLabel && (
+        {!compact && badge.categoryLabel && (
           <p className="mt-auto pt-3 text-center text-[10px] font-black uppercase tracking-[0.22em] text-white/70">
             {badge.categoryLabel}
           </p>
         )}
 
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-200/95 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-stone-900 shadow-lift">
-          <LockKeyIcon size={12} weight="fill" /> Bloqueada
+        <div
+          className={`inline-flex items-center gap-1 rounded-full bg-amber-200/95 font-black uppercase tracking-[0.18em] text-stone-900 shadow-lift ${
+            compact
+              ? 'mt-auto px-2 py-0.5 text-[8px]'
+              : 'mt-3 px-3 py-1 text-[10px] tracking-[0.22em]'
+          }`}
+        >
+          <LockKeyIcon size={compact ? 9 : 12} weight="fill" /> Bloqueada
         </div>
       </div>
     </article>
   );
 }
 
-function LockedMedallion() {
+function LockedMedallion({ compact = false }: { compact?: boolean }) {
+  const size = compact ? 'h-12 w-12' : 'h-20 w-20 md:h-24 md:w-24';
+  const inset = compact ? 'inset-1.5' : 'inset-2';
+  const iconSize = compact ? 18 : 32;
   return (
-    <div className="relative h-20 w-20 md:h-24 md:w-24">
+    <div className={`relative ${size}`}>
       <div
         className="absolute inset-0 rounded-full"
         style={{
           background:
             'conic-gradient(from 220deg, #f7e08a, #b48721, #f4c757, #8a5e10, #f7e08a)',
-          padding: 3,
+          padding: compact ? 2 : 3,
         }}
       >
         <div className="h-full w-full rounded-full bg-stone-900" />
       </div>
-      <div className="absolute inset-2 flex items-center justify-center rounded-full bg-gradient-to-br from-stone-800 to-stone-950 ring-2 ring-white/10">
-        <LockKeyIcon size={32} weight="bold" className="text-amber-200" />
+      <div
+        className={`absolute ${inset} flex items-center justify-center rounded-full bg-gradient-to-br from-stone-800 to-stone-950 ring-2 ring-white/10`}
+      >
+        <LockKeyIcon size={iconSize} weight="bold" className="text-amber-200" />
       </div>
     </div>
   );

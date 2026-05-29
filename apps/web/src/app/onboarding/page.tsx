@@ -9,6 +9,7 @@ import {
 import { getSessionOrRedirect } from '@/lib/db';
 import { LogoMark } from '@/components/brand/Logo';
 import { Button, Field, Input, Select } from '@/components/ui';
+import { ClubNameAutocomplete } from '@/components/onboarding/ClubNameAutocomplete';
 import { createClubAction, joinClubAction } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -151,15 +152,9 @@ function OwnerForm() {
       <form action={createClubAction} className="mt-6 space-y-3">
         <Field
           label="Nombre de la hípica"
-          hint="Lo verán tus alumnos y propietarios."
+          hint="Empieza a escribir: si está en la federación, la encontramos por ti."
         >
-          <Input
-            required
-            name="name"
-            minLength={2}
-            maxLength={120}
-            placeholder="Hípica Valdebebas"
-          />
+          <ClubNameAutocomplete name="name" />
         </Field>
         <Button type="submit" size="lg" className="w-full">
           Crear hípica y entrar

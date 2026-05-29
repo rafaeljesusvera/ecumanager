@@ -31,6 +31,7 @@ export async function createRiderAction(formData: FormData) {
   const category = (formData.get('category') ?? 'adulto') as RiderCategory;
   const tier = (formData.get('tier') ?? 'iniciacion') as RiderTier;
   const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
+  const birthdate = String(formData.get('birthdate') ?? '').trim() || null;
 
   if (!name || !RIDER_CATEGORIES.includes(category) || !RIDER_TIERS.includes(tier))
     return;
@@ -45,6 +46,7 @@ export async function createRiderAction(formData: FormData) {
       category,
       tier,
       photoUrl,
+      birthdate,
     })
     .returning();
   revalidatePath('/app/riders');
@@ -61,6 +63,7 @@ export async function updateRiderAction(formData: FormData) {
   const tier = (formData.get('tier') ?? 'iniciacion') as RiderTier;
   const photoUrl = String(formData.get('photoUrl') ?? '').trim() || null;
   const notes = String(formData.get('notes') ?? '').trim() || null;
+  const birthdate = String(formData.get('birthdate') ?? '').trim() || null;
   const status =
     (formData.get('status') ?? 'activo') === 'baja' ? 'baja' : 'activo';
 
@@ -77,6 +80,7 @@ export async function updateRiderAction(formData: FormData) {
       tier,
       photoUrl,
       notes,
+      birthdate,
       status,
       updatedAt: new Date(),
     })

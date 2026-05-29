@@ -26,6 +26,7 @@ export default async function AppLayout({
           clubName={session.primary.clubName}
           roleLabel={roleLabel(session.primary.role)}
           email={session.user.email}
+          session={session}
         />
         {children}
       </main>

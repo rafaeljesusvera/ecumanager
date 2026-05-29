@@ -10,9 +10,11 @@ import {
   TicketIcon,
   MicrophoneStageIcon,
   UserIcon,
+  UsersIcon,
   MedalIcon,
   ClipboardTextIcon,
   QuestionIcon,
+  GearIcon,
   CircleIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
@@ -27,9 +29,11 @@ const map: Record<string, Icon> = {
   Ticket: TicketIcon,
   MicrophoneStage: MicrophoneStageIcon,
   User: UserIcon,
+  Users: UsersIcon,
   Medal: MedalIcon,
   ClipboardText: ClipboardTextIcon,
   Question: QuestionIcon,
+  Gear: GearIcon,
 };
 
 export function NavIcon({

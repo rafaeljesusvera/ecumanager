@@ -176,6 +176,13 @@ export default async function RiderDetailPage({
           <Field label="Teléfono">
             <Input name="phone" defaultValue={rider.phone ?? ''} />
           </Field>
+          <Field label="Fecha de nacimiento">
+            <Input
+              name="birthdate"
+              type="date"
+              defaultValue={rider.birthdate ?? ''}
+            />
+          </Field>
           <Field label="Categoría">
             <Select name="category" defaultValue={rider.category}>
               {RIDER_CATEGORIES.map((c) => (

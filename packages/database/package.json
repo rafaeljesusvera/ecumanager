@@ -18,7 +18,8 @@
     "push": "drizzle-kit push",
     "migrate": "tsx src/migrate.ts",
     "studio": "drizzle-kit studio",
-    "seed": "tsx src/seed.ts"
+    "seed": "tsx src/seed.ts",
+    "directory-ingest": "tsx src/directory-ingest.ts"
   },
   "dependencies": {
     "@equmanager/domain": "workspace:*",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@equmanager/config": "workspace:*",
+    "@supabase/supabase-js": "^2.45.4",
     "@types/node": "^22.7.4",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",

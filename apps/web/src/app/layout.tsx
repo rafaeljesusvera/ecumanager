@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   description:
     'Plataforma todo-en-uno para hípicas, propietarios, mozos y alumnos. Clases, eventos, cuidados, bonos e IA en un mismo sitio.',
-  icons: { icon: '/favicon.png' },
+  icons: { icon: '/em_fav.png' },
 };
 
 export default function RootLayout({

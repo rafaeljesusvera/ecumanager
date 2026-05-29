@@ -37,6 +37,7 @@ export const riders = pgTable(
     category: riderCategoryEnum('category').notNull(),
     tier: riderTierEnum('tier').notNull(),
     joinedAt: date('joined_at'),
+    birthdate: date('birthdate'),
     photoUrl: text('photo_url'),
     notes: text('notes'),
     status: riderStatusEnum('status').notNull().default('activo'),

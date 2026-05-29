@@ -51,12 +51,24 @@ export function buildNav(roles: ClubRole[]): NavSection[] {
     });
   }
 
+  if (hasAny(['owner', 'admin'])) {
+    sections.push({
+      title: 'Administración',
+      items: [
+        { href: '/app/staff', label: 'Equipo', icon: 'Users', roles: ['owner', 'admin'] },
+        { href: '/app/care-templates', label: 'Plantillas de cuidado', icon: 'ClipboardText', roles: ['owner', 'admin'] },
+        { href: '/app/club-settings', label: 'Ajustes del centro', icon: 'Gear', roles: ['owner', 'admin'] },
+      ],
+    });
+  }
+
   if (hasAny(['rider'])) {
     sections.push({
       title: 'Mi cuenta',
       items: [
         { href: '/app/me', label: 'Mi panel', icon: 'User', roles: ['rider'] },
         { href: '/app/me/lessons', label: 'Mis clases', icon: 'CalendarBlank', roles: ['rider'] },
+        { href: '/app/me/courses', label: 'Cursos', icon: 'BookOpenText', roles: ['rider'] },
         { href: '/app/me/horses', label: 'Mis caballos', icon: 'Horse', roles: ['rider'] },
         { href: '/app/me/badges', label: 'Insignias', icon: 'Medal', roles: ['rider'] },
         { href: '/app/me/events', label: 'Eventos', icon: 'Trophy', roles: ['rider'] },

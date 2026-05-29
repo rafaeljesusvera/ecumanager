@@ -8,6 +8,17 @@ import {
   CalendarBlankIcon,
   ArrowRightIcon,
   SparkleIcon,
+  BookOpenTextIcon,
+  TrophyIcon,
+  NewspaperIcon,
+  TicketIcon,
+  MedalIcon,
+  BellIcon,
+  StethoscopeIcon,
+  HeartIcon,
+  CheckCircleIcon,
+  ChatCircleTextIcon,
+  UsersThreeIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { LogoFull, LogoMark } from '@/components/brand/Logo';
 
@@ -170,6 +181,187 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Desglose por perfil */}
+      <section className="mx-auto max-w-6xl px-6 py-12 md:py-16">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="label-eyebrow">Qué puede hacer cada perfil</p>
+            <h2 className="mt-2 text-4xl font-bold tracking-tight text-stone-900 md:text-5xl">
+              Funcionalidades,{' '}
+              <span className="text-brand-700">rol a rol</span>.
+            </h2>
+          </div>
+          <p className="max-w-xs text-sm font-medium text-stone-500">
+            El mismo Equmanager, cuatro experiencias. Mira con qué herramientas
+            cuenta cada perfil cuando entra.
+          </p>
+        </div>
+
+        <div className="stagger space-y-4">
+          <ProfileBreakdown
+            icon={<HorseIcon size={26} weight="duotone" />}
+            title="Propietario de hípica"
+            subtitle="También admin e instructor"
+            tone="brand"
+            features={[
+              {
+                icon: <HorseIcon size={18} weight="duotone" />,
+                label: 'Gestión de caballos',
+                text: 'Altas, descansos, fichas y disponibilidad.',
+              },
+              {
+                icon: <GraduationCapIcon size={18} weight="duotone" />,
+                label: 'Gestión de alumnos',
+                text: 'Categorías, niveles y altas en un clic.',
+              },
+              {
+                icon: <CalendarBlankIcon size={18} weight="duotone" />,
+                label: 'Clases',
+                text: 'Programación, asistencia y feedback.',
+              },
+              {
+                icon: <BookOpenTextIcon size={18} weight="duotone" />,
+                label: 'Cursos',
+                text: 'Series de clases con inscripciones y pagos.',
+              },
+              {
+                icon: <TrophyIcon size={18} weight="duotone" />,
+                label: 'Eventos',
+                text: 'Concursos, ferias y entradas.',
+              },
+              {
+                icon: <NewspaperIcon size={18} weight="duotone" />,
+                label: 'Noticias',
+                text: 'Comunicados a toda la hípica.',
+              },
+              {
+                icon: <TicketIcon size={18} weight="duotone" />,
+                label: 'Bonos',
+                text: 'Paquetes de clases con saldo y caducidad.',
+              },
+              {
+                icon: <MedalIcon size={18} weight="duotone" />,
+                label: 'Insignias',
+                text: 'Diseña retos y premia progresos.',
+              },
+              {
+                icon: <MicrophoneStageIcon size={18} weight="duotone" />,
+                label: 'Bandeja IA',
+                text: 'Nota de voz convertida en feedback por alumno.',
+              },
+            ]}
+          />
+
+          <ProfileBreakdown
+            icon={<CertificateIcon size={26} weight="duotone" />}
+            title="Propietario de caballo"
+            subtitle="Familias con caballo en pupilaje"
+            tone="amber"
+            features={[
+              {
+                icon: <StethoscopeIcon size={18} weight="duotone" />,
+                label: 'Agenda de cuidados',
+                text: 'Veterinario, herrador, dentista y desparasitaciones.',
+              },
+              {
+                icon: <ClipboardTextIcon size={18} weight="duotone" />,
+                label: 'Parte del mozo',
+                text: 'Comida, ejercicio, salud y descanso del día.',
+              },
+              {
+                icon: <CalendarBlankIcon size={18} weight="duotone" />,
+                label: 'Historial de montura',
+                text: 'Quién, cuándo y con qué intensidad lo ha trabajado.',
+              },
+              {
+                icon: <BellIcon size={18} weight="duotone" />,
+                label: 'Avisos en tiempo real',
+                text: 'Cojeras, incidencias o citas confirmadas.',
+              },
+            ]}
+          />
+
+          <ProfileBreakdown
+            icon={<GraduationCapIcon size={26} weight="duotone" />}
+            title="Alumno o corredor"
+            subtitle="Jinetes y sus familias"
+            tone="sky"
+            features={[
+              {
+                icon: <CalendarBlankIcon size={18} weight="duotone" />,
+                label: 'Mis clases',
+                text: 'Próximas, asistencia y feedback recibido.',
+              },
+              {
+                icon: <HeartIcon size={18} weight="duotone" />,
+                label: 'Mis caballos',
+                text: 'Caballos asignados y afinidad acumulada.',
+              },
+              {
+                icon: <TrophyIcon size={18} weight="duotone" />,
+                label: 'Eventos',
+                text: 'Apúntate a concursos y cursos abiertos.',
+              },
+              {
+                icon: <TicketIcon size={18} weight="duotone" />,
+                label: 'Mis bonos',
+                text: 'Saldo de clases y caducidad.',
+              },
+              {
+                icon: <MedalIcon size={18} weight="duotone" />,
+                label: 'Insignias y retos',
+                text: 'Logros conseguidos y próximas metas.',
+              },
+              {
+                icon: <NewspaperIcon size={18} weight="duotone" />,
+                label: 'Noticias del club',
+                text: 'Avisos importantes en tu inicio.',
+              },
+            ]}
+          />
+
+          <ProfileBreakdown
+            icon={<ClipboardTextIcon size={26} weight="duotone" />}
+            title="Mozo de cuadra"
+            subtitle="Personal de cuadra"
+            tone="rose"
+            features={[
+              {
+                icon: <CheckCircleIcon size={18} weight="duotone" />,
+                label: 'Checklist diaria',
+                text: 'Por caballo: comida, agua, cama, salud.',
+              },
+              {
+                icon: <ChatCircleTextIcon size={18} weight="duotone" />,
+                label: 'Notas y partes',
+                text: 'Incidencias que llegan al propietario al instante.',
+              },
+              {
+                icon: <HorseIcon size={18} weight="duotone" />,
+                label: 'Caballos asignados',
+                text: 'Tu lista del día, ordenada por prioridad.',
+              },
+            ]}
+          />
+        </div>
+
+        <div className="mt-6 flex items-center justify-center gap-2 rounded-3xl border border-dashed border-stone-300 bg-white/60 px-6 py-5 text-center backdrop-blur">
+          <UsersThreeIcon
+            size={20}
+            weight="duotone"
+            className="shrink-0 text-brand-700"
+          />
+          <p className="text-xs font-medium text-stone-600 md:text-sm">
+            Una misma persona puede tener varios perfiles (padre + propietario
+            de caballo + alumno) y{' '}
+            <span className="font-bold text-stone-900">
+              cambiar de uno a otro
+            </span>{' '}
+            sin volver a entrar.
+          </p>
+        </div>
+      </section>
+
       {/* Features destacadas */}
       <section className="mx-auto max-w-6xl px-6 py-12 md:py-16">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-5">
@@ -265,6 +457,94 @@ function RoleCard({
       <p className="mt-1.5 text-sm font-medium leading-relaxed text-stone-600">
         {text}
       </p>
+    </article>
+  );
+}
+
+const TONE_ACCENT: Record<string, { chip: string; ring: string; icon: string }> = {
+  brand: {
+    chip: 'bg-brand-100 text-brand-800',
+    ring: 'ring-brand-200',
+    icon: 'bg-brand-100 text-brand-700',
+  },
+  amber: {
+    chip: 'bg-amber-100 text-amber-800',
+    ring: 'ring-amber-200',
+    icon: 'bg-amber-100 text-amber-700',
+  },
+  sky: {
+    chip: 'bg-sky-100 text-sky-800',
+    ring: 'ring-sky-200',
+    icon: 'bg-sky-100 text-sky-700',
+  },
+  rose: {
+    chip: 'bg-rose-100 text-rose-800',
+    ring: 'ring-rose-200',
+    icon: 'bg-rose-100 text-rose-700',
+  },
+};
+
+function ProfileBreakdown({
+  icon,
+  title,
+  subtitle,
+  tone,
+  features,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  tone: keyof typeof TONE_ACCENT;
+  features: Array<{ icon: React.ReactNode; label: string; text: string }>;
+}) {
+  const accent = TONE_ACCENT[tone] ?? TONE_ACCENT.brand!;
+  return (
+    <article className="relative overflow-hidden rounded-3xl border border-stone-200/80 bg-white p-6 shadow-card md:p-8">
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-8">
+        <div className="md:w-1/4 md:shrink-0">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-2xl ${accent.icon}`}
+            >
+              {icon}
+            </div>
+            <span
+              className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ring-1 ${accent.chip} ${accent.ring}`}
+            >
+              Perfil
+            </span>
+          </div>
+          <h3 className="mt-4 text-2xl font-bold tracking-tight text-stone-900 md:text-3xl">
+            {title}
+          </h3>
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-stone-500">
+            {subtitle}
+          </p>
+        </div>
+
+        <ul className="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f) => (
+            <li
+              key={f.label}
+              className="flex items-start gap-3 rounded-2xl border border-stone-200/70 bg-stone-50/60 p-3 transition hover:border-brand-300 hover:bg-white"
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${accent.icon}`}
+              >
+                {f.icon}
+              </span>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-stone-900">
+                  {f.label}
+                </div>
+                <p className="mt-0.5 text-xs font-medium leading-relaxed text-stone-600">
+                  {f.text}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </article>
   );
 }

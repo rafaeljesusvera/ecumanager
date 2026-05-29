@@ -6,6 +6,7 @@
  */
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   jsonb,
   pgEnum,
   pgTable,
@@ -36,6 +37,7 @@ export const profiles = pgTable('profiles', {
   email: text('email').notNull(),
   fullName: text('full_name'),
   avatarUrl: text('avatar_url'),
+  isSuperadmin: boolean('is_superadmin').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .default(sql`now()`),

@@ -13,3 +13,4 @@ export { Select } from './Select';
 export { Label, Field } from './Label';
 export { Badge } from './Badge';
 export { EmptyState } from './EmptyState';
+export { CreatePanel } from './CreatePanel';

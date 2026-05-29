@@ -60,6 +60,9 @@ export default async function RidersPage() {
           <Field label="Teléfono">
             <Input name="phone" placeholder="600 000 000" />
           </Field>
+          <Field label="Fecha de nacimiento">
+            <Input name="birthdate" type="date" />
+          </Field>
           <Field label="Categoría">
             <Select name="category" defaultValue="adulto">
               {RIDER_CATEGORIES.map((c) => (

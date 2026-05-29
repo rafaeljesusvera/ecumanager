@@ -59,6 +59,63 @@ export type ClubRole = (typeof CLUB_ROLES)[number];
 export const CLUB_PLANS = ['free', 'pro', 'enterprise'] as const;
 export type ClubPlan = (typeof CLUB_PLANS)[number];
 
+/**
+ * Federaciones hípicas oficiales en España. La nacional (RFHE) agrupa a
+ * todas las autonómicas. Se usan para etiquetar entradas del directorio
+ * público de clubes.
+ */
+export const SPAIN_FEDERATIONS = [
+  'rfhe',
+  'andalucia',
+  'aragon',
+  'asturias',
+  'baleares',
+  'canarias',
+  'cantabria',
+  'castilla_leon',
+  'castilla_la_mancha',
+  'cataluna',
+  'ceuta',
+  'extremadura',
+  'galicia',
+  'madrid',
+  'melilla',
+  'murcia',
+  'navarra',
+  'pais_vasco',
+  'la_rioja',
+  'valencia',
+] as const;
+export type SpainFederation = (typeof SPAIN_FEDERATIONS)[number];
+
+/**
+ * Relación entre dos perfiles vinculados. El usuario "owner" puede asumir
+ * el perfil "target" desde el selector de cuentas.
+ *
+ * Se usa también para riders sin cuenta propia (target_profile_id NULL y
+ * rider_id apuntando al alumno gestionado por sus tutores).
+ */
+export const PROFILE_LINK_RELATIONS = [
+  'self',
+  'padre',
+  'madre',
+  'tutor',
+  'conyuge',
+  'hijo',
+  'hija',
+  'secretaria',
+  'asistente',
+  'otro',
+] as const;
+export type ProfileLinkRelation = (typeof PROFILE_LINK_RELATIONS)[number];
+
+export const PROFILE_LINK_STATUSES = [
+  'activa',
+  'pendiente',
+  'revocada',
+] as const;
+export type ProfileLinkStatus = (typeof PROFILE_LINK_STATUSES)[number];
+
 export const COURSE_STATUSES = [
   'borrador',
   'publicado',

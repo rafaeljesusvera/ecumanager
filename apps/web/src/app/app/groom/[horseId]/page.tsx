@@ -38,12 +38,28 @@ export default async function GroomChecklistPage({
     .limit(1);
   if (!horse) notFound();
 
-  const [template] = await db
-    .select()
-    .from(schema.horseCareTemplates)
-    .where(eq(schema.horseCareTemplates.clubId, session.primary.clubId))
-    .orderBy(schema.horseCareTemplates.createdAt)
-    .limit(1);
+  // Usa la plantilla asignada al caballo si existe; si no, la primera del club.
+  let template: typeof schema.horseCareTemplates.$inferSelect | undefined;
+  if (horse.careTemplateId) {
+    [template] = await db
+      .select()
+      .from(schema.horseCareTemplates)
+      .where(
+        and(
+          eq(schema.horseCareTemplates.id, horse.careTemplateId),
+          eq(schema.horseCareTemplates.clubId, session.primary.clubId),
+        ),
+      )
+      .limit(1);
+  }
+  if (!template) {
+    [template] = await db
+      .select()
+      .from(schema.horseCareTemplates)
+      .where(eq(schema.horseCareTemplates.clubId, session.primary.clubId))
+      .orderBy(schema.horseCareTemplates.createdAt)
+      .limit(1);
+  }
 
   const items: CareItem[] = Array.isArray(template?.items)
     ? (template!.items as CareItem[])

@@ -186,26 +186,21 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
           </div>
         </header>
 
-        {/* ░░░░ INSIGNIAS DESTACADAS ░░░░ */}
+        {/* ░░░░ INSIGNIAS — primera sección pero discreta ░░░░ */}
         <section
-          className="relative overflow-hidden rounded-3xl border border-amber-200 p-6 shadow-lift md:p-8"
-          style={{
-            backgroundColor: '#fffaf2',
-            backgroundImage:
-              'radial-gradient(at 88% 8%, rgba(250, 220, 141, 0.65) 0px, transparent 55%), radial-gradient(at 8% 92%, rgba(143, 195, 149, 0.45) 0px, transparent 55%), radial-gradient(at 50% 50%, rgba(255, 226, 226, 0.45) 0px, transparent 60%)',
-          }}
+          className="relative overflow-hidden rounded-3xl border border-amber-200/70 bg-amber-50/40 p-5 shadow-card md:p-6"
         >
           <div className="relative">
-            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">
-                  <SparkleIcon size={11} weight="fill" /> Tu colección
+                <p className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">
+                  <SparkleIcon size={10} weight="fill" /> Tu colección
                 </p>
-                <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-900 md:text-5xl">
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-stone-900 md:text-3xl">
                   Insignias{' '}
                   <span className="text-brand-700">por conquistar</span>
                 </h2>
-                <p className="mt-2 text-sm font-medium text-stone-600">
+                <p className="mt-1 text-xs font-medium text-stone-600">
                   Llevas{' '}
                   <span className="font-bold text-stone-900">
                     {unlocked.length}
@@ -219,17 +214,17 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
               </div>
               <Link
                 href="/app/me/badges"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-lift transition hover:bg-brand-800"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-brand-800"
               >
                 Ver colección
-                <ArrowRightIcon size={12} weight="bold" />
+                <ArrowRightIcon size={11} weight="bold" />
               </Link>
             </div>
 
             {/* Barra de progreso */}
             {allBadges.length > 0 && (
-              <div className="mb-6">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white/70">
+              <div className="mb-5">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/80">
                   <div
                     className="h-full bg-gradient-to-r from-brand-500 via-brand-600 to-amber-500 transition-all"
                     style={{
@@ -237,17 +232,17 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                     }}
                   />
                 </div>
-                <div className="mt-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                <div className="mt-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone-500">
                   <span>{unlocked.length} desbloqueadas</span>
                   <span>{locked.length} bloqueadas</span>
                 </div>
               </div>
             )}
 
-            {/* Carta destacada + grid */}
+            {/* Carta destacada + grid (todo compacto en una sola fila) */}
             {featured ? (
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-[260px_1fr] md:items-center">
-                <div className="mx-auto w-full max-w-[260px]">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-[160px_1fr] md:items-start">
+                <div className="mx-auto w-full max-w-[160px]">
                   <Link
                     href={
                       (featured.info
@@ -260,25 +255,25 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                       clubName={session.primary.clubName}
                       recipientName={featured.info ? rider!.name : null}
                       badge={featured.badge}
-                      ratio="tall"
+                      ratio="compact"
                       locked={!featured.info}
                     />
                   </Link>
-                  <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                  <p className="mt-1.5 text-center text-[9px] font-bold uppercase tracking-widest text-stone-500">
                     {featured.info
-                      ? `Tu más reciente · ${formatDate(featured.info.awardedAt)}`
+                      ? `Más reciente · ${formatDate(featured.info.awardedAt)}`
                       : 'Tu próximo reto'}
                   </p>
                 </div>
 
                 <div>
-                  <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-stone-600">
-                    El resto de la colección
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">
+                    El resto
                   </p>
-                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                     {allBadges
                       .filter((b) => b.id !== featured.badge.id)
-                      .slice(0, 8)
+                      .slice(0, 4)
                       .map((b) => {
                         const got = awardedMap.get(b.id);
                         const href = got
@@ -301,12 +296,12 @@ export async function RiderHome({ session }: { session: CurrentSession & { prima
                         );
                       })}
                   </div>
-                  {allBadges.length > 9 && (
+                  {allBadges.length > 5 && (
                     <Link
                       href="/app/me/badges"
-                      className="mt-3 block text-center text-[11px] font-bold uppercase tracking-[0.22em] text-brand-700 hover:text-brand-900"
+                      className="mt-2 block text-center text-[10px] font-bold uppercase tracking-[0.22em] text-brand-700 hover:text-brand-900"
                     >
-                      + {allBadges.length - 9} más en tu colección →
+                      + {allBadges.length - 5} más en tu colección →
                     </Link>
                   )}
                 </div>
