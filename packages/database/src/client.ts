@@ -27,10 +27,14 @@ function getClient(): DrizzleClient {
     );
   }
 
-  // Pooler de Supabase: limita el prefetch para no agotar conexiones.
+  // Pooler de Supabase. En serverless cada lambda tiene su propio cliente,
+  // así que basta con UNA conexión por lambda (max=1). Si usas el endpoint
+  // session-mode (puerto 5432) y abres muchas, se agota el pool global.
+  // Recomendado: usar el transaction-pooler (puerto 6543) en DATABASE_URL.
   const queryClient = postgres(connectionString, {
-    max: 10,
+    max: 1,
     idle_timeout: 20,
+    connect_timeout: 10,
     prepare: false, // Supabase pgbouncer no soporta prepared statements
   });
 
