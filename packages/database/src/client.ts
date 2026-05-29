@@ -13,21 +13,40 @@ import postgres from 'postgres';
 
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL;
+type DrizzleClient = ReturnType<typeof drizzle<typeof schema>>;
 
-if (!connectionString) {
-  throw new Error(
-    '[@equmanager/database] DATABASE_URL no está definida. Revisa .env.',
-  );
+let cached: DrizzleClient | null = null;
+
+function getClient(): DrizzleClient {
+  if (cached) return cached;
+
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error(
+      '[@equmanager/database] DATABASE_URL no está definida. Revisa .env.',
+    );
+  }
+
+  // Pooler de Supabase: limita el prefetch para no agotar conexiones.
+  const queryClient = postgres(connectionString, {
+    max: 10,
+    idle_timeout: 20,
+    prepare: false, // Supabase pgbouncer no soporta prepared statements
+  });
+
+  cached = drizzle(queryClient, { schema, logger: false });
+  return cached;
 }
 
-// Pooler de Supabase: limita el prefetch para no agotar conexiones.
-const queryClient = postgres(connectionString, {
-  max: 10,
-  idle_timeout: 20,
-  prepare: false, // Supabase pgbouncer no soporta prepared statements
+// Proxy que difiere la creación del cliente real hasta el primer uso.
+// Así el módulo se puede importar durante el build de Next.js (collect page
+// data) sin necesidad de DATABASE_URL: solo falla cuando se hace una query.
+export const db = new Proxy({} as DrizzleClient, {
+  get(_target, prop, receiver) {
+    const client = getClient();
+    const value = Reflect.get(client as object, prop, receiver);
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
 });
 
-export const db = drizzle(queryClient, { schema, logger: false });
-
-export type Database = typeof db;
+export type Database = DrizzleClient;
