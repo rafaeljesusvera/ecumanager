@@ -8,7 +8,7 @@ import {
   EyeIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { Avatar, Badge, Input, Select } from '@/components/ui';
-import { roleLabel } from '@/lib/db/session';
+import { roleLabel } from '@/lib/role-label';
 import type { ClubRole } from '@equmanager/domain';
 import { impersonateUserAction } from './actions';
 

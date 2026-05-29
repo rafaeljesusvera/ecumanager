@@ -56,13 +56,4 @@ export function assertRole(
   if (!has) redirect('/app');
 }
 
-export function roleLabel(role: ClubRole): string {
-  return {
-    owner: 'Propietario hípica',
-    admin: 'Administrador',
-    instructor: 'Instructor',
-    groom: 'Mozo',
-    horse_owner: 'Propietario caballo',
-    rider: 'Alumno',
-  }[role];
-}
+export { roleLabel } from '@/lib/role-label';
