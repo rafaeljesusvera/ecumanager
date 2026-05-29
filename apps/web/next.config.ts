@@ -9,9 +9,7 @@ const config: NextConfig = {
   ],
   // typedRoutes desactivado: con el nuevo refactor multi-rol los redirects
   // y links dinámicos no encajan en el árbol estático y bloquean el build.
-  experimental: {
-    typedRoutes: false,
-  },
+  typedRoutes: false,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
