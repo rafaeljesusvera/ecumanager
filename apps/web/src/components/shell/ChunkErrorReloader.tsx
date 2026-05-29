@@ -2,23 +2,34 @@
 
 import { useEffect } from 'react';
 
-const KEY = 'eq_chunk_reload_attempt';
+const KEY = 'eq_chunk_reload_count';
+const MAX_ATTEMPTS = 2;
 
 /**
  * Detecta el ChunkLoadError típico cuando hay un deploy nuevo y el
  * navegador intenta cargar un chunk del bundle anterior (404).
  *
- * Cuando lo ve, recarga la página una sola vez (flag en sessionStorage
- * para evitar bucle infinito si el error persiste por otra causa).
+ * - Captura window error / unhandledrejection.
+ * - Reintenta hasta MAX_ATTEMPTS veces por sesión, con cache-buster en
+ *   la URL para evitar que el navegador sirva HTML cacheado.
+ * - Si tras MAX_ATTEMPTS reintentos sigue fallando, deja de recargar
+ *   automáticamente para no entrar en bucle (asumimos otra causa).
  */
 export function ChunkErrorReloader() {
   useEffect(() => {
-    const shouldReloadOnce = () => {
-      const attempt = sessionStorage.getItem(KEY);
-      if (attempt) return false;
-      sessionStorage.setItem(KEY, String(Date.now()));
-      return true;
-    };
+    function getAttempts(): number {
+      const raw = sessionStorage.getItem(KEY);
+      return raw ? Number(raw) || 0 : 0;
+    }
+
+    function tryReload() {
+      const attempts = getAttempts();
+      if (attempts >= MAX_ATTEMPTS) return;
+      sessionStorage.setItem(KEY, String(attempts + 1));
+      const url = new URL(window.location.href);
+      url.searchParams.set('_v', String(Date.now()));
+      window.location.replace(url.toString());
+    }
 
     function isChunkError(err: unknown): boolean {
       if (!err) return false;
@@ -27,28 +38,32 @@ export function ChunkErrorReloader() {
       const msg = e.message ?? '';
       return (
         name === 'ChunkLoadError' ||
-        /Loading chunk [\w-]+ failed/i.test(msg) ||
+        /Loading chunk [\w/-]+ failed/i.test(msg) ||
         /Loading CSS chunk/i.test(msg) ||
-        /Failed to fetch dynamically imported module/i.test(msg)
+        /Failed to fetch dynamically imported module/i.test(msg) ||
+        /Importing a module script failed/i.test(msg) ||
+        /error loading dynamically imported module/i.test(msg) ||
+        /Failed to load .*chunk/i.test(msg)
       );
     }
 
     function onError(ev: ErrorEvent) {
       if (isChunkError(ev.error ?? new Error(ev.message))) {
-        if (shouldReloadOnce()) window.location.reload();
+        tryReload();
       }
     }
 
     function onRejection(ev: PromiseRejectionEvent) {
       if (isChunkError(ev.reason)) {
-        if (shouldReloadOnce()) window.location.reload();
+        tryReload();
       }
     }
 
     window.addEventListener('error', onError);
     window.addEventListener('unhandledrejection', onRejection);
-    // Reset flag a los 30s para permitir un futuro reload si vuelve a pasar
-    const t = setTimeout(() => sessionStorage.removeItem(KEY), 30_000);
+    // Si llevamos 60s en la página sin más errores, asumimos éxito y
+    // reseteamos el contador para futuros incidentes.
+    const t = setTimeout(() => sessionStorage.removeItem(KEY), 60_000);
     return () => {
       window.removeEventListener('error', onError);
       window.removeEventListener('unhandledrejection', onRejection);
