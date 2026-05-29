@@ -62,7 +62,7 @@ export default async function MePage() {
       lessonDate: schema.lessons.date,
     })
     .from(schema.lessonFeedback)
-    .innerJoin(schema.lessons, eq(schema.lessons.id, schema.lessonFeedback.lessonId))
+    .leftJoin(schema.lessons, eq(schema.lessons.id, schema.lessonFeedback.lessonId))
     .where(eq(schema.lessonFeedback.riderId, rider!.id))
     .orderBy(desc(schema.lessonFeedback.createdAt))
     .limit(2);

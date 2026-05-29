@@ -109,7 +109,7 @@ export async function confirmVoiceNoteAction(formData: FormData) {
     if (!include || !item.riderId || !edited) continue;
 
     await db.insert(schema.lessonFeedback).values({
-      lessonId: note.lessonId!,
+      lessonId: note.lessonId,
       riderId: item.riderId,
       body: edited,
       source: 'ia',

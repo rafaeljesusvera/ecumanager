@@ -69,9 +69,9 @@ export const lessonFeedback = pgTable(
   'lesson_feedback',
   {
     id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
-    lessonId: uuid('lesson_id')
-      .notNull()
-      .references(() => lessons.id, { onDelete: 'cascade' }),
+    lessonId: uuid('lesson_id').references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
     riderId: uuid('rider_id')
       .notNull()
       .references(() => riders.id, { onDelete: 'cascade' }),
