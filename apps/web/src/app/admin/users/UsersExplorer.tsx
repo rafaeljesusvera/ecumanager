@@ -5,10 +5,12 @@ import {
   MagnifyingGlassIcon,
   ShieldStarIcon,
   XCircleIcon,
+  EyeIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { Avatar, Badge, Input, Select } from '@/components/ui';
 import { roleLabel } from '@/lib/db/session';
 import type { ClubRole } from '@equmanager/domain';
+import { impersonateUserAction } from './actions';
 
 export type UserRow = {
   id: string;
@@ -33,9 +35,11 @@ const ROLE_OPTIONS: Array<{ value: string; label: string }> = [
 export function UsersExplorer({
   users,
   clubs,
+  currentUserId,
 }: {
   users: UserRow[];
   clubs: string[];
+  currentUserId: string;
 }) {
   const [q, setQ] = useState('');
   const [role, setRole] = useState('');
@@ -175,13 +179,14 @@ export function UsersExplorer({
               <th className="px-4 py-3 text-left">Perfiles</th>
               <th className="px-4 py-3 text-left">Alta</th>
               <th className="px-4 py-3 text-left">Sistema</th>
+              <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-sm font-medium text-stone-500"
                 >
                   Sin resultados con esos filtros.
@@ -231,6 +236,29 @@ export function UsersExplorer({
                   </td>
                   <td className="px-4 py-3">
                     {u.isSuperadmin && <Badge tone="brand">Superadmin</Badge>}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {u.id === currentUserId ? (
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-stone-300">
+                        Tú
+                      </span>
+                    ) : (
+                      <form action={impersonateUserAction}>
+                        <input
+                          type="hidden"
+                          name="profileId"
+                          value={u.id}
+                        />
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-stone-200 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-700 transition hover:border-brand-300 hover:text-brand-700"
+                          title={`Ver Equmanager como ${u.fullName ?? u.email}`}
+                        >
+                          <EyeIcon size={12} weight="bold" />
+                          Ver como
+                        </button>
+                      </form>
+                    )}
                   </td>
                 </tr>
               ))

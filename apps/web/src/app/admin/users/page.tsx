@@ -1,5 +1,6 @@
 import { db, schema } from '@equmanager/database';
 import { eq } from 'drizzle-orm';
+import { getCurrentUser } from '@equmanager/auth';
 import { PageHeader } from '@/components/page/PageHeader';
 import { UsersExplorer, type UserRow } from './UsersExplorer';
 
@@ -7,6 +8,7 @@ export const metadata = { title: 'Superadmin · Usuarios' };
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage() {
+  const me = await getCurrentUser();
   const profiles = await db
     .select({
       id: schema.profiles.id,
@@ -69,7 +71,11 @@ export default async function AdminUsersPage() {
         description="Cada persona registrada y sus perfiles activos en cada club. Un mismo usuario puede ser propietario en un club y alumno en otro."
       />
 
-      <UsersExplorer users={rows} clubs={clubs} />
+      <UsersExplorer
+        users={rows}
+        clubs={clubs}
+        currentUserId={me?.id ?? ''}
+      />
     </div>
   );
 }
