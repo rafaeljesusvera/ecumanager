@@ -23,6 +23,11 @@
   *:focus-visible {
     @apply outline-none ring-2 ring-brand-500/40 ring-offset-2 ring-offset-stone-50;
   }
+  /* iOS Safari hace zoom automático en inputs con font-size < 16px.
+     Forzamos 16px en todos para evitarlo sin cambiar el aspecto visual. */
+  input, textarea, select {
+    font-size: max(16px, 1em);
+  }
 }
 
 @layer components {
