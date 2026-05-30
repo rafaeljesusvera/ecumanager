@@ -21,13 +21,14 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser().catch(() => null);
   if (!user) redirect('/login');
   const [profile] = await db
     .select({ isSuperadmin: schema.profiles.isSuperadmin })
     .from(schema.profiles)
     .where(eq(schema.profiles.id, user.id))
-    .limit(1);
+    .limit(1)
+    .catch(() => [{ isSuperadmin: false }]);
   if (!profile?.isSuperadmin) redirect('/app');
 
   return (
