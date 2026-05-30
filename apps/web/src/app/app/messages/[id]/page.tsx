@@ -80,7 +80,7 @@ export default async function ThreadPage({
     'Conversación';
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col p-6 md:p-10">
+    <div className="flex min-h-0 flex-1 flex-col p-4 md:p-10">
       <Link
         href="/app/messages"
         className="mb-3 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-500 hover:text-brand-700"
