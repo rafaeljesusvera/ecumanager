@@ -94,7 +94,7 @@ export default async function RidersPage() {
           description="Crea el primero o pídeles que se unan con el código de tu hípica."
         />
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card">
+        <div className="overflow-x-auto rounded-3xl border border-stone-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-stone-50 text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
               <tr>

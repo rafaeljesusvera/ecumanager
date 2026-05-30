@@ -27,7 +27,7 @@ export default async function AdminHorsesPage() {
         description="Caballos de todos los clubes del sistema."
       />
 
-      <div className="mt-6 overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-card">
+      <div className="mt-6 overflow-x-auto rounded-3xl border border-stone-200 bg-white shadow-card">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">
             <tr>

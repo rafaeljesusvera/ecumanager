@@ -18,7 +18,7 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen bg-stone-50">
       <Sidebar session={session} />
-      <main className="flex-1 overflow-x-hidden">
+      <main className="flex-1 min-w-0">
         <ImpersonationBanner currentEmail={session.user.email} />
         <Topbar
           profileId={session.user.id}
