@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr';
 import { ensureSession } from '@/lib/db';
 import { Avatar, Button, Textarea } from '@/components/ui';
 import { sendMessageAction } from '../actions';
+import { MessageTime } from '../MessageTime';
 
 export const dynamic = 'force-dynamic';
 
@@ -127,10 +128,7 @@ export default async function ThreadPage({
                 )}
                 <div className="text-sm font-medium">{m.body}</div>
                 <div className="mt-0.5 text-right text-[10px] opacity-60">
-                  {new Date(m.createdAt).toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  <MessageTime date={m.createdAt} />
                 </div>
               </div>
             </div>
